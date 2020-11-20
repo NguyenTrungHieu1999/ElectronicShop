@@ -92,8 +92,8 @@ namespace ElectronicShop.Data.Migrations
                     Sex = table.Column<bool>(nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "DateTime", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "DateTime", nullable: false),
-                    CreatedBy = table.Column<DateTime>(maxLength: 20, nullable: false),
-                    ModifiedBy = table.Column<DateTime>(maxLength: 20, nullable: false)
+                    CreatedBy = table.Column<string>(maxLength: 20, nullable: true),
+                    ModifiedBy = table.Column<string>(maxLength: 20, nullable: true)
                 },
                 constraints: table =>
                 {

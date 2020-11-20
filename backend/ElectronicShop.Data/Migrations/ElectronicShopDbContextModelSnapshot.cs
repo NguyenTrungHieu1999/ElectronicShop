@@ -461,8 +461,8 @@ namespace ElectronicShop.Data.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedBy")
-                        .HasColumnType("datetime2")
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(20)")
                         .HasMaxLength(20);
 
                     b.Property<DateTime>("CreatedDate")
@@ -485,8 +485,8 @@ namespace ElectronicShop.Data.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTime>("ModifiedBy")
-                        .HasColumnType("datetime2")
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(20)")
                         .HasMaxLength(20);
 
                     b.Property<DateTime>("ModifiedDate")
