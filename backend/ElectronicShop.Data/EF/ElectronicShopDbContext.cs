@@ -15,8 +15,13 @@ namespace ElectronicShop.Data.EF
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=ElectronicShopDb;Trusted_Connection=True;");
+            if (!optionsBuilder.IsConfigured)
+            {
+                //warning You can move this code to protect potentially senstive information
+                //in connection string.
+
+                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=ElectronicShopDb;Trusted_Connection=True;");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
