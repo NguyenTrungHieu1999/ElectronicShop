@@ -6,7 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace ElectronicShop.Services.Common.Repository
+namespace ElectronicShop.Services.Common
 {
     public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {

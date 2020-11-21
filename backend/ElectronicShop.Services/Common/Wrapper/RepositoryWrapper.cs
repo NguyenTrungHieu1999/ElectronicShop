@@ -1,7 +1,7 @@
 ﻿using ElectronicShop.Data.EF;
 using System.Threading.Tasks;
 
-namespace ElectronicShop.Services.Common.Repository.Wrapper
+namespace ElectronicShop.Services.Common.Wrapper
 {
     public class RepositoryWrapper : IRepositoryWrapper
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace ElectronicShop.Services.Common.Repository
+namespace ElectronicShop.Services.Common
 {
     public interface IRepositoryBase<T>
     {
