@@ -2,7 +2,7 @@
 
 namespace ElectronicShop.Utilities.Mapper
 {
-    class ElectronicShopProfile : Profile
+    public class ElectronicShopProfile : Profile
     {
         public ElectronicShopProfile()
         {
