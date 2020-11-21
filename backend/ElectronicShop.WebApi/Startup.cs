@@ -1,9 +1,11 @@
+using AutoMapper;
 using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
+using ElectronicShop.Services.SendMail;
+using ElectronicShop.Utilities.Mapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -22,13 +24,18 @@ namespace ElectronicShop.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ElectronicShopDbContext>(options =>
-            options.UseSqlServer(
-                Configuration.GetConnectionString("DefaultDb")));
+            // Inject AutoMapper
+            services.AddAutoMapper(typeof(ElectronicShopProfile));
 
+            // Inject ElectronicShopDbContext
+            services.AddDbContext<ElectronicShopDbContext>();
             services.AddIdentity<User, Role>()
                 .AddEntityFrameworkStores<ElectronicShopDbContext>()
                 .AddDefaultTokenProviders();
+
+            // Insert SMTP settings parser and initialize a singleton object that will handle mail service
+            services.Configure<SmtpSettings>(Configuration.GetSection("SmtpSettings"));
+            services.AddSingleton<IMailer, Mailer>();
 
             services.AddControllers();
         }
