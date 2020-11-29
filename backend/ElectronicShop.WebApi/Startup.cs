@@ -1,4 +1,7 @@
 using AutoMapper;
+using ElectronicShop.Application.Common.Repositorys.Wrapper;
+using ElectronicShop.Application.Users.Interfaces;
+using ElectronicShop.Application.Users.Services;
 using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
 using ElectronicShop.Infrastructure.SendMail;
@@ -111,6 +114,12 @@ namespace ElectronicShop.WebApi
             // Insert SMTP settings parser and initialize a singleton object that will handle mail service
             services.Configure<SmtpSettings>(Configuration.GetSection("SmtpSettings"));
             services.AddSingleton<IMailer, Mailer>();
+
+            // DI
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<UserManager<User>, UserManager<User>>();
+            services.AddTransient<SignInManager<User>, SignInManager<User>>();
+            services.AddTransient<IRepositoryWrapper, RepositoryWrapper>();
 
             services.AddControllers();
         }
