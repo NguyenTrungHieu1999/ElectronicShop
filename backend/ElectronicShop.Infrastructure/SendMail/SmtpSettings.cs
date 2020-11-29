@@ -1,4 +1,4 @@
-﻿namespace ElectronicShop.Services.SendMail
+﻿namespace ElectronicShop.Infrastructure.SendMail
 {
     public class SmtpSettings
     {

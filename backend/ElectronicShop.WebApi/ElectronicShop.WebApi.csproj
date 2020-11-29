@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ElectronicShop.Data\ElectronicShop.Data.csproj" />
-    <ProjectReference Include="..\ElectronicShop.Services\ElectronicShop.Services.csproj" />
+    <ProjectReference Include="..\ElectronicShop.Infrastructure\ElectronicShop.Infrastructure.csproj" />
     <ProjectReference Include="..\ElectronicShop.Utilities\ElectronicShop.Utilities.csproj" />
   </ItemGroup>
 

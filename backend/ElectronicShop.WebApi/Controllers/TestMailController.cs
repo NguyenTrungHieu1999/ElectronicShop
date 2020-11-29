@@ -1,4 +1,4 @@
-﻿using ElectronicShop.Services.SendMail;
+﻿using ElectronicShop.Infrastructure.SendMail;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 

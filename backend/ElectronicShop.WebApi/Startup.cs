@@ -1,7 +1,7 @@
 using AutoMapper;
 using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
-using ElectronicShop.Services.SendMail;
+using ElectronicShop.Infrastructure.SendMail;
 using ElectronicShop.Utilities.Mapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace ElectronicShop.Services.SendMail
+namespace ElectronicShop.Infrastructure.SendMail
 {
     public interface IMailer
     {

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace ElectronicShop.Services.Common.Wrapper
+namespace ElectronicShop.Application.Common.Repositorys.Wrapper
 {
     public interface IRepositoryWrapper
     {
