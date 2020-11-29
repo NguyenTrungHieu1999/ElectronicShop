@@ -16,7 +16,7 @@ namespace ElectronicShop.Data.Configurations
                 .UseIdentityColumn();
 
             builder.Property(x => x.Url)
-                .HasMaxLength(200)
+                .HasMaxLength(500)
                 .IsRequired();
 
             builder.Property(x => x.IsDefault)
@@ -25,7 +25,7 @@ namespace ElectronicShop.Data.Configurations
             builder.HasOne(x => x.Product)
                 .WithMany(x => x.ProductPhotos)
                 .HasForeignKey(x => x.ProductId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

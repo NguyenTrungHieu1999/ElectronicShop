@@ -16,7 +16,7 @@ namespace ElectronicShop.Data.Configurations
                 .UseIdentityColumn();
 
             builder.Property(x => x.Name)
-                .HasMaxLength(30)
+                .HasMaxLength(50)
                 .IsRequired();
 
             builder.Property(x => x.Status)

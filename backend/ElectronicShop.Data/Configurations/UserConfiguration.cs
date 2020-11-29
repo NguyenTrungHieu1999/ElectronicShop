@@ -19,12 +19,12 @@ namespace ElectronicShop.Data.Configurations
                 .HasMaxLength(50)
                 .IsRequired();
 
-            builder.Property(x => x.Name)
+            builder.Property(x => x.LastName)
                 .HasMaxLength(20)
                 .IsRequired();
 
             builder.Property(x => x.Address)
-                .HasMaxLength(100)
+                .HasMaxLength(500)
                 .IsRequired();
 
             builder.Property(x => x.Status)
@@ -43,10 +43,10 @@ namespace ElectronicShop.Data.Configurations
                 .HasMaxLength(20);
 
             builder.Property(x => x.ModifiedBy)
-                .HasMaxLength(20);
+                .HasMaxLength(30);
 
             builder.Property(x => x.UserName)
-                .HasMaxLength(20)
+                .HasMaxLength(30)
                 .IsRequired();
         }
     }

@@ -47,7 +47,7 @@ namespace ElectronicShop.Data.Configurations
             builder.HasOne(x => x.OrderStatus)
                 .WithMany(x => x.Orders)
                 .HasForeignKey(x => x.StatusId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

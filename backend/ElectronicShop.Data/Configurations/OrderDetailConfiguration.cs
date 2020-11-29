@@ -31,12 +31,12 @@ namespace ElectronicShop.Data.Configurations
             builder.HasOne(x => x.Order)
                 .WithMany(x => x.OrderDetails)
                 .HasForeignKey(x => x.OrderId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.Product)
                 .WithMany(x => x.OrderDetails)
                 .HasForeignKey(x => x.ProductId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

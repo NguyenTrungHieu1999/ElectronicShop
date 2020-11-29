@@ -9,7 +9,7 @@ namespace ElectronicShop.Data.Entities
     {
         public string FirstMiddleName { get; set; }
 
-        public string Name { get; set; }
+        public string LastName { get; set; }
 
         public string Address { get; set; }
 
@@ -34,5 +34,13 @@ namespace ElectronicShop.Data.Entities
         public List<ProductReview> ProductReviews { get; set; }
 
         public List<Order> Orders { get; set; }
+
+        public List<UserRole> UserRoles { get; set; }
+
+        public List<UserClaim> UserClaims { get; set; }
+
+        public List<UserLogin> UserLogins { get; set; }
+
+        public List<UserToken> UserTokens { get; set; }
     }
 }

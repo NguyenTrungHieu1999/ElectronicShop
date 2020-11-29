@@ -1,12 +1,11 @@
 ﻿using ElectronicShop.Data.Configurations;
 using ElectronicShop.Data.Entities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ElectronicShop.Data.EF
 {
-    public class ElectronicShopDbContext : IdentityDbContext<User, Role, int>
+    public class ElectronicShopDbContext : IdentityDbContext<User, Role, int, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>
     {
         public ElectronicShopDbContext(DbContextOptions options) : base(options)
         {
@@ -41,16 +40,11 @@ namespace ElectronicShop.Data.EF
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new WatchedProductConfiguration());
-
-            modelBuilder.Entity<IdentityUserClaim<int>>().ToTable("UserClaim");
-
-            modelBuilder.Entity<IdentityUserRole<int>>().ToTable("UserRole").HasKey(x => new { x.UserId, x.RoleId });
-
-            modelBuilder.Entity<IdentityUserLogin<int>>().ToTable("UserLogin").HasKey(x => new { x.UserId, x.ProviderKey, x.ProviderDisplayName, x.LoginProvider });
-
-            modelBuilder.Entity<IdentityRoleClaim<int>>().ToTable("RoleClaim");
-
-            modelBuilder.Entity<IdentityUserToken<int>>().ToTable("UserToken").HasKey(x => x.UserId);
+            modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
+            modelBuilder.ApplyConfiguration(new RoleClaimConfiguration());
+            modelBuilder.ApplyConfiguration(new UserClaimConfiguration());
+            modelBuilder.ApplyConfiguration(new UserLoginConfiguration());
+            modelBuilder.ApplyConfiguration(new UserTokenConfiguration());
         }
 
         public DbSet<Category> Categories { get; set; }

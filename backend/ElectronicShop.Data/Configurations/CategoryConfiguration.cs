@@ -51,7 +51,7 @@ namespace ElectronicShop.Data.Configurations
             builder.HasOne(x => x.ProductType)
                  .WithMany(x => x.Categories)
                  .HasForeignKey(x => x.ProductTypeId)
-                 .OnDelete(DeleteBehavior.Cascade);
+                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
