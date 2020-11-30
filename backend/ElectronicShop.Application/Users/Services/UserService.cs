@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Application.Common.Repositorys.Wrapper;
+using ElectronicShop.Application.Users.Extensions;
 using ElectronicShop.Application.Users.Interfaces;
 using ElectronicShop.Application.Users.Models;
 using ElectronicShop.Data.Entities;
@@ -106,6 +107,22 @@ namespace ElectronicShop.Application.Users.Services
             }
 
             return new ApiErrorResult<bool>("Registration failed");
+        }
+
+        public async Task<ApiResult<bool>> UpdateUserAsync(UserUpdateRequest request)
+        {
+            var user = await _userManager.FindByIdAsync(request.Id.ToString());
+
+            user.Map(request);
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+            {
+                return new ApiSuccessResult<bool>();
+            }
+
+            return new ApiErrorResult<bool>("Update failed");
         }
     }
 }

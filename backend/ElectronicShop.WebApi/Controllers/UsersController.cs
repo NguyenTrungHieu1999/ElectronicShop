@@ -30,5 +30,19 @@ namespace ElectronicShop.WebApi.Controllers
 
             return Ok(result);
         }
+
+        [HttpPut("update")]
+        [Authorize]
+        public async Task<IActionResult> Update([FromBody] UserUpdateRequest request)
+        {
+            var result = await _userService.UpdateUserAsync(request);
+
+            if (!result.IsSuccessed)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
     }
 }

@@ -30,7 +30,7 @@ namespace ElectronicShop.Data.Configurations
             builder.Property(x => x.Status)
                 .IsRequired();
 
-            builder.Property(x => x.Sex)
+            builder.Property(x => x.Gender)
                 .IsRequired();
 
             builder.Property(x => x.CreatedDate)
@@ -48,6 +48,9 @@ namespace ElectronicShop.Data.Configurations
             builder.Property(x => x.UserName)
                 .HasMaxLength(30)
                 .IsRequired();
+
+            builder.Property(x => x.Birthday)
+                .HasColumnType("DateTime");
 
             builder.Property(x => x.Email)
                 .HasMaxLength(50)

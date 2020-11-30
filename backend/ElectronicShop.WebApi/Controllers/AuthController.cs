@@ -8,7 +8,6 @@ namespace ElectronicShop.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [AllowAnonymous]
     public class AuthController : ControllerBase
     {
         private readonly IUserService _userService;

@@ -9,5 +9,7 @@ namespace ElectronicShop.Application.Users.Interfaces
         Task<ApiResult<string>> AuthenticateAsync(LoginRequest request);
 
         Task<ApiResult<bool>> RegisterAsync(UserRegisterRequest request);
+
+        Task<ApiResult<bool>> UpdateUserAsync(UserUpdateRequest request);
     }
 }

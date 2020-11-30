@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -50,31 +51,32 @@ namespace ElectronicShop.WebApi
             // A similar approach in which typing "Bearer " can be skipped is the following:
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Title = "ElectronicShop",
-                    Version = "v1"
-                });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "UnrealEstate", Version = "v1" });
+
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    In = ParameterLocation.Header,
-                    Description = "Please insert JWT with Bearer into field",
                     Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "JWT Authorization header using the Bearer scheme."
                 });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement {
-                   {
-                     new OpenApiSecurityScheme
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                 {
                      {
-                       Reference = new OpenApiReference
-                       {
-                         Type = ReferenceType.SecurityScheme,
-                         Id = "Bearer"
-                       }
-                      },
-                      new string[] { }
-                    }
-                  });
+                           new OpenApiSecurityScheme
+                             {
+                                 Reference = new OpenApiReference
+                                 {
+                                     Type = ReferenceType.SecurityScheme,
+                                     Id = "Bearer"
+                                 }
+                             },
+                             new string[] {}
+                     }
+                 });
             });
 
             // Configure the authentication schema with JWT bearer options
@@ -82,7 +84,6 @@ namespace ElectronicShop.WebApi
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             })
            // Adding Jwt Bearer  
            .AddJwtBearer(options =>
@@ -91,10 +92,14 @@ namespace ElectronicShop.WebApi
                options.RequireHttpsMetadata = false;
                options.TokenValidationParameters = new TokenValidationParameters()
                {
+                   ValidateIssuerSigningKey = true,
                    ValidateIssuer = true,
                    ValidateAudience = true,
                    ValidAudience = Configuration["JWT:ValidAudience"],
                    ValidIssuer = Configuration["JWT:ValidIssuer"],
+                   RequireExpirationTime = true,
+                   ValidateLifetime = true,
+                   ClockSkew = TimeSpan.Zero,
                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
                };
            });
@@ -134,6 +139,12 @@ namespace ElectronicShop.WebApi
 
             app.UseHttpsRedirection();
 
+            app.UseRouting();
+
+            app.UseAuthentication();
+
+            app.UseAuthorization();
+
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
 
@@ -143,12 +154,6 @@ namespace ElectronicShop.WebApi
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "ElectronicShop API V1");
             });
-
-            app.UseRouting();
-
-            app.UseAuthentication();
-
-            app.UseAuthorization();
 
             app.UseSession();
 
