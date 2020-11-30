@@ -33,6 +33,8 @@ namespace ElectronicShop.Application.Users.Models
         [Required]
         public Gender Gender { get; set; }
 
+        public string Address { get; set; }
+
         [Required, DataType(DataType.PhoneNumber), StringLength(11)]
         [Phone]
         public string PhoneNumber { get; set; }

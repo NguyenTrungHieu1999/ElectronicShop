@@ -8,27 +8,22 @@ namespace ElectronicShop.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [AllowAnonymous]
-    public class AuthController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
 
-        public AuthController(IUserService userService)
+        public UsersController(IUserService userService)
         {
             _userService = userService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Authenticate([FromBody] LoginRequest request)
+        [AllowAnonymous]
+        public async Task<IActionResult> Register([FromBody] UserRegisterRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            var result = await _userService.RegisterAsync(request);
 
-            var result = await _userService.AuthenticateAsync(request);
-
-            if (string.IsNullOrEmpty(result.ResultObj))
+            if (!result.IsSuccessed)
             {
                 return BadRequest(result);
             }
