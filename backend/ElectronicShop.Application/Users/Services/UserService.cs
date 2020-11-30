@@ -76,5 +76,10 @@ namespace ElectronicShop.Application.Users.Services
 
             return new ApiSuccessResult<string>(new JwtSecurityTokenHandler().WriteToken(token));
         }
+
+        public Task<ApiResult<bool>> RegisterAsync(UserRegisterRequest request)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

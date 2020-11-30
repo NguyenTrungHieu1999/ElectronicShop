@@ -40,13 +40,21 @@ namespace ElectronicShop.Data.Configurations
                 .HasColumnType("DateTime");
 
             builder.Property(x => x.CreatedBy)
-                .HasMaxLength(20);
+                .HasMaxLength(30);
 
             builder.Property(x => x.ModifiedBy)
                 .HasMaxLength(30);
 
             builder.Property(x => x.UserName)
                 .HasMaxLength(30)
+                .IsRequired();
+
+            builder.Property(x => x.Email)
+                .HasMaxLength(50)
+                .IsRequired();
+
+            builder.Property(x => x.PhoneNumber)
+                .HasMaxLength(11)
                 .IsRequired();
         }
     }
