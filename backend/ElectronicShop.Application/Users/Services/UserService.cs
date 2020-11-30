@@ -83,15 +83,15 @@ namespace ElectronicShop.Application.Users.Services
 
         public async Task<ApiResult<bool>> RegisterAsync(UserRegisterRequest request)
         {
-            var test = await _repository.UserRepo.FindByCondition(x=>x.Email == request.Email||x.UserName == request.UserName)
+            var user = await _repository.UserRepo.FindByCondition(x=>x.Email == request.Email||x.UserName == request.UserName)
                 .SingleOrDefaultAsync();
 
-            if(test!=null)
+            if(user!=null)
             {
                 return new ApiErrorResult<bool>("Account already exists");
             }
 
-            var user = _mapper.Map<User>(request);
+            user = _mapper.Map<User>(request);
 
             user.CreatedDate = DateTime.Now;
             user.ModifiedDate = DateTime.Now;
