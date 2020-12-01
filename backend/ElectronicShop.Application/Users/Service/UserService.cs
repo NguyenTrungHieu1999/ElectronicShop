@@ -69,6 +69,9 @@ namespace ElectronicShop.Application.Users.Service
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
+
+
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Secret"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
