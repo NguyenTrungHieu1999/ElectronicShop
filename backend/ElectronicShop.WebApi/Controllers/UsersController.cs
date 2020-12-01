@@ -1,5 +1,6 @@
-﻿using ElectronicShop.Application.Users.Interfaces;
-using ElectronicShop.Application.Users.Models;
+﻿using ElectronicShop.Application.Users.Command;
+using ElectronicShop.WebApi.ActionFilters;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -10,39 +11,42 @@ namespace ElectronicShop.WebApi.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IMediator _mediator;
 
-        public UsersController(IUserService userService)
+        public UsersController(IMediator mediator)
         {
-            _userService = userService;
+            _mediator = mediator;
         }
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Register([FromBody] UserRegisterRequest request)
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> Register([FromBody] RegisterUserCommand request)
         {
-            var result = await _userService.RegisterAsync(request);
+            var result = await _mediator.Send(request);
 
-            if (!result.IsSuccessed)
-            {
-                return BadRequest(result);
-            }
-
-            return Ok(result);
+            return result.IsSuccessed ? (IActionResult)Ok(result) : BadRequest(result);
         }
 
-        [HttpPut("update")]
-        [Authorize]
-        public async Task<IActionResult> Update([FromBody] UserUpdateRequest request)
+        [HttpPut]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> Update([FromBody] UpdateUserCommand request)
         {
-            var result = await _userService.UpdateUserAsync(request);
+            var result = await _mediator.Send(request);
 
-            if (!result.IsSuccessed)
-            {
-                return BadRequest(result);
-            }
+            return result.IsSuccessed ? (IActionResult)Ok(result) : BadRequest(result);
+        }
 
-            return Ok(result);
+        [HttpDelete("delete/{userId}")]
+        [Authorize(Roles = "Admin")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> Delete(int userId)
+        {
+            var query = new DeleteUserCommand(userId);
+
+            var result = await _mediator.Send(query);
+
+            return result.IsSuccessed ? (IActionResult)Ok(result) : BadRequest(result);
         }
     }
 }

@@ -1,10 +1,15 @@
-﻿using ElectronicShop.Data.Enums;
+﻿using ElectronicShop.Application.Common.Models;
+using ElectronicShop.Application.Users.Service;
+using ElectronicShop.Data.Enums;
+using MediatR;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace ElectronicShop.Application.Users.Models
+namespace ElectronicShop.Application.Users.Command
 {
-    public class UserRegisterRequest
+    public class RegisterUserCommand : IRequest<ApiResult<bool>>
     {
         [Required, StringLength(30, MinimumLength = 1)]
         public string UserName { get; set; }
@@ -38,5 +43,20 @@ namespace ElectronicShop.Application.Users.Models
         [Required, DataType(DataType.PhoneNumber), StringLength(11)]
         [Phone]
         public string PhoneNumber { get; set; }
+    }
+
+    public class RegisterUserHandle : IRequestHandler<RegisterUserCommand, ApiResult<bool>>
+    {
+        private readonly IUserService _userService;
+
+        public RegisterUserHandle(IUserService userService)
+        {
+            _userService = userService;
+        }
+
+        public async Task<ApiResult<bool>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+        {
+            return await _userService.RegisterAsync(request);
+        }
     }
 }

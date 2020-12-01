@@ -1,9 +1,8 @@
-﻿using ElectronicShop.Application.Users.Interfaces;
-using ElectronicShop.Application.Users.Services;
+﻿using ElectronicShop.Application.Users.Repository;
 using ElectronicShop.Data.EF;
 using System.Threading.Tasks;
 
-namespace ElectronicShop.Application.Common.Repositorys.Wrapper
+namespace ElectronicShop.Application.Common.Repositories.Wrapper
 {
     public class RepositoryWrapper : IRepositoryWrapper
     {
@@ -20,7 +19,7 @@ namespace ElectronicShop.Application.Common.Repositorys.Wrapper
         {
             get
             {
-                if(_user == null)
+                if (_user == null)
                 {
                     _user = new UserRepository(_repoContext);
                 }

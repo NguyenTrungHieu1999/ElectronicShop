@@ -1,17 +1,17 @@
 using AutoMapper;
-using ElectronicShop.Application.Common.Repositorys.Wrapper;
-using ElectronicShop.Application.Users.Interfaces;
-using ElectronicShop.Application.Users.Services;
+using ElectronicShop.Application.Common.Repositories.Wrapper;
+using ElectronicShop.Application.Users.Service;
 using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
 using ElectronicShop.Infrastructure.SendMail;
 using ElectronicShop.Utilities.Mapper;
+using ElectronicShop.WebApi.ActionFilters;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -34,6 +34,12 @@ namespace ElectronicShop.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Model state validation filter ASP.NET Core
+            services.AddScoped<ValidationFilterAttribute>();
+
+            // Handler for MediatR query ASP.Net Core
+            services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
+
             // Compatibility version for ASP.NET Core MVC
             //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 

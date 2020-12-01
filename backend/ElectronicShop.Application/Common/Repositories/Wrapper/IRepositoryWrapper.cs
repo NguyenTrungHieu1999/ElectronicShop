@@ -1,7 +1,7 @@
-﻿using ElectronicShop.Application.Users.Interfaces;
+﻿using ElectronicShop.Application.Users.Repository;
 using System.Threading.Tasks;
 
-namespace ElectronicShop.Application.Common.Repositorys.Wrapper
+namespace ElectronicShop.Application.Common.Repositories.Wrapper
 {
     public interface IRepositoryWrapper
     {

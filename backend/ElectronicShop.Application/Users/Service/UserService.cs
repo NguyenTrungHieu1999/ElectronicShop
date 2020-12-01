@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
 using ElectronicShop.Application.Common.Models;
-using ElectronicShop.Application.Common.Repositorys.Wrapper;
+using ElectronicShop.Application.Common.Repositories.Wrapper;
+using ElectronicShop.Application.Users.Command;
 using ElectronicShop.Application.Users.Extensions;
-using ElectronicShop.Application.Users.Interfaces;
-using ElectronicShop.Application.Users.Models;
 using ElectronicShop.Data.Entities;
 using ElectronicShop.Data.Enums;
 using ElectronicShop.Services.Common.Models;
@@ -17,7 +16,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElectronicShop.Application.Users.Services
+namespace ElectronicShop.Application.Users.Service
 {
     public class UserService : IUserService
     {
@@ -37,7 +36,7 @@ namespace ElectronicShop.Application.Users.Services
             _mapper = mapper;
         }
 
-        public async Task<ApiResult<string>> AuthenticateAsync(LoginRequest request)
+        public async Task<ApiResult<string>> AuthenticateAsync(AuthenticateCommand request)
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
 
@@ -51,7 +50,8 @@ namespace ElectronicShop.Application.Users.Services
                 return new ApiErrorResult<string>("Account is locked");
             }
 
-            var result = await _signInManager.PasswordSignInAsync(user.UserName, request.Password, request.RememberMe, true);
+            var result = await _signInManager.PasswordSignInAsync(user.UserName,
+                request.Password, request.RememberMe, true);
 
             if (!result.Succeeded)
             {
@@ -79,15 +79,15 @@ namespace ElectronicShop.Application.Users.Services
                 expires: DateTime.Now.AddHours(3),
                 signingCredentials: creds);
 
-            return new ApiSuccessResult<string>(new JwtSecurityTokenHandler().WriteToken(token));
+            return await Task.FromResult(new ApiSuccessResult<string>(new JwtSecurityTokenHandler().WriteToken(token)));
         }
 
-        public async Task<ApiResult<bool>> RegisterAsync(UserRegisterRequest request)
+        public async Task<ApiResult<bool>> RegisterAsync(RegisterUserCommand request)
         {
-            var user = await _repository.UserRepo.FindByCondition(x=>x.Email == request.Email||x.UserName == request.UserName)
+            var user = await _repository.UserRepo.FindByCondition(x => x.Email == request.Email || x.UserName == request.UserName)
                 .SingleOrDefaultAsync();
 
-            if(user!=null)
+            if (user != null)
             {
                 return new ApiErrorResult<bool>("Account already exists");
             }
@@ -103,13 +103,13 @@ namespace ElectronicShop.Application.Users.Services
 
             if (result.Succeeded)
             {
-                return new ApiSuccessResult<bool>();
+                return await Task.FromResult(new ApiSuccessResult<bool>());
             }
 
-            return new ApiErrorResult<bool>("Registration failed");
+            return await Task.FromResult(new ApiErrorResult<bool>("Registration failed"));
         }
 
-        public async Task<ApiResult<bool>> UpdateUserAsync(UserUpdateRequest request)
+        public async Task<ApiResult<bool>> UpdateAsync(UpdateUserCommand request)
         {
             var user = await _userManager.FindByIdAsync(request.Id.ToString());
 
@@ -119,10 +119,31 @@ namespace ElectronicShop.Application.Users.Services
 
             if (result.Succeeded)
             {
-                return new ApiSuccessResult<bool>();
+                return await Task.FromResult(new ApiSuccessResult<bool>());
             }
 
-            return new ApiErrorResult<bool>("Update failed");
+            return await Task.FromResult(new ApiErrorResult<bool>("Update failed"));
+        }
+
+        public async Task<ApiResult<bool>> DeleteAsync(int userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user is null)
+            {
+                return new ApiErrorResult<bool>("User does not found");
+            }
+
+            user.Status = UserStatus.DELETED;
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+            {
+                return await Task.FromResult(new ApiSuccessResult<bool>());
+            }
+
+            return await Task.FromResult(new ApiErrorResult<bool>("Delete failed"));
         }
     }
 }

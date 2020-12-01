@@ -1,6 +1,6 @@
-﻿using ElectronicShop.Application.Users.Interfaces;
-using ElectronicShop.Application.Users.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using ElectronicShop.Application.Users.Command;
+using ElectronicShop.WebApi.ActionFilters;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -10,29 +10,20 @@ namespace ElectronicShop.WebApi.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IMediator _mediator;
 
-        public AuthController(IUserService userService)
+        public AuthController(IMediator mediator)
         {
-            _userService = userService;
+            _mediator = mediator;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Authenticate([FromBody] LoginRequest request)
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> Authenticate([FromBody] AuthenticateCommand request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            var result = await _mediator.Send(request);
 
-            var result = await _userService.AuthenticateAsync(request);
-
-            if (string.IsNullOrEmpty(result.ResultObj))
-            {
-                return BadRequest(result);
-            }
-
-            return Ok(result);
+            return result.IsSuccessed ? (IActionResult)Ok(result) : BadRequest(result);
         }
     }
 }

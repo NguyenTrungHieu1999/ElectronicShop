@@ -1,11 +1,11 @@
-﻿using ElectronicShop.Application.Users.Models;
+﻿using ElectronicShop.Application.Users.Command;
 using ElectronicShop.Data.Entities;
 
 namespace ElectronicShop.Application.Users.Extensions
 {
     public static class UserExtensions
     {
-        public static void Map(this User user, UserUpdateRequest request)
+        public static void Map(this User user, UpdateUserCommand request)
         {
             user.FirstMiddleName = request.FirstMiddleName;
             user.LastName = request.LastName;
