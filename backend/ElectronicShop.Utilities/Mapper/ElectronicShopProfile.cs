@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using ElectronicShop.Application.Users.Command;
+using ElectronicShop.Data.Entities;
 
 namespace ElectronicShop.Utilities.Mapper
 {
@@ -6,6 +8,7 @@ namespace ElectronicShop.Utilities.Mapper
     {
         public ElectronicShopProfile()
         {
+            CreateMap<RegisterUserCommand, User>();
         }
     }
 }

@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElectronicShop.Data", "ElectronicShop.Data\ElectronicShop.Data.csproj", "{76488839-2A48-4E7F-AD7B-6F030E91E260}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElectronicShop.WebApi", "ElectronicShop.WebApi\ElectronicShop.WebApi.csproj", "{2CA8718B-0AC3-4EA7-B446-ABD155799281}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElectronicShop.Utilities", "ElectronicShop.Utilities\ElectronicShop.Utilities.csproj", "{616204DD-7A68-4264-A913-67D298B38308}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElectronicShop.Application", "ElectronicShop.Application\ElectronicShop.Application.csproj", "{3E9B1851-3A50-4715-B029-2041A0F3F74F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElectronicShop.Application", "ElectronicShop.Application\ElectronicShop.Application.csproj", "{3E9B1851-3A50-4715-B029-2041A0F3F74F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElectronicShop.Infrastructure", "ElectronicShop.Infrastructure\ElectronicShop.Infrastructure.csproj", "{5D4A355F-7BE3-4FFA-A68A-32A51BB8CDBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElectronicShop.Infrastructure", "ElectronicShop.Infrastructure\ElectronicShop.Infrastructure.csproj", "{5D4A355F-7BE3-4FFA-A68A-32A51BB8CDBD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElectronicShop.Data", "ElectronicShop.Data\ElectronicShop.Data.csproj", "{7BB9A7B6-7066-42C5-AD5A-C3F537EE06AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,10 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{76488839-2A48-4E7F-AD7B-6F030E91E260}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{76488839-2A48-4E7F-AD7B-6F030E91E260}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{76488839-2A48-4E7F-AD7B-6F030E91E260}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{76488839-2A48-4E7F-AD7B-6F030E91E260}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2CA8718B-0AC3-4EA7-B446-ABD155799281}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2CA8718B-0AC3-4EA7-B446-ABD155799281}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CA8718B-0AC3-4EA7-B446-ABD155799281}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +35,10 @@ Global
 		{5D4A355F-7BE3-4FFA-A68A-32A51BB8CDBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D4A355F-7BE3-4FFA-A68A-32A51BB8CDBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D4A355F-7BE3-4FFA-A68A-32A51BB8CDBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BB9A7B6-7066-42C5-AD5A-C3F537EE06AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BB9A7B6-7066-42C5-AD5A-C3F537EE06AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BB9A7B6-7066-42C5-AD5A-C3F537EE06AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BB9A7B6-7066-42C5-AD5A-C3F537EE06AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

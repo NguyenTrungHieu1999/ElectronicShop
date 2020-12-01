@@ -1,9 +1,8 @@
-﻿using ElectronicShop.Application.Common.Repositorys;
-using ElectronicShop.Application.Users.Interfaces;
+﻿using ElectronicShop.Application.Common.Repositories;
 using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
 
-namespace ElectronicShop.Application.Users.Services
+namespace ElectronicShop.Application.Users.Repository
 {
     public class UserRepository : RepositoryBase<User>, IUserRepository
     {

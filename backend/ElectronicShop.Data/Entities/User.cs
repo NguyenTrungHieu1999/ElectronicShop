@@ -15,7 +15,9 @@ namespace ElectronicShop.Data.Entities
 
         public UserStatus Status { get; set; }
 
-        public bool Sex { get; set; }
+        public Gender Gender { get; set; }
+
+        public DateTime Birthday { get; set; }
 
         public DateTime CreatedDate { get; set; }
 
