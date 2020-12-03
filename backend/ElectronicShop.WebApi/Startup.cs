@@ -1,6 +1,7 @@
 using AutoMapper;
+using ElectronicShop.Application.Authentications.Services;
 using ElectronicShop.Application.Common.Repositories.Wrapper;
-using ElectronicShop.Application.Users.Service;
+using ElectronicShop.Application.Users.Services;
 using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
 using ElectronicShop.Infrastructure.SendMail;
@@ -12,6 +13,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -32,6 +36,7 @@ namespace ElectronicShop.WebApi
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
+        [Obsolete]
         public void ConfigureServices(IServiceCollection services)
         {
             // Model state validation filter ASP.NET Core
@@ -41,7 +46,7 @@ namespace ElectronicShop.WebApi
             services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
 
             // Compatibility version for ASP.NET Core MVC
-            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             // For use Session
             services.AddDistributedMemoryCache();
@@ -57,7 +62,7 @@ namespace ElectronicShop.WebApi
             // A similar approach in which typing "Bearer " can be skipped is the following:
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "UnrealEstate", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ElectronicShop", Version = "v1" });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -91,7 +96,7 @@ namespace ElectronicShop.WebApi
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-           // Adding Jwt Bearer  
+           // Adding Jwt Bearer
            .AddJwtBearer(options =>
            {
                options.SaveToken = true;
@@ -127,12 +132,21 @@ namespace ElectronicShop.WebApi
             services.AddSingleton<IMailer, Mailer>();
 
             // DI
+            services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<UserManager<User>, UserManager<User>>();
             services.AddTransient<SignInManager<User>, SignInManager<User>>();
             services.AddTransient<IRepositoryWrapper, RepositoryWrapper>();
 
             services.AddControllers();
+
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            services.AddScoped<IUrlHelper>(x => {
+                var actionContext = x.GetRequiredService<IActionContextAccessor>().ActionContext;
+                var factory = x.GetRequiredService<IUrlHelperFactory>();
+                return factory.GetUrlHelper(actionContext);
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -149,6 +163,7 @@ namespace ElectronicShop.WebApi
 
             app.UseAuthentication();
 
+            // Configure the authentication schema with JWT bearer options
             app.UseAuthorization();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
@@ -165,7 +180,9 @@ namespace ElectronicShop.WebApi
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Users}/{action=GetAllUser}");
             });
         }
     }

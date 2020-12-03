@@ -1,5 +1,5 @@
 ﻿using ElectronicShop.Application.Common.Models;
-using ElectronicShop.Application.Users.Service;
+using ElectronicShop.Application.Users.Services;
 using ElectronicShop.Data.Enums;
 using MediatR;
 using System;
@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ElectronicShop.Application.Users.Command
+namespace ElectronicShop.Application.Users.Commands.UpdateUser
 {
     public class UpdateUserCommand : IRequest<ApiResult<bool>>
     {

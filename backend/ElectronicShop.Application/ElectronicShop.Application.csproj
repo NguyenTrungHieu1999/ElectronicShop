@@ -9,10 +9,16 @@
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ElectronicShop.Data\ElectronicShop.Data.csproj" />
+    <ProjectReference Include="..\ElectronicShop.Infrastructure\ElectronicShop.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Authentications\Queries\" />
   </ItemGroup>
 
 </Project>

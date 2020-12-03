@@ -1,13 +1,10 @@
-﻿using AutoMapper;
+﻿using ElectronicShop.Application.Authentications.Commands.Authenticate;
+using ElectronicShop.Application.Authentications.Commands.ResetPassword;
 using ElectronicShop.Application.Common.Models;
-using ElectronicShop.Application.Common.Repositories.Wrapper;
-using ElectronicShop.Application.Users.Command;
-using ElectronicShop.Application.Users.Extensions;
 using ElectronicShop.Data.Entities;
 using ElectronicShop.Data.Enums;
 using ElectronicShop.Services.Common.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -16,36 +13,31 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElectronicShop.Application.Users.Service
+namespace ElectronicShop.Application.Authentications.Services
 {
-    public class UserService : IUserService
+    public class AuthService : IAuthService
     {
-        private readonly IMapper _mapper;
-        private readonly IRepositoryWrapper _repository;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration _config;
 
-        public UserService(IRepositoryWrapper repository, UserManager<User> userManager,
-            SignInManager<User> signInManager, IConfiguration config, IMapper mapper)
+        public AuthService(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration config)
         {
-            _repository = repository;
             _userManager = userManager;
             _signInManager = signInManager;
             _config = config;
-            _mapper = mapper;
         }
 
         public async Task<ApiResult<string>> AuthenticateAsync(AuthenticateCommand request)
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
 
-            if (user is null)
+            if (user is null || user.Status.Equals(UserStatus.DELETED))
             {
                 return new ApiErrorResult<string>("Account does not exist");
             }
 
-            if (user.Status == UserStatus.DISABLE)
+            if (user.Status.Equals(UserStatus.DISABLE))
             {
                 return new ApiErrorResult<string>("Account is locked");
             }
@@ -69,10 +61,8 @@ namespace ElectronicShop.Application.Users.Service
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
-
-
-
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Secret"]));
+
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
@@ -85,68 +75,37 @@ namespace ElectronicShop.Application.Users.Service
             return await Task.FromResult(new ApiSuccessResult<string>(new JwtSecurityTokenHandler().WriteToken(token)));
         }
 
-        public async Task<ApiResult<bool>> RegisterAsync(RegisterUserCommand request)
+        public async Task<ApiResult<string>> ForgotPasswordAsync(string email)
         {
-            var user = await _repository.UserRepo.FindByCondition(x => x.Email == request.Email || x.UserName == request.UserName)
-                .SingleOrDefaultAsync();
-
-            if (user != null)
-            {
-                return new ApiErrorResult<bool>("Account already exists");
-            }
-
-            user = _mapper.Map<User>(request);
-
-            user.CreatedDate = DateTime.Now;
-            user.ModifiedDate = DateTime.Now;
-
-            user.Status = UserStatus.ACTIVE;
-
-            var result = await _userManager.CreateAsync(user, request.Password);
-
-            if (result.Succeeded)
-            {
-                return await Task.FromResult(new ApiSuccessResult<bool>());
-            }
-
-            return await Task.FromResult(new ApiErrorResult<bool>("Registration failed"));
-        }
-
-        public async Task<ApiResult<bool>> UpdateAsync(UpdateUserCommand request)
-        {
-            var user = await _userManager.FindByIdAsync(request.Id.ToString());
-
-            user.Map(request);
-
-            var result = await _userManager.UpdateAsync(user);
-
-            if (result.Succeeded)
-            {
-                return await Task.FromResult(new ApiSuccessResult<bool>());
-            }
-
-            return await Task.FromResult(new ApiErrorResult<bool>("Update failed"));
-        }
-
-        public async Task<ApiResult<bool>> DeleteAsync(int userId)
-        {
-            var user = await _userManager.FindByIdAsync(userId.ToString());
+            var user = await _userManager.FindByEmailAsync(email);
 
             if (user is null)
             {
-                return new ApiErrorResult<bool>("User does not found");
+                return await Task.FromResult(new ApiErrorResult<string>("Account does not exist"));
             }
 
-            user.Status = UserStatus.DELETED;
+            string token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-            var result = await _userManager.UpdateAsync(user);
+            return await Task.FromResult(new ApiSuccessResult<string>(token));
+        }
+
+        public async Task<ApiResult<bool>> ResetPasswordAsync(ResetPasswordCommand request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+
+            if (user is null)
+            {
+                return await Task.FromResult( new ApiErrorResult<bool>("User does not exits!"));
+            }
+
+            var result = await _userManager.ResetPasswordAsync(user, request.Token, request.Password);
 
             if (result.Succeeded)
             {
                 return await Task.FromResult(new ApiSuccessResult<bool>());
             }
 
-            return await Task.FromResult(new ApiErrorResult<bool>("Delete failed"));
+            return await Task.FromResult(new ApiErrorResult<bool>("ResetPassword Failed!"));
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using ElectronicShop.Application.Common.Models;
-using ElectronicShop.Application.Users.Service;
+using ElectronicShop.Application.Users.Services;
 using ElectronicShop.Data.Enums;
 using MediatR;
 using System;
@@ -7,9 +7,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ElectronicShop.Application.Users.Command
+namespace ElectronicShop.Application.Users.Commands.CreateUser
 {
-    public class RegisterUserCommand : IRequest<ApiResult<bool>>
+    public class CreateUserCommand : IRequest<ApiResult<bool>>
     {
         [Required, StringLength(30, MinimumLength = 1)]
         public string UserName { get; set; }
@@ -45,18 +45,18 @@ namespace ElectronicShop.Application.Users.Command
         public string PhoneNumber { get; set; }
     }
 
-    public class RegisterUserHandle : IRequestHandler<RegisterUserCommand, ApiResult<bool>>
+    public class CreateUserHandle : IRequestHandler<CreateUserCommand, ApiResult<bool>>
     {
         private readonly IUserService _userService;
 
-        public RegisterUserHandle(IUserService userService)
+        public CreateUserHandle(IUserService userService)
         {
             _userService = userService;
         }
 
-        public async Task<ApiResult<bool>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<bool>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            return await _userService.RegisterAsync(request);
+            return await _userService.CreateAsync(request);
         }
     }
 }
