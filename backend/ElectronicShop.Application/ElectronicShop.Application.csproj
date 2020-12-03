@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Authentications\Queries\" />
+    <Folder Include="Categories\Queries" />
   </ItemGroup>
 
 </Project>

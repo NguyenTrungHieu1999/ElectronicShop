@@ -58,9 +58,9 @@ namespace ElectronicShop.WebApi.Controllers
             }
 
             var callbackUrl = _urlHelper.Action(
-               controller: "ForgotPassword",
-               action: "ResetPassword",
-               values: new { email = request.Email, result.ResultObj },
+               controller: "",
+               action: "",
+               values: new { email = request.Email, token = result.ResultObj },
                protocol: _httpContextAccessor.HttpContext.Request.Scheme,
                host: "localhost:5001"
            );
