@@ -1,4 +1,4 @@
-﻿using ElectronicShop.Application.Users.Command;
+﻿using ElectronicShop.Application.Users.Commands.UpdateUser;
 using ElectronicShop.Data.Entities;
 
 namespace ElectronicShop.Application.Users.Extensions
