@@ -1,10 +1,10 @@
-﻿using ElectronicShop.Application.Common.Models;
-using ElectronicShop.Application.Users.Service;
+﻿using ElectronicShop.Application.Authentications.Services;
+using ElectronicShop.Application.Common.Models;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ElectronicShop.Application.Users.Command
+namespace ElectronicShop.Application.Authentications.Commands.Authenticate
 {
     public class AuthenticateCommand : IRequest<ApiResult<string>>
     {
@@ -17,16 +17,16 @@ namespace ElectronicShop.Application.Users.Command
 
     public class AuthenticateHandle : IRequestHandler<AuthenticateCommand, ApiResult<string>>
     {
-        private readonly IUserService _userService;
+        private readonly IAuthService _authService;
 
-        public AuthenticateHandle(IUserService userService)
+        public AuthenticateHandle(IAuthService authService)
         {
-            _userService = userService;
+            _authService = authService;
         }
 
         public async Task<ApiResult<string>> Handle(AuthenticateCommand request, CancellationToken cancellationToken)
         {
-            return await _userService.AuthenticateAsync(request);
+            return await _authService.AuthenticateAsync(request);
         }
     }
 }

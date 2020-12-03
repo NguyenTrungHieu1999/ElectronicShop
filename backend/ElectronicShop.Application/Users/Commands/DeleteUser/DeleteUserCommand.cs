@@ -1,10 +1,10 @@
 ﻿using ElectronicShop.Application.Common.Models;
-using ElectronicShop.Application.Users.Service;
+using ElectronicShop.Application.Users.Services;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ElectronicShop.Application.Users.Command
+namespace ElectronicShop.Application.Users.Commands.DeleteUser
 {
     public class DeleteUserCommand : IRequest<ApiResult<bool>>
     {
