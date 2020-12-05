@@ -43,6 +43,8 @@ namespace ElectronicShop.Application.Users.Commands.CreateUser
         [Required, DataType(DataType.PhoneNumber), StringLength(11)]
         [Phone]
         public string PhoneNumber { get; set; }
+
+        public string UserInRole { get; set; }
     }
 
     public class CreateUserHandle : IRequestHandler<CreateUserCommand, ApiResult<bool>>

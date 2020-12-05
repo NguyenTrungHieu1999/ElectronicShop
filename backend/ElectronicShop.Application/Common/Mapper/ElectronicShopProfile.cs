@@ -2,9 +2,8 @@
 using ElectronicShop.Application.Users.Commands.CreateUser;
 using ElectronicShop.Application.Users.Models;
 using ElectronicShop.Data.Entities;
-using System.Collections.Generic;
 
-namespace ElectronicShop.Utilities.Mapper
+namespace ElectronicShop.Application.Common.Mapper
 {
     public class ElectronicShopProfile : Profile
     {

@@ -19,6 +19,9 @@ namespace ElectronicShop.Data.Configurations
                 .HasMaxLength(50)
                 .IsRequired();
 
+            builder.Property(x => x.Icon)
+                .IsRequired(false);
+
             builder.Property(x => x.Status)
                 .IsRequired();
         }

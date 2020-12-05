@@ -1,5 +1,6 @@
 ﻿using ElectronicShop.Application.Users.Commands.UpdateUser;
 using ElectronicShop.Data.Entities;
+using System;
 
 namespace ElectronicShop.Application.Users.Extensions
 {
@@ -14,6 +15,7 @@ namespace ElectronicShop.Application.Users.Extensions
             user.Birthday = request.Birthday;
             user.Address = request.Address;
             user.Status = request.Status;
+            user.ModifiedDate = DateTime.Now;
         }
     }
 }

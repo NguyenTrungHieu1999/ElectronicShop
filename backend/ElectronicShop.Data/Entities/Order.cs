@@ -9,7 +9,7 @@ namespace ElectronicShop.Data.Entities
 
         public DateTime CreatedDate { get; set; }
 
-        public DateTime ModifiedDate { get; set; }
+        public DateTime? ModifiedDate { get; set; }
 
         public DateTime DeliveryDate { get; set; }//Ngày giao dự kiến
 

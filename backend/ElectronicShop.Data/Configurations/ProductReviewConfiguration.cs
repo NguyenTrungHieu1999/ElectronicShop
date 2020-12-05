@@ -27,6 +27,9 @@ namespace ElectronicShop.Data.Configurations
             builder.Property(x => x.ProductId)
                 .IsRequired();
 
+            builder.Property(x => x.CreateDate)
+                .HasColumnType("DateTime");
+
             builder.HasOne(x => x.User)
                 .WithMany(x => x.ProductReviews)
                 .HasForeignKey(x => x.UserId)

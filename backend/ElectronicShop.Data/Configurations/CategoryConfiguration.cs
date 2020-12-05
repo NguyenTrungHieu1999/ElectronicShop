@@ -19,10 +19,6 @@ namespace ElectronicShop.Data.Configurations
                 .IsRequired()
                 .HasMaxLength(50);
 
-            builder.Property(x => x.Icon)
-                .IsRequired()
-                .HasMaxLength(100);
-
             builder.Property(x => x.Alias)
                 .IsRequired()
                 .HasMaxLength(100);
@@ -33,7 +29,7 @@ namespace ElectronicShop.Data.Configurations
 
             builder.Property(x => x.ModifiedDate)
                 .HasColumnType("DateTime")
-                .IsRequired();
+                .IsRequired(false);
 
             builder.Property(x => x.CreatedBy)
                 .HasMaxLength(30)
@@ -41,7 +37,7 @@ namespace ElectronicShop.Data.Configurations
 
             builder.Property(x => x.ModifiedBy)
                 .HasMaxLength(30)
-                .IsRequired();
+                .IsRequired(false);
 
             builder.HasOne(x => x.Parent)
                 .WithMany(x=>x.Children)

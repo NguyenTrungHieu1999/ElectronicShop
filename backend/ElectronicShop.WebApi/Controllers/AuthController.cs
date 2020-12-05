@@ -17,14 +17,12 @@ namespace ElectronicShop.WebApi.Controllers
         private readonly IMediator _mediator;
         private readonly IMailer _mailer;
         private readonly IUrlHelper _urlHelper;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthController(IMediator mediator, IMailer mailer, IUrlHelper urlHelper, IHttpContextAccessor httpContextAccessor)
+        public AuthController(IMediator mediator, IMailer mailer, IUrlHelper urlHelper)
         {
             _mediator = mediator;
             _mailer = mailer;
             _urlHelper = urlHelper;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         /// <summary>
@@ -61,7 +59,7 @@ namespace ElectronicShop.WebApi.Controllers
                controller: "",
                action: "",
                values: new { email = request.Email, token = result.ResultObj },
-               protocol: _httpContextAccessor.HttpContext.Request.Scheme,
+               protocol: HttpContext.Request.Scheme,
                host: "localhost:5001"
            );
 

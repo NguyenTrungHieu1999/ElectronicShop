@@ -43,7 +43,8 @@ namespace ElectronicShop.Data.Configurations
                 .HasMaxLength(30);
 
             builder.Property(x => x.ModifiedBy)
-                .HasMaxLength(30);
+                .HasMaxLength(30)
+                .IsRequired(false);
 
             builder.Property(x => x.UserName)
                 .HasMaxLength(30)
