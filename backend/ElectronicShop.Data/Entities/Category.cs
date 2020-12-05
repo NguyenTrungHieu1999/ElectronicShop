@@ -9,17 +9,15 @@ namespace ElectronicShop.Data.Entities
 
         public string Name { get; set; }
 
-        public string Icon { get; set; }
-
         public string Alias { get; set; }
 
-        public int RootId { get; set; }
+        public int? RootId { get; set; }
 
         public int ProductTypeId { get; set; }
 
         public DateTime CreatedDate { get; set; }
 
-        public DateTime ModifiedDate { get; set; }
+        public DateTime? ModifiedDate { get; set; }
 
         public string CreatedBy { get; set; }
 

@@ -4,14 +4,16 @@ using ElectronicShop.Data.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ElectronicShop.Data.Migrations
 {
     [DbContext(typeof(ElectronicShopDbContext))]
-    partial class ElectronicShopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201204034331_update_v2")]
+    partial class update_v2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,10 +44,11 @@ namespace ElectronicShop.Data.Migrations
                         .HasColumnType("DateTime");
 
                     b.Property<string>("ModifiedBy")
+                        .IsRequired()
                         .HasColumnType("nvarchar(30)")
                         .HasMaxLength(30);
 
-                    b.Property<DateTime?>("ModifiedDate")
+                    b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("DateTime");
 
                     b.Property<string>("Name")
@@ -80,7 +83,7 @@ namespace ElectronicShop.Data.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("DateTime");
 
-                    b.Property<DateTime?>("ModifiedDate")
+                    b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("DateTime");
 
                     b.Property<int?>("ParentId")
@@ -146,7 +149,7 @@ namespace ElectronicShop.Data.Migrations
                     b.Property<DateTime>("DeliveryDate")
                         .HasColumnType("DateTime");
 
-                    b.Property<DateTime?>("ModifiedDate")
+                    b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("DateTime");
 
                     b.Property<bool>("Paid")
@@ -296,10 +299,11 @@ namespace ElectronicShop.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ModifiedBy")
+                        .IsRequired()
                         .HasColumnType("nvarchar(30)")
                         .HasMaxLength(30);
 
-                    b.Property<DateTime?>("ModifiedDate")
+                    b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("DateTime");
 
                     b.Property<string>("Name")
@@ -340,7 +344,9 @@ namespace ElectronicShop.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Url")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(500)")
+                        .HasMaxLength(500);
 
                     b.HasKey("Id");
 
@@ -357,9 +363,6 @@ namespace ElectronicShop.Data.Migrations
                         .HasAnnotation("SqlServer:IdentityIncrement", 1)
                         .HasAnnotation("SqlServer:IdentitySeed", 1)
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("DateTime");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -523,7 +526,7 @@ namespace ElectronicShop.Data.Migrations
                         .HasColumnType("nvarchar(30)")
                         .HasMaxLength(30);
 
-                    b.Property<DateTime?>("ModifiedDate")
+                    b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("DateTime");
 
                     b.Property<string>("NormalizedEmail")

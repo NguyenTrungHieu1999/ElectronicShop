@@ -1,11 +1,11 @@
 using AutoMapper;
 using ElectronicShop.Application.Authentications.Services;
+using ElectronicShop.Application.Common.Mapper;
 using ElectronicShop.Application.Common.Repositories.Wrapper;
 using ElectronicShop.Application.Users.Services;
 using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
 using ElectronicShop.Infrastructure.SendMail;
-using ElectronicShop.Utilities.Mapper;
 using ElectronicShop.WebApi.ActionFilters;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -46,7 +46,7 @@ namespace ElectronicShop.WebApi
             services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
 
             // Compatibility version for ASP.NET Core MVC
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             // For use Session
             services.AddDistributedMemoryCache();

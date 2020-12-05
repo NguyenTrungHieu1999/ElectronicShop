@@ -33,6 +33,8 @@ namespace ElectronicShop.Application.Users.Commands.UpdateUser
 
         [Required]
         public UserStatus Status { get; set; }
+
+        public string UserInRole { get; set; }
     }
 
     public class UpdateUserHandle : IRequestHandler<UpdateUserCommand, ApiResult<bool>>

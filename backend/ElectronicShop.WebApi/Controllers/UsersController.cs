@@ -4,6 +4,9 @@ using ElectronicShop.Application.Users.Commands.DisableAccount;
 using ElectronicShop.Application.Users.Commands.UpdateUser;
 using ElectronicShop.Application.Users.Queries.GetAllUser;
 using ElectronicShop.Application.Users.Queries.GetUserById;
+using ElectronicShop.Data.Entities;
+using ElectronicShop.Utilities.Session;
+using ElectronicShop.Utilities.SystemConstants;
 using ElectronicShop.WebApi.ActionFilters;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -29,7 +32,6 @@ namespace ElectronicShop.WebApi.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("create")]
-        [AllowAnonymous]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> Create([FromBody] CreateUserCommand request)
         {
@@ -64,10 +66,16 @@ namespace ElectronicShop.WebApi.Controllers
         public async Task<IActionResult> UpdateMe([FromBody] UpdateUserCommand request)
         {
             // Kiểm tra mã người dùng hiện tại thông qua session và request có khớp không
+            var currentuserId = HttpContext.Session.GetComplexData<User>(Constants.CURRENTUSER).Id;
 
-            var result = await _mediator.Send(request);
+            if (currentuserId.Equals(request.Id))
+            {
+                var result = await _mediator.Send(request);
 
-            return result.IsSuccessed ? (IActionResult)Ok(result) : BadRequest(result);
+                return result.IsSuccessed ? (IActionResult)Ok(result) : BadRequest(result);
+            }
+
+            return BadRequest();
         } 
 
         /// <summary>

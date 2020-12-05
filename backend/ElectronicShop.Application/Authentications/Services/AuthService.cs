@@ -4,6 +4,9 @@ using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Data.Entities;
 using ElectronicShop.Data.Enums;
 using ElectronicShop.Services.Common.Models;
+using ElectronicShop.Utilities.Session;
+using ElectronicShop.Utilities.SystemConstants;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -20,12 +23,15 @@ namespace ElectronicShop.Application.Authentications.Services
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration _config;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthService(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration config)
+        public AuthService(UserManager<User> userManager, SignInManager<User> signInManager,
+            IConfiguration config, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _config = config;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ApiResult<string>> AuthenticateAsync(AuthenticateCommand request)
@@ -49,6 +55,8 @@ namespace ElectronicShop.Application.Authentications.Services
             {
                 return new ApiErrorResult<string>("Login incorrectly");
             }
+
+            _httpContextAccessor.HttpContext.Session.SetComplexData(Constants.CURRENTUSER, user);
 
             var roles = await _userManager.GetRolesAsync(user);
 

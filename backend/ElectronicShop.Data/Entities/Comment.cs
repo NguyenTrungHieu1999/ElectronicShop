@@ -11,13 +11,13 @@ namespace ElectronicShop.Data.Entities
 
         public int ProductId { get; set; }
 
-        public int ParentId { get; set; }
+        public int? ParentId { get; set; }
 
         public string Text { get; set; }
 
         public DateTime CreatedDate { get; set; }
 
-        public DateTime ModifiedDate { get; set; }
+        public DateTime? ModifiedDate { get; set; }
 
         public User User { get; set; }
 
