@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using ElectronicShop.Application.Categories.Repositories;
 using ElectronicShop.Application.UserRoles.Repositories;
+using ElectronicShop.Application.Users.Repositories;
 
 namespace ElectronicShop.Application.Common.Repositories.Wrapper
 {
@@ -11,6 +12,7 @@ namespace ElectronicShop.Application.Common.Repositories.Wrapper
 
         private ICategoryRepository _category;
         private IUserRoleRepository _userRole;
+        private IUserRepository _user;
 
         public RepositoryWrapper(ElectronicShopDbContext repoContext)
         {
@@ -25,5 +27,7 @@ namespace ElectronicShop.Application.Common.Repositories.Wrapper
         public ICategoryRepository CategoryRepository => _category ??= new CategoryRepository(_repoContext);
 
         public IUserRoleRepository UserRoleRepository => _userRole ??= new UserRoleRepository(_repoContext);
+
+        public IUserRepository UserRepository => _user ??= new UserRepository(_repoContext);
     }
 }
