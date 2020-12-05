@@ -1,6 +1,6 @@
 ﻿namespace ElectronicShop.Utilities.SystemConstants
 {
-    public class Constants
+    public static class Constants
     {
         public const string CURRENTUSER = "CURRENTUSER";
 

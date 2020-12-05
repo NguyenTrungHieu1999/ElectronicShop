@@ -3,7 +3,6 @@ using ElectronicShop.Application.Authentications.Commands.ResetPassword;
 using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Data.Entities;
 using ElectronicShop.Data.Enums;
-using ElectronicShop.Services.Common.Models;
 using ElectronicShop.Utilities.Session;
 using ElectronicShop.Utilities.SystemConstants;
 using Microsoft.AspNetCore.Http;

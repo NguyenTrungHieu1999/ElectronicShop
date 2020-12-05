@@ -1,6 +1,4 @@
-﻿using ElectronicShop.Application.Common.Models;
-
-namespace ElectronicShop.Services.Common.Models
+﻿namespace ElectronicShop.Application.Common.Models
 {
     public class ApiSuccessResult<T> : ApiResult<T>
     {

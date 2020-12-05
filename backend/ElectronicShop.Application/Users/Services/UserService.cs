@@ -7,7 +7,6 @@ using ElectronicShop.Application.Users.Extensions;
 using ElectronicShop.Application.Users.Models;
 using ElectronicShop.Data.Entities;
 using ElectronicShop.Data.Enums;
-using ElectronicShop.Services.Common.Models;
 using ElectronicShop.Utilities.Session;
 using ElectronicShop.Utilities.SystemConstants;
 using Microsoft.AspNetCore.Http;
@@ -80,7 +79,9 @@ namespace ElectronicShop.Application.Users.Services
         public async Task<ApiResult<bool>> UpdateAsync(UpdateUserCommand request)
         {
             var user = await _userManager.FindByIdAsync(request.Id.ToString());
-            var username = _httpContextAccessor.HttpContext.Session.GetComplexData<User>(Constants.CURRENTUSER).UserName;
+            
+            var username = _httpContextAccessor.HttpContext.Session
+                .GetComplexData<User>(Constants.CURRENTUSER).UserName;
 
             try
             {
@@ -106,7 +107,9 @@ namespace ElectronicShop.Application.Users.Services
 
             string role = isUser ? Constants.USERROLENAME : roleName;
 
-            var useRole = await _repository.UserRoleRepository.FindByCondition(x => x.UserId == user.Id).FirstAsync();
+            var useRole = await _repository.UserRoleRepository
+                .FindByCondition(x => x.UserId == user.Id)
+                .FirstAsync();
 
             _repository.UserRoleRepository.Delete(useRole);
 
