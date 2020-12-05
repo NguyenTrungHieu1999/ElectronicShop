@@ -1,10 +1,12 @@
 ﻿using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
+using ElectronicShop.Application.Categories.Services;
+using ElectronicShop.Application.Common.Models;
 
 namespace ElectronicShop.Application.Categories.Commands.CreateCategory
 {
-    public class CreateCategoryCommand : IRequest<int>
+    public class CreateCategoryCommand : IRequest<ApiResult<string>>
     {
         public string Name { get; set; }
         
@@ -15,11 +17,18 @@ namespace ElectronicShop.Application.Categories.Commands.CreateCategory
         public int ProductTypeId { get; set; }
     }
 
-    public class CreateCategoryHandle : IRequestHandler<CreateCategoryCommand, int>
+    public class CreateCategoryHandle : IRequestHandler<CreateCategoryCommand, ApiResult<string>>
     {
-        public Task<int> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
+        private readonly ICategoryService _categoryService;
+
+        public CreateCategoryHandle(ICategoryService categoryService)
         {
-            throw new System.NotImplementedException();
+            _categoryService = categoryService;
+        }
+
+        public async Task<ApiResult<string>> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
+        {
+            return await _categoryService.CreateAsync(request);
         }
     }
 }

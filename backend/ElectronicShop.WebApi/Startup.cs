@@ -23,6 +23,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Text;
+using ElectronicShop.Application.Categories.Services;
 
 namespace ElectronicShop.WebApi
 {
@@ -132,6 +133,7 @@ namespace ElectronicShop.WebApi
             services.AddSingleton<IMailer, Mailer>();
 
             // DI
+            services.AddTransient<ICategoryService, CategoryService>();
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<UserManager<User>, UserManager<User>>();
