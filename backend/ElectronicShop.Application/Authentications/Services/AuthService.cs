@@ -39,12 +39,12 @@ namespace ElectronicShop.Application.Authentications.Services
 
             if (user is null || user.Status.Equals(UserStatus.DELETED))
             {
-                return new ApiErrorResult<string>("Account does not exist");
+                return new ApiErrorResult<string>("Tài khoản không tồn tại");
             }
 
             if (user.Status.Equals(UserStatus.DISABLE))
             {
-                return new ApiErrorResult<string>("Account is locked");
+                return new ApiErrorResult<string>("Tài khoản đã bị khóa");
             }
 
             var result = await _signInManager.PasswordSignInAsync(user.UserName,
@@ -52,7 +52,7 @@ namespace ElectronicShop.Application.Authentications.Services
 
             if (!result.Succeeded)
             {
-                return new ApiErrorResult<string>("Login incorrectly");
+                return new ApiErrorResult<string>("Đăng nhập thất bại");
             }
 
             _httpContextAccessor.HttpContext.Session.SetComplexData(Constants.CURRENTUSER, user);
@@ -88,7 +88,7 @@ namespace ElectronicShop.Application.Authentications.Services
 
             if (user is null)
             {
-                return await Task.FromResult(new ApiErrorResult<string>("Account does not exist"));
+                return await Task.FromResult(new ApiErrorResult<string>("Tài khoản không tồn tại"));
             }
 
             string token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -102,7 +102,7 @@ namespace ElectronicShop.Application.Authentications.Services
 
             if (user is null)
             {
-                return await Task.FromResult( new ApiErrorResult<bool>("User does not exits!"));
+                return await Task.FromResult( new ApiErrorResult<bool>("Người dùng không tồn tại"));
             }
 
             var result = await _userManager.ResetPasswordAsync(user, request.Token, request.Password);
@@ -112,7 +112,7 @@ namespace ElectronicShop.Application.Authentications.Services
                 return await Task.FromResult(new ApiSuccessResult<bool>());
             }
 
-            return await Task.FromResult(new ApiErrorResult<bool>("ResetPassword Failed!"));
+            return await Task.FromResult(new ApiErrorResult<bool>("Tạo mới mật khẩu thất bại"));
         }
     }
 }

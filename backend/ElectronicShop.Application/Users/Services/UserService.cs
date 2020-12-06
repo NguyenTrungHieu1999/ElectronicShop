@@ -41,7 +41,7 @@ namespace ElectronicShop.Application.Users.Services
 
             if (userEmail != null || userUserName != null)
             {
-                return new ApiErrorResult<bool>("Account already exists");
+                return new ApiErrorResult<bool>("Tài khoản đã tồn tại!");
             }
 
             var user = _mapper.Map<User>(request);
@@ -60,7 +60,7 @@ namespace ElectronicShop.Application.Users.Services
             {
                 await _userManager.DeleteAsync(user);
 
-                return await Task.FromResult(new ApiErrorResult<bool>("Registration failed"));
+                return await Task.FromResult(new ApiErrorResult<bool>("Đăng ký thất bại"));
             }
 
             return await Task.FromResult(new ApiSuccessResult<bool>());
@@ -71,8 +71,21 @@ namespace ElectronicShop.Application.Users.Services
         {
             var isAdmin = _httpContextAccessor.HttpContext.User.IsInRole(Constants.ADMIN);
 
-            string role = isAdmin ? roleName : Constants.USERROLENAME;
+            var currentUser = _httpContextAccessor.HttpContext.Session
+                .GetComplexData<User>(Constants.CURRENTUSER);
 
+            string role = Constants.USERROLENAME;
+            
+            user.CreatedBy = user.UserName;
+            
+            if (isAdmin)
+            {
+                role = roleName;
+                user.CreatedBy = currentUser.UserName;
+            }
+
+            await _userManager.UpdateAsync(user);
+            
             await _userManager.AddToRoleAsync(user, role);
         }
 
@@ -95,7 +108,7 @@ namespace ElectronicShop.Application.Users.Services
             }
             catch
             {
-                return await Task.FromResult(new ApiErrorResult<bool>("Update failed"));
+                return await Task.FromResult(new ApiErrorResult<bool>("Cập nhật thông tin người dùng thất bại"));
             }
 
             return await Task.FromResult(new ApiSuccessResult<bool>());
@@ -124,7 +137,7 @@ namespace ElectronicShop.Application.Users.Services
 
             if (user is null)
             {
-                return new ApiErrorResult<bool>("User does not found");
+                return new ApiErrorResult<bool>("Người dùng không tồn tại");
             }
 
             user.Status = UserStatus.DELETED;
@@ -136,7 +149,7 @@ namespace ElectronicShop.Application.Users.Services
                 return await Task.FromResult(new ApiSuccessResult<bool>());
             }
 
-            return await Task.FromResult(new ApiErrorResult<bool>("Delete failed"));
+            return await Task.FromResult(new ApiErrorResult<bool>("Xóa người dùng thất bại"));
         }
 
         public async Task<ApiResult<bool>> DisableAccountAsync(int userId)

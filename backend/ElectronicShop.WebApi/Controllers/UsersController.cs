@@ -56,14 +56,12 @@ namespace ElectronicShop.WebApi.Controllers
             var userId =  _httpContextAccessor.HttpContext.Session
                 .GetComplexData<User>(Constants.CURRENTUSER).Id;
 
-            if (userId.Equals(request.Id))
-            {
-                var result = await _mediator.Send(request);
+            if (!userId.Equals(request.Id)) return BadRequest();
+            
+            var result = await _mediator.Send(request);
 
-                return result.IsSuccessed ? (IActionResult)Ok(result) : BadRequest(result);
-            }
+            return result.IsSuccessed ? (IActionResult)Ok(result) : BadRequest(result);
 
-            return BadRequest();
         } 
         
         [HttpDelete("delete/{userId}")]
@@ -82,9 +80,9 @@ namespace ElectronicShop.WebApi.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DisableAccount(int userId)
         {
-            var query = new DisableAccountCommand(userId);
+            var command = new DisableAccountCommand(userId);
 
-            var result = await _mediator.Send(query);
+            var result = await _mediator.Send(command);
 
             return Ok(result);
         }
