@@ -10,6 +10,8 @@
 
         public const string ADMIN = "Admin";
 
+        public const string EMP = "Emp";
+
         public const string USER = "User";
     }
 }

@@ -25,11 +25,6 @@ namespace ElectronicShop.WebApi.Controllers
             _urlHelper = urlHelper;
         }
 
-        /// <summary>
-        /// Chức năng đăng nhập
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> Authenticate([FromBody] AuthenticateCommand request)
@@ -39,11 +34,6 @@ namespace ElectronicShop.WebApi.Controllers
             return result.IsSuccessed ? (IActionResult)Ok(result) : BadRequest(result);
         }
 
-        /// <summary>
-        /// Chức năng quên mật khẩu
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
         [HttpPost("forgot-password")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordCommand request)
@@ -68,11 +58,6 @@ namespace ElectronicShop.WebApi.Controllers
             return Ok(result);
         }
 
-        /// <summary>
-        /// Chức năng tạo lại mật khẩu
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
         [HttpPost("reset-password")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand request)
