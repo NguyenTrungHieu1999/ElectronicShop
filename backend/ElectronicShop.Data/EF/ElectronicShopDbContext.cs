@@ -49,7 +49,7 @@ namespace ElectronicShop.Data.EF
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<Comment> Comments { get; set; }
-        public DbSet<FavoriteProduct> favoriteProducts { get; set; }
+        public DbSet<FavoriteProduct> FavoriteProducts { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<OrderStatus> OrderStatuses { get; set; }

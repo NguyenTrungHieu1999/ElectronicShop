@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using ElectronicShop.Application.Categories.Repositories;
+using ElectronicShop.Application.Products.Repositories;
 using ElectronicShop.Application.UserRoles.Repositories;
 using ElectronicShop.Application.Users.Repositories;
 
@@ -14,5 +15,7 @@ namespace ElectronicShop.Application.Common.Repositories.Wrapper
         IUserRoleRepository UserRoleRepository { get; }
 
         IUserRepository UserRepository { get; }
+        
+        IProductRepository ProductRepository { get; }
     }
 }
