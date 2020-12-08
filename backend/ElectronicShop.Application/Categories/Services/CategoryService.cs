@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ElectronicShop.Application.Categories.Commands.CreateCategory;
@@ -8,6 +9,7 @@ using ElectronicShop.Application.Categories.Extensions;
 using ElectronicShop.Application.Categories.Models;
 using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Application.Common.Repositories.Wrapper;
+using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
 using ElectronicShop.Utilities.Session;
 using ElectronicShop.Utilities.SystemConstants;

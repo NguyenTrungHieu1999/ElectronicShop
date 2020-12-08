@@ -25,5 +25,9 @@
     <ProjectReference Include="..\ElectronicShop.Infrastructure\ElectronicShop.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 
 </Project>
