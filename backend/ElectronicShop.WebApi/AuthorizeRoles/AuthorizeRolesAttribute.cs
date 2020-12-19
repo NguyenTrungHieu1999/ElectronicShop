@@ -2,7 +2,7 @@
 
 namespace ElectronicShop.WebApi.AuthorizeRoles
 {
-    public class AuthorizeRolesAttribute: AuthorizeAttribute
+    public class AuthorizeRolesAttribute : AuthorizeAttribute
     {
         public AuthorizeRolesAttribute(params string[] roles) : base()
         {
