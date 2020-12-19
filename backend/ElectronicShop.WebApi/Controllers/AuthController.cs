@@ -31,7 +31,7 @@ namespace ElectronicShop.WebApi.Controllers
         {
             var result = await _mediator.Send(request);
 
-            return result.IsSuccessed ? (IActionResult)Ok(result) : BadRequest(result);
+            return Ok(result);
         }
 
         [HttpPost("forgot-password")]

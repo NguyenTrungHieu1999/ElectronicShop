@@ -79,7 +79,13 @@ namespace ElectronicShop.Application.Authentications.Services
                 expires: DateTime.Now.AddHours(3),
                 signingCredentials: creds);
 
-            return await Task.FromResult(new ApiSuccessResult<string>(new JwtSecurityTokenHandler().WriteToken(token)));
+            return await Task.FromResult(
+                new ApiSuccessResult<string>()
+                {
+                    Message = roles[0],
+                    ResultObj = new JwtSecurityTokenHandler().WriteToken(token)
+                });
+
         }
 
         public async Task<ApiResult<string>> ForgotPasswordAsync(string email)
@@ -102,7 +108,7 @@ namespace ElectronicShop.Application.Authentications.Services
 
             if (user is null)
             {
-                return await Task.FromResult( new ApiErrorResult<bool>("Người dùng không tồn tại"));
+                return await Task.FromResult(new ApiErrorResult<bool>("Người dùng không tồn tại"));
             }
 
             var result = await _userManager.ResetPasswordAsync(user, request.Token, request.Password);

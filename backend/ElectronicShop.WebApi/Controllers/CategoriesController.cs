@@ -28,18 +28,14 @@ namespace ElectronicShop.WebApi.Controllers
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> Create([FromBody] CreateCategoryCommand request)
         {
-            var result = await _mediator.Send(request);
-
-            return result.IsSuccessed ? (IActionResult) Ok(result) : BadRequest(result);
+            return Ok(await _mediator.Send(request));
         }
 
         [HttpPut("update")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> Update([FromBody] UpdateCategoryCommand request)
         {
-            var result = await _mediator.Send(request);
-
-            return result.IsSuccessed ? (IActionResult) Ok(result) : BadRequest(result);
+            return Ok(await _mediator.Send(request));
         }
 
         [HttpGet("{cateId}")]

@@ -41,6 +41,15 @@ namespace ElectronicShop.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.WithOrigins("http://localhost:3000/", "http://localhost:3001/")
+                       .AllowAnyMethod()
+                       .AllowAnyHeader()
+                       .AllowCredentials()
+                       .SetIsOriginAllowed((host) => true);
+            }));
+
             // Model state validation filter ASP.NET Core
             services.AddScoped<ValidationFilterAttribute>();
 
@@ -176,6 +185,8 @@ namespace ElectronicShop.WebApi
             app.UseAuthorization();
 
             app.UseAuthentication();
+
+            app.UseCors("MyPolicy");
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
