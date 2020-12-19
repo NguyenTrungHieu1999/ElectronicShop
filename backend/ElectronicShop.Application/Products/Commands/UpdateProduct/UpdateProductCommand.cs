@@ -27,6 +27,8 @@ namespace ElectronicShop.Application.Products.Commands.UpdateProduct
 
         public string Alias { get; set; }
 
+        public DateTime? ModifiedDate { get; set; }
+
         public string ModifiedBy { get; set; } //UserName
     }
 }

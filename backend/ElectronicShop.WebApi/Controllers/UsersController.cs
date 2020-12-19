@@ -18,7 +18,7 @@ namespace ElectronicShop.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : BaseController
+    public class UsersController : ControllerBase
     {
         private readonly IMediator _mediator;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -31,7 +31,6 @@ namespace ElectronicShop.WebApi.Controllers
         
         [HttpPost("create")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
-        [AllowAnonymous]
         public async Task<IActionResult> Create([FromBody] CreateUserCommand request)
         {
             var result = await _mediator.Send(request);
@@ -40,8 +39,8 @@ namespace ElectronicShop.WebApi.Controllers
         }
         
         [HttpPut("update")]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
         [Authorize(Roles = "Admin")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> Update([FromBody] UpdateUserCommand request)
         {
             var result = await _mediator.Send(request);
