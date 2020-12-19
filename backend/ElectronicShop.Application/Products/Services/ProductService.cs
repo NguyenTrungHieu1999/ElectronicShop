@@ -29,8 +29,8 @@ namespace ElectronicShop.Application.Products.Services
         private readonly ElectronicShopDbContext _context;
 
         public ProductService(IRepositoryWrapper repository,
-            IHttpContextAccessor httpContextAccessor, IMapper mapper, 
-            IStorageService storageService, 
+            IHttpContextAccessor httpContextAccessor, IMapper mapper,
+            IStorageService storageService,
             ElectronicShopDbContext context)
         {
             _repository = repository;
@@ -55,20 +55,23 @@ namespace ElectronicShop.Application.Products.Services
 
             try
             {
-                product.ProductPhotos = new List<ProductPhoto>()
+                product.ProductPhotos = new List<ProductPhoto>();
+
+                foreach (var i in request.ThumbnailImages)
                 {
-                    new ProductPhoto()
-                    {
-                        IsDefault = true,
-                        Url = await _storageService.SaveFile(path, request.ThumbnailImage)
-                    }
-                };
+                    product.ProductPhotos.Add(
+                        new ProductPhoto()
+                        {
+                            IsDefault = true,
+                            Url = await _storageService.SaveFile(path, i)
+                        });
+                }
 
                 await _repository.ProductRepository.CreateAsync(product);
 
                 await _repository.SaveChangesAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return new ApiErrorResult<string>("Thêm sản phẩm thất bại");
             }
@@ -76,7 +79,7 @@ namespace ElectronicShop.Application.Products.Services
             return new ApiSuccessResult<string>("Thêm sản phẩm thành công");
         }
 
-        public async Task<ApiResult<string>> UpdateAsync(UpdateProductCommand update) 
+        public async Task<ApiResult<string>> UpdateAsync(UpdateProductCommand update)
         {
             var product = await _repository.ProductRepository.FindByIdAsync(update.Id);
 
@@ -98,8 +101,8 @@ namespace ElectronicShop.Application.Products.Services
         {
             var product = await _repository.ProductRepository.FindByIdAsync(productId);
 
-            product.Status = ProductStatus.HIDDEN; 
-            
+            product.Status = ProductStatus.HIDDEN;
+
             _repository.ProductRepository.Update(product);
 
             await _repository.SaveChangesAsync();
@@ -111,10 +114,10 @@ namespace ElectronicShop.Application.Products.Services
         {
             var product = await _context.Products
                 .Include(x => x.ProductPhotos)
-                .SingleOrDefaultAsync(x=>x.Id == productId);
+                .SingleOrDefaultAsync(x => x.Id == productId);
 
             var path = _storageService.CreateProductPath(product.CategoryId, product.Name);
-            
+
             var result = _mapper.Map<ProductVm>(product);
 
             foreach (var p in result.ProductPhotos)
@@ -137,7 +140,7 @@ namespace ElectronicShop.Application.Products.Services
             foreach (var p in result)
             {
                 var path = _storageService.CreateProductPath(p.CategoryId, p.Name);
-                
+
                 foreach (var i in p.ProductPhotos)
                 {
                     i.Url = "https://localhost:5001/" + path + "/" + i.Url;

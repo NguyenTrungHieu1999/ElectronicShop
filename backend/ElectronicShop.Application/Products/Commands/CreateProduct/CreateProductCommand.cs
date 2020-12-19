@@ -29,7 +29,7 @@ namespace ElectronicShop.Application.Products.Commands.CreateProduct
 
         public string Alias { get; set; }
         
-        public IFormFile ThumbnailImage { get; set; }
+        public List<IFormFile> ThumbnailImages { get; set; }
     }
 
     public class CreateProductHandle : IRequestHandler<CreateProductCommand, ApiResult<string>>
