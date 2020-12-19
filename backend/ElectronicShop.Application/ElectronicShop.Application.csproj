@@ -10,16 +10,13 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ElectronicShop.Data\ElectronicShop.Data.csproj" />
+    <ProjectReference Include="..\ElectronicShop.Infrastructure\ElectronicShop.Infrastructure.csproj" />
     <ProjectReference Include="..\ElectronicShop.Utilities\ElectronicShop.Utilities.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Products\Extensions" />
-    <Folder Include="Products\Queries" />
   </ItemGroup>
 
 </Project>
