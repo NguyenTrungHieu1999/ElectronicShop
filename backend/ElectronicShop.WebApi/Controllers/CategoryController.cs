@@ -1,4 +1,5 @@
-﻿using ElectronicShop.Application.Categories.Commands.CreateCategory;
+﻿using System.Threading.Tasks;
+using ElectronicShop.Application.Categories.Commands.CreateCategory;
 using ElectronicShop.Application.Categories.Commands.UpdateCategory;
 using ElectronicShop.Application.Categories.Queries.GetAllCategory;
 using ElectronicShop.Application.Categories.Queries.GetCategoryById;
@@ -6,20 +7,18 @@ using ElectronicShop.Utilities.SystemConstants;
 using ElectronicShop.WebApi.ActionFilters;
 using ElectronicShop.WebApi.AuthorizeRoles;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace ElectronicShop.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [AuthorizeRoles(Constants.ADMIN, Constants.EMP)]
-    public class CategoriesController : BaseController
+    public class CategoryController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public CategoriesController(IMediator mediator)
+        public CategoryController(IMediator mediator)
         {
             _mediator = mediator;
         }
@@ -43,7 +42,6 @@ namespace ElectronicShop.WebApi.Controllers
         }
 
         [HttpGet("{cateId}")]
-        [AllowAnonymous]
         public async Task<IActionResult> GetById(int cateId)
         {
             var query = new GetCategoryByIdQuery(cateId);
@@ -52,7 +50,6 @@ namespace ElectronicShop.WebApi.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<IActionResult> GetAll()
         {
             var query = new GetAllCategoryQuery();

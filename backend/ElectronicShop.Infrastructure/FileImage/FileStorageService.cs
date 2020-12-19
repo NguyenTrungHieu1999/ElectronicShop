@@ -11,13 +11,13 @@ namespace ElectronicShop.Infrastructure.FileImage
 {
     public class FileStorageService : IStorageService
     {
-        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ElectronicShopDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public FileStorageService(IWebHostEnvironment webHostEnvironment, ElectronicShopDbContext context)
+        public FileStorageService(ElectronicShopDbContext context, IWebHostEnvironment webHostEnvironment)
         {
-            _webHostEnvironment = webHostEnvironment;
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public async Task<string> SaveFile(string path, IFormFile image)
@@ -54,7 +54,32 @@ namespace ElectronicShop.Infrastructure.FileImage
                 }
             }
 
-            return uniqueFileName;
+            return Path.Combine(path, uniqueFileName);
+        }
+
+        public string CreatePath(int cateId, string fileName)
+        {
+            var query = from c in _context.Categories
+                        where c.Id.Equals(cateId)
+                        join r in _context.Categories
+                            on c.RootId equals r.Id
+                        join t in _context.ProductTypes
+                            on c.ProductTypeId equals t.Id
+                        select new
+                        {
+                            C = c.Name,
+                            R = r.Name,
+                            T = t.Name
+                        };
+
+            string path = null;
+
+            foreach (var i in query)
+            {
+                path = i.T + @"\" + i.R + @"\" + i.C + @"\" + fileName;
+            }
+
+            return path;
         }
 
         public async Task DeleteFileAsync(string filePath)
@@ -65,37 +90,6 @@ namespace ElectronicShop.Infrastructure.FileImage
             {
                 await Task.Run(() => File.Delete(filePath));
             }
-        }
-
-        public string CreateProductPath(int cateId, string productName)
-        {
-            var query = from c in _context.Categories
-                where c.Id.Equals(cateId)
-                join t in _context.ProductTypes
-                    on c.ProductTypeId equals t.Id
-                select new
-                {
-                    C = c.Name,
-                    T = t.Name
-                };
-
-            string path = null;
-
-            foreach (var i in query)
-            {
-                path = "images/products/" + i.T + "/" + productName;
-            }
-
-            return path;
-        }
-        
-        public void ChangeNameFolder(string fromFolder, string toFolder)
-        {
-            string source = Path.Combine(Directory.GetCurrentDirectory(), _webHostEnvironment.WebRootPath, fromFolder);
-
-            string destination = Path.Combine(Directory.GetCurrentDirectory(), _webHostEnvironment.WebRootPath, toFolder);
-
-            Directory.Move(source, destination);
         }
     }
 }
