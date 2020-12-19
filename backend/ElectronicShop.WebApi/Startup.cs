@@ -47,7 +47,11 @@ namespace ElectronicShop.WebApi
             // Handler for MediatR query ASP.Net Core
             services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
 
-            services.AddControllers();
+            // Fix .Net Core 3.1 possible object cycle was detected which is not supported
+            services.AddControllers()
+                .AddNewtonsoftJson(options =>
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                );
 
             // Compatibility version for ASP.NET Core MVC
             services.AddMvc();//.SetCompatibilityVersion(CompatibilityVersion.Latest);
@@ -143,7 +147,7 @@ namespace ElectronicShop.WebApi
             services.AddTransient<SignInManager<User>, SignInManager<User>>();
             services.AddTransient<IRepositoryWrapper, RepositoryWrapper>();
 
-            // Fix Url
+            // Fix Create Url.Action is null
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddScoped<IUrlHelper>(x =>
             {

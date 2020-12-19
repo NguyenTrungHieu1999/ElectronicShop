@@ -4,6 +4,7 @@ using ElectronicShop.Application.Categories.Repositories;
 using ElectronicShop.Application.Products.Repositories;
 using ElectronicShop.Application.UserRoles.Repositories;
 using ElectronicShop.Application.Users.Repositories;
+using ElectronicShop.Application.ProductPhotos.Repositories;
 
 namespace ElectronicShop.Application.Common.Repositories.Wrapper
 {
@@ -15,6 +16,7 @@ namespace ElectronicShop.Application.Common.Repositories.Wrapper
         private IUserRoleRepository _userRole;
         private IUserRepository _user;
         private IProductRepository _product;
+        private IProductPhotoRepository _productPhoto;
 
         public RepositoryWrapper(ElectronicShopDbContext repoContext)
         {
@@ -33,5 +35,7 @@ namespace ElectronicShop.Application.Common.Repositories.Wrapper
         public IUserRepository UserRepository => _user ??= new UserRepository(_repoContext);
 
         public IProductRepository ProductRepository => _product ??= new ProductRepository(_repoContext);
+
+        public IProductPhotoRepository ProductPhotoRepository => _productPhoto ??= new ProductPhotoRepository(_repoContext);
     }
 }

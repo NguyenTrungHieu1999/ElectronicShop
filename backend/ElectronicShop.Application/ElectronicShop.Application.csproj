@@ -19,9 +19,4 @@
     <ProjectReference Include="..\ElectronicShop.Utilities\ElectronicShop.Utilities.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Products\Extensions" />
-    <Folder Include="Products\Queries" />
-  </ItemGroup>
-
 </Project>
