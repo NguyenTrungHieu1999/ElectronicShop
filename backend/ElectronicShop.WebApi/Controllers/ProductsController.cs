@@ -30,18 +30,14 @@ namespace ElectronicShop.WebApi.Controllers
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> Create([FromForm] CreateProductCommand request)
         {
-            var result = await _mediator.Send(request);
-
-            return result.IsSuccessed ? (IActionResult)Ok(result) : BadRequest(result);
+            return Ok(await _mediator.Send(request));
         }
 
         [HttpPut("update")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> Update([FromBody] UpdateProductCommand update)
         {
-            var result = await _mediator.Send(update);
-
-            return result.IsSuccessed ? (IActionResult)Ok(result) : BadRequest();
+            return Ok(await _mediator.Send(update));
         }
         
         [HttpDelete("delete/{productId}")]
@@ -49,9 +45,7 @@ namespace ElectronicShop.WebApi.Controllers
         {
             var query = new DeleteProductCommand(productId);
 
-            var result = await _mediator.Send(query);
-
-            return result.IsSuccessed ? (IActionResult)Ok(result) : BadRequest();
+            return Ok(await _mediator.Send(query));
         }
 
         [HttpGet("{productId}")]
@@ -60,18 +54,14 @@ namespace ElectronicShop.WebApi.Controllers
         {
             var query = new GetProductByIdQuery(productId);
 
-            var result = await _mediator.Send(query);
-
-            return Ok(result);
+            return Ok(await _mediator.Send(query));
         }
 
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> GetAll([FromQuery] GetAllProductQuery request)
         {
-            var result = await _mediator.Send(request);
-
-            return Ok(result);
+            return Ok(await _mediator.Send(request));
         }
     }
 }

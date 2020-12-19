@@ -1,4 +1,4 @@
-using ElectronicShop.Application.Users.Commands.CreateUser;
+﻿using ElectronicShop.Application.Users.Commands.CreateUser;
 using ElectronicShop.Application.Users.Commands.DeleteUser;
 using ElectronicShop.Application.Users.Commands.DisableAccount;
 using ElectronicShop.Application.Users.Commands.UpdateUser;
@@ -28,100 +28,91 @@ namespace ElectronicShop.WebApi.Controllers
             _mediator = mediator;
             _httpContextAccessor = httpContextAccessor;
         }
-        
+
         [HttpPost("create")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         [AllowAnonymous]
         public async Task<IActionResult> Create([FromBody] CreateUserCommand request)
         {
-            var result = await _mediator.Send(request);
-
-            return result.IsSuccessed ? (IActionResult)Ok(result) : BadRequest(result);
+            return Ok(await _mediator.Send(request));
         }
-        
+
         [HttpPut("update")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = Constants.ADMIN)]
         public async Task<IActionResult> Update([FromBody] UpdateUserCommand request)
         {
-            var result = await _mediator.Send(request);
-
-            return result.IsSuccessed ? (IActionResult)Ok(result) : BadRequest(result);
+            return Ok(await _mediator.Send(request));
         }
-        
+
         [HttpPut("update/me")]
         [Authorize]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> UpdateMe([FromBody] UpdateUserCommand request)
         {
-            var userId =  _httpContextAccessor.HttpContext.Session
+            var userId = _httpContextAccessor.HttpContext.Session
                 .GetComplexData<User>(Constants.CURRENTUSER).Id;
 
-            if (!userId.Equals(request.Id)) return BadRequest();
-            
-            var result = await _mediator.Send(request);
+            if (!userId.Equals(request.Id))
+            {
+                return Ok(
+                    new
+                    {
+                        message = "Bạn thông tin chỉnh sửa không khớp với người dùng hiện tại."
+                    });
+            }
 
-            return result.IsSuccessed ? (IActionResult)Ok(result) : BadRequest(result);
+            return Ok(await _mediator.Send(request));
 
-        } 
-        
+        }
+
         [HttpDelete("delete/{userId}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = Constants.ADMIN)]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> Delete(int userId)
         {
             var query = new DeleteUserCommand(userId);
 
-            var result = await _mediator.Send(query);
-
-            return result.IsSuccessed ? (IActionResult)Ok(result) : BadRequest(result);
+            return Ok(await _mediator.Send(query));
         }
-        
+
         [HttpPut("disable/{userId}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = Constants.ADMIN)]
         public async Task<IActionResult> DisableAccount(int userId)
         {
             var command = new DisableAccountCommand(userId);
 
-            var result = await _mediator.Send(command);
-
-            return Ok(result);
+            return Ok(await _mediator.Send(command));
         }
-        
+
         [HttpGet("{userId}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetUserById (int userId)
+        [Authorize(Roles = Constants.ADMIN)]
+        public async Task<IActionResult> GetUserById(int userId)
         {
             var query = new GetByIdUserQuery(userId);
 
-            var result = await _mediator.Send(query);
-
-            return Ok(result);
+            return Ok(await _mediator.Send(query));
         }
 
         [HttpGet("me")]
         [Authorize]
         public async Task<IActionResult> GetProfile()
         {
-            var userId =  _httpContextAccessor.HttpContext.Session
+            var userId = _httpContextAccessor.HttpContext.Session
                 .GetComplexData<User>(Constants.CURRENTUSER).Id;
 
             var query = new GetByIdUserQuery(userId);
 
-            var result = await _mediator.Send(query);
-
-            return Ok(result);
+            return Ok(await _mediator.Send(query));
         }
-        
+
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = Constants.ADMIN)]
         public async Task<IActionResult> GetAllUser()
         {
             var query = new GetAllUserQuery();
 
-            var result = await _mediator.Send(query);
-
-            return Ok(result);
+            return Ok(await _mediator.Send(query));
         }
     }
 }

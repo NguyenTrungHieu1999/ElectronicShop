@@ -70,8 +70,6 @@ namespace ElectronicShop.Application.Products.Services
             }
             catch(Exception ex)
             {
-                Console.WriteLine("Lỗi khi thêm sản phẩm: {0}", ex.ToString());
-
                 return new ApiErrorResult<string>("Thêm sản phẩm thất bại");
             }
 

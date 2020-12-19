@@ -60,7 +60,9 @@ namespace ElectronicShop.Application.Users.Services
             {
                 await _userManager.DeleteAsync(user);
 
-                return await Task.FromResult(new ApiErrorResult<bool>("Đăng ký thất bại"));
+                return await Task.FromResult(
+                    new ApiErrorResult<bool>("Đăng ký thất bại, không thể thêm quyền cho người dùng.")
+                    );
             }
 
             return await Task.FromResult(new ApiSuccessResult<bool>());
@@ -75,9 +77,9 @@ namespace ElectronicShop.Application.Users.Services
                 .GetComplexData<User>(Constants.CURRENTUSER);
 
             string role = Constants.USERROLENAME;
-            
+
             user.CreatedBy = user.UserName;
-            
+
             if (isAdmin)
             {
                 role = roleName;
@@ -85,14 +87,14 @@ namespace ElectronicShop.Application.Users.Services
             }
 
             await _userManager.UpdateAsync(user);
-            
+
             await _userManager.AddToRoleAsync(user, role);
         }
 
         public async Task<ApiResult<bool>> UpdateAsync(UpdateUserCommand request)
         {
             var user = await _userManager.FindByIdAsync(request.Id.ToString());
-            
+
             var username = _httpContextAccessor.HttpContext.Session
                 .GetComplexData<User>(Constants.CURRENTUSER).UserName;
 
