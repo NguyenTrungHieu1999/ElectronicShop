@@ -1,11 +1,11 @@
-﻿using ElectronicShop.Application.Common.Models;
+﻿using System;
+using System.Collections.Generic;
+using ElectronicShop.Data.Entities;
 using ElectronicShop.Data.Enums;
-using MediatR;
-using System;
 
-namespace ElectronicShop.Application.Products.Commands.UpdateProduct
+namespace ElectronicShop.Application.Products.Models
 {
-    public class UpdateProductCommand : IRequest<ApiResult<string>>
+    public class ProductVm
     {
         public int Id { get; set; }
 
@@ -27,6 +27,14 @@ namespace ElectronicShop.Application.Products.Commands.UpdateProduct
 
         public string Alias { get; set; }
 
+        public DateTime CreatedDate { get; set; }
+
+        public DateTime? ModifiedDate { get; set; }
+
+        public string CreatedBy { get; set; } //UserName
+
         public string ModifiedBy { get; set; } //UserName
+        
+        public List<ProductPhoto> ProductPhotos { get; set; }
     }
 }
