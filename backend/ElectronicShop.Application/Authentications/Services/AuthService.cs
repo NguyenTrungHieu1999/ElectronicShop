@@ -88,10 +88,12 @@ namespace ElectronicShop.Application.Authentications.Services
 
         }
 
-        public async Task SignOutAsync()
+        public async Task<bool> SignOutAsync()
         {
             await _signInManager.SignOutAsync();
             _httpContextAccessor.HttpContext.Session.Remove(Constants.CURRENTUSER);
+
+            return true;
         }
 
         public async Task<ApiResult<string>> ForgotPasswordAsync(string email)
