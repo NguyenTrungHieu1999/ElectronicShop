@@ -1,6 +1,7 @@
 ﻿using ElectronicShop.Application.Authentications.Commands.Authenticate;
 using ElectronicShop.Application.Authentications.Commands.ForgotPassword;
 using ElectronicShop.Application.Authentications.Commands.ResetPassword;
+using ElectronicShop.Application.Authentications.Commands.SignOut;
 using ElectronicShop.Infrastructure.SendMail;
 using ElectronicShop.WebApi.ActionFilters;
 using MediatR;
@@ -50,7 +51,7 @@ namespace ElectronicShop.WebApi.Controllers
                action: "",
                values: new { email = request.Email, token = result.ResultObj },
                protocol: HttpContext.Request.Scheme,
-               host: "localhost:5001"
+               host: "localhost:3001"
            );
 
             await _mailer.SenEmailAsync(request.Email, "Reset Password", callbackUrl);
@@ -63,6 +64,14 @@ namespace ElectronicShop.WebApi.Controllers
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand request)
         {
             await _mediator.Send(request);
+
+            return Ok();
+        }
+
+        [HttpPost("sign-out")]
+        public async Task<IActionResult> SignOut()
+        {
+            await _mediator.Send(new SignOutCommand());
 
             return NoContent();
         }
