@@ -19,5 +19,11 @@ namespace ElectronicShop.Application.Users.Models
         public string PhoneNumber { get; set; }
 
         public Gender Gender { get; set; }
+
+        public string Address { get; set; }
+
+        public UserStatus Status { get; set; }
+
+        public string UserInRole { get; set; }
     }
 }

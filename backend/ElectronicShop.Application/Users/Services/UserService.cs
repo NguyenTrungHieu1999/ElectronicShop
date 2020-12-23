@@ -61,8 +61,7 @@ namespace ElectronicShop.Application.Users.Services
                 await _userManager.DeleteAsync(user);
 
                 return await Task.FromResult(
-                    new ApiErrorResult<bool>("Đăng ký thất bại, không thể thêm quyền cho người dùng.")
-                    );
+                    new ApiErrorResult<bool>("Đăng ký thất bại, không thể thêm quyền cho người dùng."));
             }
 
             return await Task.FromResult(new ApiSuccessResult<bool>());
@@ -170,6 +169,10 @@ namespace ElectronicShop.Application.Users.Services
             var user = await _userManager.FindByIdAsync(userId.ToString());
 
             var result = _mapper.Map<UserVm>(user);
+
+            var role = await _userManager.GetRolesAsync(user);
+
+            result.UserInRole = role[0];
 
             return await Task.FromResult(new ApiSuccessResult<UserVm>(result));
         }
