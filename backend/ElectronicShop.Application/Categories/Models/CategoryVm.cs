@@ -9,6 +9,10 @@ namespace ElectronicShop.Application.Categories.Models
         public string Name { get; set; }
 
         public string Alias { get; set; }
+
+        public int? RootId { get; set; }
+
+        public int ProductTypeId { get; set; }
         
         public DateTime CreatedDate { get; set; }
         
