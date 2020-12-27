@@ -132,7 +132,7 @@ namespace ElectronicShop.Application.Products.Services
         {
             var products = await _context.Products
                 .Include(x => x.ProductPhotos)
-                .Where(x => x.Status == ProductStatus.DEFAULT)
+                .Where(x => x.Status != ProductStatus.HIDDEN)
                 .ToListAsync();
 
             var result = _mapper.Map<List<ProductVm>>(products);
