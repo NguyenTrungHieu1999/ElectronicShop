@@ -39,13 +39,13 @@ namespace ElectronicShop.Infrastructure.FileImage
                     {
                         // Try to create the directory.
                         DirectoryInfo di = Directory.CreateDirectory(uploadsFolder);
+                    }
 
-                        string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await image.CopyToAsync(stream);
-                        }
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await image.CopyToAsync(stream);
                     }
                 }
                 catch
@@ -83,7 +83,7 @@ namespace ElectronicShop.Infrastructure.FileImage
 
             foreach (var i in query)
             {
-                path = "images/products/" + i.T + "/" + productName;
+                path = @"images\products\" + i.T + @"\" + productName;
             }
 
             return path;
