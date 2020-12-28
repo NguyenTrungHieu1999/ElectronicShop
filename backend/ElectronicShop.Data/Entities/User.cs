@@ -17,7 +17,7 @@ namespace ElectronicShop.Data.Entities
 
         public Gender Gender { get; set; }
 
-        public DateTime Birthday { get; set; }
+        public DateTime? Birthday { get; set; }
 
         public DateTime CreatedDate { get; set; }
 
