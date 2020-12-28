@@ -44,6 +44,8 @@ namespace ElectronicShop.Application.Users.Services
                 return new ApiErrorResult<bool>("Tài khoản đã tồn tại!");
             }
 
+            request.Birthday.ToString("yyyy-MM-dd h:mm tt");
+
             var user = _mapper.Map<User>(request);
 
             user.CreatedDate = DateTime.Now;
@@ -96,6 +98,8 @@ namespace ElectronicShop.Application.Users.Services
 
             var username = _httpContextAccessor.HttpContext.Session
                 .GetComplexData<User>(Constants.CURRENTUSER).UserName;
+
+            request.Birthday.ToString("yyyy-MM-dd h:mm tt");
 
             try
             {
