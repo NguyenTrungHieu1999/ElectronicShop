@@ -42,14 +42,15 @@ namespace ElectronicShop.Application.Products.Services
 
         public async Task<ApiResult<string>> CreateAsync(CreateProductCommand request)
         {
-            var currentUser = _httpContextAccessor.HttpContext.Session
-                .GetComplexData<User>(Constants.CURRENTUSER);
+            var currentUser = _httpContextAccessor.HttpContext.User.Identity.Name;
 
             var product = _mapper.Map<Product>(request);
 
             product.CreatedDate = DateTime.Now;
 
-            product.CreatedBy = currentUser.UserName;
+            product.CreatedBy = currentUser;
+
+            product.Inventory = request.GoodsReceipt;
 
             string path = _storageService.CreateProductPath(request.CategoryId, request.Name);
 
@@ -83,12 +84,16 @@ namespace ElectronicShop.Application.Products.Services
         {
             var product = await _repository.ProductRepository.FindByIdAsync(update.Id);
 
+            if(product is null)
+            {
+                return await Task.FromResult(new ApiErrorResult<string>("Không tìm thấy sản phẩm cần cập nhật"));
+            }
+
             _storageService.ChangeNameFolder(product.Name, update.Name);
 
-            var currentUser = _httpContextAccessor.HttpContext.Session
-                .GetComplexData<User>(Constants.CURRENTUSER);
+            var currentUser = _httpContextAccessor.HttpContext.User.Identity.Name;
 
-            product.ModifiedBy = currentUser.UserName;
+            product.ModifiedBy = currentUser;
 
             _repository.ProductRepository.Update(product);
 
@@ -100,6 +105,11 @@ namespace ElectronicShop.Application.Products.Services
         public async Task<ApiResult<string>> DeleteAsync(int productId)
         {
             var product = await _repository.ProductRepository.FindByIdAsync(productId);
+
+            if(product is null)
+            {
+                return await Task.FromResult(new ApiErrorResult<string>("Không tìm thấy sản phẩm cần xóa"));
+            }
 
             product.Status = ProductStatus.HIDDEN;
 
@@ -115,6 +125,11 @@ namespace ElectronicShop.Application.Products.Services
             var product = await _context.Products
                 .Include(x => x.ProductPhotos)
                 .SingleOrDefaultAsync(x => x.Id == productId);
+
+            if (product is null)
+            {
+                return await Task.FromResult(new ApiErrorResult<ProductVm>("Không tìm thấy sản phẩm"));
+            }
 
             var path = _storageService.CreateProductPath(product.CategoryId, product.Name);
 
@@ -134,6 +149,11 @@ namespace ElectronicShop.Application.Products.Services
                 .Include(x => x.ProductPhotos)
                 .Where(x => x.Status != ProductStatus.HIDDEN)
                 .ToListAsync();
+
+            if (products is null)
+            {
+                return await Task.FromResult(new ApiErrorResult<List<ProductVm>>("Không tìm thấy sản phẩm"));
+            }
 
             var result = _mapper.Map<List<ProductVm>>(products);
 

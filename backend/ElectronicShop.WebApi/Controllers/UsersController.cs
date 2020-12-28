@@ -58,7 +58,7 @@ namespace ElectronicShop.WebApi.Controllers
                 return Ok(
                     new
                     {
-                        message = "Bạn thông tin chỉnh sửa không khớp với người dùng hiện tại."
+                        message = "Thông tin chỉnh sửa không khớp với người dùng hiện tại."
                     });
             }
 

@@ -6,7 +6,6 @@ using ElectronicShop.Application.Products.Models;
 using ElectronicShop.Application.Users.Commands.CreateUser;
 using ElectronicShop.Application.Users.Models;
 using ElectronicShop.Data.Entities;
-using System;
 
 namespace ElectronicShop.Application.Common.Mapper
 {
@@ -16,9 +15,8 @@ namespace ElectronicShop.Application.Common.Mapper
         {
 
             CreateMap<CreateUserCommand, User>();
-            
-            CreateMap<User, UserVm>()
-                .ForMember(dest => dest.Birthday, opt => opt.MapFrom(src => DateTime.Parse(src.Birthday.ToString(), System.Globalization.CultureInfo.InvariantCulture).ToString()));
+
+            CreateMap<User, UserVm>();
 
             CreateMap<CreateCategoryCommand, Category>();
 

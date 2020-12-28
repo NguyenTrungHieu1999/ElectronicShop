@@ -4,6 +4,7 @@ using ElectronicShop.Data.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,24 +12,30 @@ namespace ElectronicShop.Application.Products.Commands.CreateProduct
 {
     public class CreateProductCommand : IRequest<ApiResult<string>>
     {
+        [Required]
         public string Name { get; set; }
 
+        [Required]
         public decimal Price { get; set; }
 
+        [Required]
         public string Specifications { get; set; }//Thông số kỹ thuật
 
+        [Required]
         public string Description { get; set; }
 
+        [Required]
         public int GoodsReceipt { get; set; }//Số lượng nhập
-
-        public int Inventory { get; set; }//Số lượng tồn
 
         public ProductStatus Status { get; set; }
 
+        [Required]
         public int CategoryId { get; set; }
 
+        [Required]
         public string Alias { get; set; }
-        
+
+        [Required]
         public List<IFormFile> ThumbnailImages { get; set; }
     }
 

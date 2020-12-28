@@ -22,6 +22,11 @@ namespace ElectronicShop.Application.ProductPhotos.Services
         {
             var product = await _repository.ProductRepository.FindByIdAsync(request.ProductId);
 
+            if(product is null)
+            {
+                return new ApiErrorResult<string>("Không thể tìm thấy sản phẩm để thêm ảnh");
+            }
+
             var path = _storageService.CreateProductPath(product.CategoryId, product.Name);
             
             var photo = new ProductPhoto()

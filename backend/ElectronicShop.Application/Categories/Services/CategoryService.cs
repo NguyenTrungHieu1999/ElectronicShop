@@ -33,8 +33,7 @@ namespace ElectronicShop.Application.Categories.Services
 
         public async Task<ApiResult<string>> CreateAsync(CreateCategoryCommand request)
         {
-            var username = _httpContextAccessor.HttpContext.Session
-                .GetComplexData<User>(Constants.CURRENTUSER).UserName; 
+            var username = _httpContextAccessor.HttpContext.User.Identity.Name;
             
             var category = _mapper.Map<Category>(request);
             
@@ -58,8 +57,7 @@ namespace ElectronicShop.Application.Categories.Services
 
         public async Task<ApiResult<string>> UpdateAsync(UpdateCategoryCommand request)
         {
-            var username = _httpContextAccessor.HttpContext.Session
-                .GetComplexData<User>(Constants.CURRENTUSER).UserName;
+            var username = _httpContextAccessor.HttpContext.User.Identity.Name;
 
             try
             {

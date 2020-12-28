@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Threading;
 using System.Threading.Tasks;
 using ElectronicShop.Application.Categories.Services;
 using ElectronicShop.Application.Common.Models;
@@ -8,14 +9,18 @@ namespace ElectronicShop.Application.Categories.Commands.UpdateCategory
 {
     public class UpdateCategoryCommand : IRequest<ApiResult<string>>
     {
+        [Required]
         public int Id { get; set; }
         
+        [Required]
         public string Name { get; set; }
         
+        [Required]
         public string Alias { get; set; }
         
         public int? RootId { get; set; }
         
+        [Required]
         public int ProductTypeId { get; set; }
     }
 
