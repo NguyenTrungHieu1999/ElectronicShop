@@ -1,6 +1,7 @@
 ﻿using ElectronicShop.Application.Authentications.Services;
 using ElectronicShop.Application.Common.Models;
 using MediatR;
+using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,8 +9,10 @@ namespace ElectronicShop.Application.Authentications.Commands.Authenticate
 {
     public class AuthenticateCommand : IRequest<ApiResult<string>>
     {
+        [Required, DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
+        [Required, DataType(DataType.Password)]
         public string Password { get; set; }
 
         public bool RememberMe { get; set; }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ElectronicShop.Application.Users.Commands.CreateUser
 {
-    public class CreateUserCommand : IRequest<ApiResult<bool>>
+    public class CreateUserCommand : IRequest<ApiResult<string>>
     {
         [Required, StringLength(30, MinimumLength = 1)]
         public string UserName { get; set; }
@@ -26,28 +26,22 @@ namespace ElectronicShop.Application.Users.Commands.CreateUser
         [EmailAddress]
         public string Email { get; set; }
 
-        [Required, StringLength(50, MinimumLength = 1)]
         public string FirstMiddleName { get; set; }
 
-        [Required, StringLength(20, MinimumLength = 1)]
         public string LastName { get; set; }
 
-        [Required, DataType(DataType.Date)]
         public DateTime Birthday { get; set; }
 
-        [Required]
         public Gender Gender { get; set; }
 
         public string Address { get; set; }
 
-        [Required, DataType(DataType.PhoneNumber), StringLength(11)]
-        [Phone]
         public string PhoneNumber { get; set; }
 
         public string UserInRole { get; set; }
     }
 
-    public class CreateUserHandle : IRequestHandler<CreateUserCommand, ApiResult<bool>>
+    public class CreateUserHandle : IRequestHandler<CreateUserCommand, ApiResult<string>>
     {
         private readonly IUserService _userService;
 
@@ -56,7 +50,7 @@ namespace ElectronicShop.Application.Users.Commands.CreateUser
             _userService = userService;
         }
 
-        public async Task<ApiResult<bool>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<string>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
             return await _userService.CreateAsync(request);
         }

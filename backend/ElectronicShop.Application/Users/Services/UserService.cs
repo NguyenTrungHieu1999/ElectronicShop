@@ -7,7 +7,6 @@ using ElectronicShop.Application.Users.Extensions;
 using ElectronicShop.Application.Users.Models;
 using ElectronicShop.Data.Entities;
 using ElectronicShop.Data.Enums;
-using ElectronicShop.Utilities.Session;
 using ElectronicShop.Utilities.SystemConstants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -34,17 +33,15 @@ namespace ElectronicShop.Application.Users.Services
             _repository = repository;
         }
 
-        public async Task<ApiResult<bool>> CreateAsync(CreateUserCommand request)
+        public async Task<ApiResult<string>> CreateAsync(CreateUserCommand request)
         {
             var userEmail = await _userManager.FindByEmailAsync(request.Email);
             var userUserName = await _userManager.FindByNameAsync(request.UserName);
 
             if (userEmail != null || userUserName != null)
             {
-                return new ApiErrorResult<bool>("Tài khoản đã tồn tại!");
+                return new ApiErrorResult<string>("Tài khoản đã tồn tại!");
             }
-
-            request.Birthday.ToString("yyyy-MM-dd h:mm tt");
 
             var user = _mapper.Map<User>(request);
 
@@ -63,10 +60,10 @@ namespace ElectronicShop.Application.Users.Services
                 await _userManager.DeleteAsync(user);
 
                 return await Task.FromResult(
-                    new ApiErrorResult<bool>("Đăng ký thất bại, không thể thêm quyền cho người dùng."));
+                    new ApiErrorResult<string>("Đăng ký thất bại, không thể thêm quyền cho người dùng."));
             }
 
-            return await Task.FromResult(new ApiSuccessResult<bool>());
+            return await Task.FromResult(new ApiSuccessResult<string>("Thêm người dùng thành công"));
 
         }
 
@@ -74,8 +71,7 @@ namespace ElectronicShop.Application.Users.Services
         {
             var isAdmin = _httpContextAccessor.HttpContext.User.IsInRole(Constants.ADMIN);
 
-            var currentUser = _httpContextAccessor.HttpContext.Session
-                .GetComplexData<User>(Constants.CURRENTUSER);
+            var currentUser = _httpContextAccessor.HttpContext.User.Identity.Name;
 
             string role = Constants.USERROLENAME;
 
@@ -84,7 +80,7 @@ namespace ElectronicShop.Application.Users.Services
             if (isAdmin)
             {
                 role = roleName;
-                user.CreatedBy = currentUser.UserName;
+                user.CreatedBy = currentUser;
             }
 
             await _userManager.UpdateAsync(user);
@@ -92,14 +88,23 @@ namespace ElectronicShop.Application.Users.Services
             await _userManager.AddToRoleAsync(user, role);
         }
 
-        public async Task<ApiResult<bool>> UpdateAsync(UpdateUserCommand request)
+        public async Task<ApiResult<string>> UpdateAsync(UpdateUserCommand request)
         {
+            var isAuthen = _httpContextAccessor.HttpContext.User.Identity.IsAuthenticated;
+
+            if (isAuthen is false)
+            {
+                return new ApiErrorResult<string>("Mời đăng nhập vào tài khoản!");
+            }
+
             var user = await _userManager.FindByIdAsync(request.Id.ToString());
 
-            var username = _httpContextAccessor.HttpContext.Session
-                .GetComplexData<User>(Constants.CURRENTUSER).UserName;
+            if (user is null)
+            {
+                return new ApiErrorResult<string>("Người dùng không tồn tại");
+            }
 
-            request.Birthday.ToString("yyyy-MM-dd h:mm tt");
+            var username = _httpContextAccessor.HttpContext.User.Identity.Name;
 
             try
             {
@@ -113,10 +118,10 @@ namespace ElectronicShop.Application.Users.Services
             }
             catch
             {
-                return await Task.FromResult(new ApiErrorResult<bool>("Cập nhật thông tin người dùng thất bại"));
+                return await Task.FromResult(new ApiErrorResult<string>("Cập nhật thông tin người dùng thất bại"));
             }
 
-            return await Task.FromResult(new ApiSuccessResult<bool>());
+            return await Task.FromResult(new ApiSuccessResult<string>("Cập nhật người dùng thành công"));
         }
 
         private async Task UpdateUserRoleAsync(User user, string roleName)
@@ -136,13 +141,13 @@ namespace ElectronicShop.Application.Users.Services
             await _userManager.AddToRoleAsync(user, role);
         }
 
-        public async Task<ApiResult<bool>> DeleteAsync(int userId)
+        public async Task<ApiResult<string>> DeleteAsync(int userId)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
 
             if (user is null)
             {
-                return new ApiErrorResult<bool>("Người dùng không tồn tại");
+                return new ApiErrorResult<string>("Người dùng không tồn tại");
             }
 
             user.Status = UserStatus.DELETED;
@@ -151,26 +156,36 @@ namespace ElectronicShop.Application.Users.Services
 
             if (result.Succeeded)
             {
-                return await Task.FromResult(new ApiSuccessResult<bool>());
+                return await Task.FromResult(new ApiSuccessResult<string>("Xóa người dùng thành công"));
             }
 
-            return await Task.FromResult(new ApiErrorResult<bool>("Xóa người dùng thất bại"));
+            return await Task.FromResult(new ApiErrorResult<string>("Xóa người dùng thất bại"));
         }
 
-        public async Task<ApiResult<bool>> DisableAccountAsync(int userId)
+        public async Task<ApiResult<string>> DisableAccountAsync(int userId)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user is null)
+            {
+                return new ApiErrorResult<string>("Người dùng không tồn tại");
+            }
 
             user.Status = UserStatus.DISABLE;
 
             await _userManager.UpdateAsync(user);
 
-            return await Task.FromResult(new ApiSuccessResult<bool>());
+            return await Task.FromResult(new ApiSuccessResult<string>("Khóa tài khoản thành công"));
         }
 
         public async Task<ApiResult<UserVm>> GetByIdAsync(int userId)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user is null)
+            {
+                return new ApiErrorResult<UserVm>("Người dùng không tồn tại");
+            }
 
             var result = _mapper.Map<UserVm>(user);
 
@@ -183,9 +198,24 @@ namespace ElectronicShop.Application.Users.Services
 
         public async Task<ApiResult<List<UserVm>>> GetAllAsync()
         {
-            var users = await _userManager.Users.ToListAsync();
+            var users = await _repository
+                .UserRepository
+                .FindByCondition(x => x.Status != UserStatus.DELETED)
+                .ToListAsync();
+
+            if (users is null)
+            {
+                return new ApiErrorResult<List<UserVm>>("Không tìm thấy được người dùng nào.");
+            }
 
             var result = _mapper.Map<List<UserVm>>(users);
+
+            for (int i = 0; i < users.Count; i++)
+            {
+                var role = await _userManager.GetRolesAsync(users[i]);
+
+                result[i].UserInRole = role[0];
+            }
 
             return await Task.FromResult(new ApiSuccessResult<List<UserVm>>(result));
         }

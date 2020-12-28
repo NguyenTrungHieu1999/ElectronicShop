@@ -3,17 +3,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using ElectronicShop.Application.Categories.Services;
 using ElectronicShop.Application.Common.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace ElectronicShop.Application.Categories.Commands.CreateCategory
 {
     public class CreateCategoryCommand : IRequest<ApiResult<string>>
     {
+        [Required]
         public string Name { get; set; }
         
+        [Required]
         public string Alias { get; set; }
         
         public int? RootId { get; set; }
         
+        [Required]
         public int ProductTypeId { get; set; }
     }
 

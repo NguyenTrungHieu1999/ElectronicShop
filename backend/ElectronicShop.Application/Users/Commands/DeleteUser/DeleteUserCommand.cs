@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ElectronicShop.Application.Users.Commands.DeleteUser
 {
-    public class DeleteUserCommand : IRequest<ApiResult<bool>>
+    public class DeleteUserCommand : IRequest<ApiResult<string>>
     {
         public int UserId { get; }
 
@@ -16,7 +16,7 @@ namespace ElectronicShop.Application.Users.Commands.DeleteUser
         }
     }
 
-    public class DeleteUserHandle : IRequestHandler<DeleteUserCommand, ApiResult<bool>>
+    public class DeleteUserHandle : IRequestHandler<DeleteUserCommand, ApiResult<string>>
     {
         private readonly IUserService _userService;
 
@@ -25,7 +25,7 @@ namespace ElectronicShop.Application.Users.Commands.DeleteUser
             _userService = userService;
         }
 
-        public async Task<ApiResult<bool>> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<string>> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
         {
             return await _userService.DeleteAsync(request.UserId);
         }

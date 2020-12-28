@@ -13,6 +13,6 @@ namespace ElectronicShop.Application.Authentications.Services
 
         Task<ApiResult<string>> ForgotPasswordAsync(string email);
 
-        Task<ApiResult<bool>> ResetPasswordAsync(ResetPasswordCommand request);
+        Task<ApiResult<string>> ResetPasswordAsync(ResetPasswordCommand request);
     }
 }
