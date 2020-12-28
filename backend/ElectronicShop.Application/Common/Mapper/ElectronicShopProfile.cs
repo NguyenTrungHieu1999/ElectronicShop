@@ -1,14 +1,12 @@
-﻿using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using ElectronicShop.Application.Categories.Commands.CreateCategory;
 using ElectronicShop.Application.Categories.Models;
 using ElectronicShop.Application.Products.Commands.CreateProduct;
 using ElectronicShop.Application.Products.Models;
 using ElectronicShop.Application.Users.Commands.CreateUser;
 using ElectronicShop.Application.Users.Models;
-using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
-using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace ElectronicShop.Application.Common.Mapper
 {
@@ -19,7 +17,8 @@ namespace ElectronicShop.Application.Common.Mapper
 
             CreateMap<CreateUserCommand, User>();
             
-            CreateMap<User, UserVm>();
+            CreateMap<User, UserVm>()
+                .ForMember(dest => dest.Birthday, opt => opt.MapFrom(src => DateTime.Parse(src.Birthday.ToString(), System.Globalization.CultureInfo.InvariantCulture).ToString()));
 
             CreateMap<CreateCategoryCommand, Category>();
 
