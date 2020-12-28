@@ -14,23 +14,17 @@ namespace ElectronicShop.Application.Users.Commands.UpdateUser
         [Required]
         public int Id { get; set; }
 
-        [Required, StringLength(50, MinimumLength = 1)]
         public string FirstMiddleName { get; set; }
 
-        [Required, StringLength(30, MinimumLength = 1)]
         public string LastName { get; set; }
 
-        [Required, DataType(DataType.Date)]
-        public DateTime Birthday { get; set; }
+        public DateTime? Birthday { get; set; }
 
         [Required]
         public Gender Gender { get; set; }
 
-        [Required, DataType(DataType.PhoneNumber), StringLength(11)]
-        [Phone]
         public string PhoneNumber { get; set; }
 
-        [Required]
         public string Address { get; set; }
 
         [Required]

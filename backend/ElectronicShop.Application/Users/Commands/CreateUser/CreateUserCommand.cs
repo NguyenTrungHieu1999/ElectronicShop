@@ -15,7 +15,7 @@ namespace ElectronicShop.Application.Users.Commands.CreateUser
         public string UserName { get; set; }
 
         [Required, DataType(DataType.Password)]
-        [RegularExpression("(?=^.{8,10}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+}{\":;'?/>.<,])(?!.*\\s).*$", ErrorMessage = "Validation for 8-10 characters with characters,numbers,1 upper case letter and special characters.")]
+        [RegularExpression("(?=^.{8,30}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+}{\":;'?/>.<,])(?!.*\\s).*$", ErrorMessage = "Validation for 8-10 characters with characters,numbers,1 upper case letter and special characters.")]
         public string Password { get; set; }
 
         [Required, DataType(DataType.Password)]
@@ -30,8 +30,9 @@ namespace ElectronicShop.Application.Users.Commands.CreateUser
 
         public string LastName { get; set; }
 
-        public DateTime Birthday { get; set; }
+        public DateTime? Birthday { get; set; }
 
+        [Required]
         public Gender Gender { get; set; }
 
         public string Address { get; set; }

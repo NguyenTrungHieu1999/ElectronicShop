@@ -76,7 +76,7 @@ namespace ElectronicShop.Application.Authentications.Services
                 _config["JWT:ValidIssuer"],
                 _config["JWT:ValidAudience"],
                 claims,
-                expires: DateTime.Now.AddHours(3),
+                expires: DateTime.Now.AddHours(20),
                 signingCredentials: creds);
 
             return await Task.FromResult(
@@ -91,6 +91,7 @@ namespace ElectronicShop.Application.Authentications.Services
         public async Task<bool> SignOutAsync()
         {
             await _signInManager.SignOutAsync();
+
             _httpContextAccessor.HttpContext.Session.Remove(Constants.CURRENTUSER);
 
             return true;
