@@ -4,15 +4,15 @@ using ElectronicShop.Application.Users.Commands.DisableAccount;
 using ElectronicShop.Application.Users.Commands.UpdateUser;
 using ElectronicShop.Application.Users.Queries.GetAllUser;
 using ElectronicShop.Application.Users.Queries.GetUserById;
-using ElectronicShop.Data.Entities;
-using ElectronicShop.Utilities.Session;
 using ElectronicShop.Utilities.SystemConstants;
 using ElectronicShop.WebApi.ActionFilters;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace ElectronicShop.WebApi.Controllers
 {
@@ -50,16 +50,11 @@ namespace ElectronicShop.WebApi.Controllers
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> UpdateMe([FromBody] UpdateUserCommand request)
         {
-            var userId = _httpContextAccessor.HttpContext.Session
-                .GetComplexData<User>(Constants.CURRENTUSER).Id;
+            string _userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            if (!userId.Equals(request.Id))
+            if (!_userId.Equals(request.Id.ToString()))
             {
-                return Ok(
-                    new
-                    {
-                        message = "Thông tin chỉnh sửa không khớp với người dùng hiện tại."
-                    });
+                return Ok(new { message = "Thông tin chỉnh sửa không khớp với người dùng hiện tại." });
             }
 
             return Ok(await _mediator.Send(request));
@@ -98,15 +93,14 @@ namespace ElectronicShop.WebApi.Controllers
         [Authorize]
         public async Task<IActionResult> GetProfile()
         {
-            var userId = _httpContextAccessor.HttpContext.Session
-                .GetComplexData<User>(Constants.CURRENTUSER).Id;
+            string _userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            var query = new GetByIdUserQuery(userId);
+            var query = new GetByIdUserQuery(Int32.Parse(_userId));
 
             return Ok(await _mediator.Send(query));
         }
 
-        [HttpGet]
+        [HttpGet("get-all")]
         [Authorize(Roles = Constants.ADMIN)]
         public async Task<IActionResult> GetAllUser()
         {

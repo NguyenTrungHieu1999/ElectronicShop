@@ -11,7 +11,6 @@ namespace ElectronicShop.Application.Users.Commands.UpdateUser
 {
     public class UpdateUserCommand : IRequest<ApiResult<string>>
     {
-        [Required]
         public int Id { get; set; }
 
         public string FirstMiddleName { get; set; }
@@ -20,14 +19,12 @@ namespace ElectronicShop.Application.Users.Commands.UpdateUser
 
         public DateTime? Birthday { get; set; }
 
-        [Required]
         public Gender Gender { get; set; }
 
         public string PhoneNumber { get; set; }
 
         public string Address { get; set; }
 
-        [Required]
         public UserStatus Status { get; set; }
 
         public string UserInRole { get; set; }
