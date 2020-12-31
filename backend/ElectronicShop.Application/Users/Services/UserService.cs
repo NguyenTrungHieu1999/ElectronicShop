@@ -182,16 +182,16 @@ namespace ElectronicShop.Application.Users.Services
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
 
-            if (user is null)
+            if (user is null || user.Status.Equals(UserStatus.DELETED)/*Đã xóa*/)
             {
                 return new ApiErrorResult<UserVm>("Người dùng không tồn tại");
             }
 
             var result = _mapper.Map<UserVm>(user);
 
-            var role = await _userManager.GetRolesAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);
 
-            result.UserInRole = role[0];
+            result.UserInRole = roles[0];
 
             return await Task.FromResult(new ApiSuccessResult<UserVm>(result));
         }
