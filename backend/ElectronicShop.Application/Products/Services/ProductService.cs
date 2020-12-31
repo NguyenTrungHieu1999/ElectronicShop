@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using ElectronicShop.Application.Products.Models;
 using Microsoft.EntityFrameworkCore;
 using ElectronicShop.Application.Products.Queries.GetAllProduct;
+using ElectronicShop.Application.Products.Extensions;
 
 namespace ElectronicShop.Application.Products.Services
 {
@@ -90,6 +91,8 @@ namespace ElectronicShop.Application.Products.Services
             }
 
             _storageService.ChangeNameFolder(product.Name, update.Name);
+
+            product.Map(update);
 
             var currentUser = _httpContextAccessor.HttpContext.User.Identity.Name;
 
