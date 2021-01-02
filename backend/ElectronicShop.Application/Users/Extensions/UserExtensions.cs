@@ -14,10 +14,7 @@ namespace ElectronicShop.Application.Users.Extensions
 
             user.PhoneNumber = request.PhoneNumber;
 
-            if(request.Gender != null)
-            {
-                user.Gender = request.Gender;
-            }
+            user.Gender = request.Gender;
 
             if (request.Birthday != null)
             {

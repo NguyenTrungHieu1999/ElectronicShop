@@ -1,4 +1,5 @@
 ﻿using ElectronicShop.Application.Authentications.Commands.Authenticate;
+using ElectronicShop.Application.Authentications.Commands.ExternalLogins;
 using ElectronicShop.Application.Authentications.Commands.ResetPassword;
 using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Data.Entities;
@@ -86,6 +87,20 @@ namespace ElectronicShop.Application.Authentications.Services
                 });
 
         }
+
+        //public async Task<ApiResult<string>> ExternalLogins(ExternalLoginsCommand command)
+        //{
+        //    var signInResult = await _signInManager
+        //        .ExternalLoginSignInAsync(command.LoginProvider, command.ProviderKey, 
+        //        isPersistent: false, bypassTwoFactor: true);
+
+        //    if (signInResult.Succeeded)
+        //    {
+        //        return new ApiSuccessResult<string>();
+        //    }
+
+
+        //}
 
         public async Task<bool> SignOutAsync()
         {

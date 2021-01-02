@@ -53,9 +53,6 @@ namespace ElectronicShop.Data.Configurations
                 .HasMaxLength(50)
                 .IsRequired();
 
-            builder.Property(x => x.PasswordHash)
-                .IsRequired();
-
             builder.Property(x => x.PhoneNumber)
                 .HasMaxLength(11);
         }
