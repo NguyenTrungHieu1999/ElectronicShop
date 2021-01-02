@@ -1,8 +1,11 @@
 ﻿using ElectronicShop.Application.Common.Models;
+using ElectronicShop.Application.Products.Services;
 using ElectronicShop.Data.Enums;
 using MediatR;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ElectronicShop.Application.Products.Commands.UpdateProduct
 {
@@ -36,5 +39,20 @@ namespace ElectronicShop.Application.Products.Commands.UpdateProduct
 
         [Required]
         public string Alias { get; set; }
+    }
+
+    public class UpdateProductHandle : IRequestHandler<UpdateProductCommand, ApiResult<string>>
+    {
+        private readonly IProductService _productService;
+
+        public UpdateProductHandle(IProductService productService)
+        {
+            _productService = productService;
+        }
+
+        public async Task<ApiResult<string>> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
+        {
+            return await _productService.UpdateAsync(request);
+        }
     }
 }

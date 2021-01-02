@@ -95,7 +95,13 @@ namespace ElectronicShop.Infrastructure.FileImage
 
             string destination = Path.Combine(Directory.GetCurrentDirectory(), _webHostEnvironment.WebRootPath, toFolder);
 
-            Directory.Move(source, destination);
+            if (fromFolder != toFolder)
+            {
+                if (!Directory.Exists(source))
+                {
+                    Directory.Move(source, destination);
+                }
+            }
         }
     }
 }
