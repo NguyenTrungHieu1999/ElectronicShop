@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ElectronicShop.Application.Authentications.Commands.ExternalLogins;
 using ElectronicShop.Application.Categories.Commands.CreateCategory;
 using ElectronicShop.Application.Categories.Models;
 using ElectronicShop.Application.Products.Commands.CreateProduct;
@@ -17,6 +18,8 @@ namespace ElectronicShop.Application.Common.Mapper
             CreateMap<CreateUserCommand, User>();
 
             CreateMap<User, UserVm>();
+
+            CreateMap<ExternalLoginsCommand, User>();
 
             CreateMap<CreateCategoryCommand, Category>();
 

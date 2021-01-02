@@ -119,7 +119,13 @@ namespace ElectronicShop.WebApi
                 option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 
-            }).AddJwtBearer(options =>
+            })
+            .AddGoogle(option =>
+            {
+                option.ClientId = "266745939810-8pkul8mbskjscf713hlrticfepc1a38m.apps.googleusercontent.com";
+                option.ClientSecret = "ufNwpN33IK1gfmsfa502LIR_";
+            })
+            .AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
