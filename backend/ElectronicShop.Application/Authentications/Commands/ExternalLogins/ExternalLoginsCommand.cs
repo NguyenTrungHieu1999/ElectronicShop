@@ -1,4 +1,5 @@
-﻿using ElectronicShop.Application.Common.Models;
+﻿using ElectronicShop.Application.Authentications.Services;
+using ElectronicShop.Application.Common.Models;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace ElectronicShop.Application.Authentications.Commands.ExternalLogins
 
         public string UserName { get; set; }
 
-        public string FirstMidleName { get; set; }
+        public string FirstMiddleName { get; set; }
 
         public string LastName { get; set; }
 
@@ -24,9 +25,16 @@ namespace ElectronicShop.Application.Authentications.Commands.ExternalLogins
 
     public class ExternalLoginsHandle : IRequestHandler<ExternalLoginsCommand, ApiResult<string>> 
     {
-        public Task<ApiResult<string>> Handle(ExternalLoginsCommand request, CancellationToken cancellationToken)
+        private readonly IAuthService _authService;
+
+        public ExternalLoginsHandle(IAuthService authService)
         {
-            throw new System.NotImplementedException();
+            _authService = authService;
+        }
+
+        public async Task<ApiResult<string>> Handle(ExternalLoginsCommand request, CancellationToken cancellationToken)
+        {
+            return await _authService.ExternalLogins(request);
         }
     }
 }

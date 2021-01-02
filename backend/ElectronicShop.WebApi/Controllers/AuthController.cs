@@ -1,4 +1,5 @@
 ﻿using ElectronicShop.Application.Authentications.Commands.Authenticate;
+using ElectronicShop.Application.Authentications.Commands.ExternalLogins;
 using ElectronicShop.Application.Authentications.Commands.ForgotPassword;
 using ElectronicShop.Application.Authentications.Commands.ResetPassword;
 using ElectronicShop.Application.Authentications.Commands.SignOut;
@@ -31,6 +32,15 @@ namespace ElectronicShop.WebApi.Controllers
         public async Task<IActionResult> Authenticate([FromBody] AuthenticateCommand request)
         {
             var result = await _mediator.Send(request);
+
+            return Ok(result);
+        }
+
+        [HttpPost("external-logins")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> ExternalLogins(ExternalLoginsCommand command)
+        {
+            var result = await _mediator.Send(command);
 
             return Ok(result);
         }
