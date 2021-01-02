@@ -97,7 +97,7 @@ namespace ElectronicShop.Infrastructure.FileImage
 
             if (fromFolder != toFolder)
             {
-                if (!Directory.Exists(source))
+                if (Directory.Exists(source))
                 {
                     Directory.Move(source, destination);
                 }
