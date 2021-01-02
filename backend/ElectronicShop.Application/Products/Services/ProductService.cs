@@ -90,7 +90,11 @@ namespace ElectronicShop.Application.Products.Services
                 return await Task.FromResult(new ApiErrorResult<string>("Không tìm thấy sản phẩm cần cập nhật"));
             }
 
-            _storageService.ChangeNameFolder(product.Name, update.Name);
+            string spath = _storageService.CreateProductPath(product.CategoryId, product.Name);
+
+            string dpath = _storageService.CreateProductPath(product.CategoryId, update.Name);
+
+            _storageService.ChangeNameFolder(spath, dpath);
 
             product.Map(update);
 
