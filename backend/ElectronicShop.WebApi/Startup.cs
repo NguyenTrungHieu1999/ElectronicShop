@@ -26,6 +26,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Text;
+using ElectronicShop.Application.ProductPhotos.Services;
+using ProductService = ElectronicShop.Application.Products.Services.ProductService;
 
 namespace ElectronicShop.WebApi
 {
@@ -154,6 +156,7 @@ namespace ElectronicShop.WebApi
 
             // DI
             services.AddTransient<IStorageService, FileStorageService>();
+            services.AddTransient<IProductPhotoService, ProductPhotoService>();
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<ICategoryService, CategoryService>();
             services.AddTransient<IAuthService, AuthService>();

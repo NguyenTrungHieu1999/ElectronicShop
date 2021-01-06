@@ -1,4 +1,5 @@
 ﻿using System;
+using ElectronicShop.Data.Entities;
 
 namespace ElectronicShop.Application.Categories.Models
 {
@@ -21,5 +22,7 @@ namespace ElectronicShop.Application.Categories.Models
         public string CreatedBy { get; set; }
         
         public string ModifiedBy { get; set; }
+        
+        public ProductType ProductType { get; set; }
     }
 }
