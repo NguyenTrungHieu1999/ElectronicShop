@@ -1,8 +1,9 @@
 ﻿using ElectronicShop.Application.ProductPhotos.Commands.CreateProductPhoto;
 using ElectronicShop.Application.ProductPhotos.Commands.DeleteProductPhoto;
+using ElectronicShop.Utilities.SystemConstants;
 using ElectronicShop.WebApi.ActionFilters;
+using ElectronicShop.WebApi.AuthorizeRoles;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -10,6 +11,7 @@ namespace ElectronicShop.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AuthorizeRoles(Constants.ADMIN, Constants.EMP)]
     public class ProductPhotosController : BaseController
     {
         private readonly IMediator _mediator;
@@ -28,7 +30,6 @@ namespace ElectronicShop.WebApi.Controllers
         }
 
         [HttpDelete("delete/{photoId}")]
-        [AllowAnonymous]
         public async Task<IActionResult> Delete(int photoId)
         {
             var command = new DeleteProductPhotoCommand(photoId);
