@@ -56,14 +56,14 @@ namespace ElectronicShop.Infrastructure.FileImage
 
             return uniqueFileName;
         }
-
+        
         public async Task DeleteFileAsync(string filePath)
         {
             string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), _webHostEnvironment.WebRootPath, filePath);
 
-            if (File.Exists(filePath))
+            if (File.Exists(uploadsFolder))
             {
-                await Task.Run(() => File.Delete(filePath));
+                await Task.Run(() => File.Delete(uploadsFolder));
             }
         }
 

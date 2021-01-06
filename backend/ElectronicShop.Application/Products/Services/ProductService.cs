@@ -3,21 +3,19 @@ using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Application.Common.Repositories.Wrapper;
 using ElectronicShop.Application.Products.Commands.CreateProduct;
 using ElectronicShop.Application.Products.Commands.UpdateProduct;
+using ElectronicShop.Application.Products.Extensions;
+using ElectronicShop.Application.Products.Models;
+using ElectronicShop.Application.Products.Queries.GetAllProduct;
 using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
 using ElectronicShop.Data.Enums;
 using ElectronicShop.Infrastructure.FileImage;
-using ElectronicShop.Utilities.Session;
-using ElectronicShop.Utilities.SystemConstants;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ElectronicShop.Application.Products.Models;
-using Microsoft.EntityFrameworkCore;
-using ElectronicShop.Application.Products.Queries.GetAllProduct;
-using ElectronicShop.Application.Products.Extensions;
 
 namespace ElectronicShop.Application.Products.Services
 {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using ElectronicShop.Application.Categories.Commands.CreateCategory;
 using ElectronicShop.Application.Categories.Commands.UpdateCategory;
 using ElectronicShop.Application.Categories.Extensions;
@@ -11,9 +7,11 @@ using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Application.Common.Repositories.Wrapper;
 using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
-using ElectronicShop.Utilities.Session;
-using ElectronicShop.Utilities.SystemConstants;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ElectronicShop.Application.Categories.Services
 {
@@ -22,13 +20,15 @@ namespace ElectronicShop.Application.Categories.Services
         private readonly IRepositoryWrapper _repository;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ElectronicShopDbContext _context;
 
         public CategoryService(IRepositoryWrapper repository, IMapper mapper, 
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor, ElectronicShopDbContext context)
         {
             _repository = repository;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
+            _context = context;
         }
 
         public async Task<ApiResult<string>> CreateAsync(CreateCategoryCommand request)
@@ -81,7 +81,9 @@ namespace ElectronicShop.Application.Categories.Services
 
         public async Task<ApiResult<CategoryVm>> GetById(int id)
         {
-            var category = await _repository.CategoryRepository.FindByIdAsync(id);
+            var category = await _context.Categories
+                .Include(x => x.ProductType)
+                .SingleOrDefaultAsync(x => x.Id == id);
 
             var result = _mapper.Map<CategoryVm>(category);
 
@@ -90,7 +92,9 @@ namespace ElectronicShop.Application.Categories.Services
 
         public async Task<ApiResult<List<CategoryVm>>> GetAll()
         {
-            var categories = await _repository.CategoryRepository.FindAllAsync();
+            var categories = await _context.Categories
+                .Include(x => x.ProductType)
+                .ToListAsync();
 
             var result = _mapper.Map<List<CategoryVm>>(categories);
 

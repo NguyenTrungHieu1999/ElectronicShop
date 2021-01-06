@@ -54,7 +54,7 @@ namespace ElectronicShop.Application.Authentications.Services
 
             if (user.PasswordHash is null)
             {
-                return new ApiErrorResult<string>("Đăng nhập thất bại, sai phương thức đáng nhập.");
+                return new ApiErrorResult<string>("Đăng nhập thất bại, sai phương thức đăng nhập.");
             }
 
             var result = await _signInManager.PasswordSignInAsync(user.UserName,
