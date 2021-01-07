@@ -1,9 +1,11 @@
 ﻿using ElectronicShop.Application.ProductPhotos.Commands.CreateProductPhoto;
 using ElectronicShop.Application.ProductPhotos.Commands.DeleteProductPhoto;
+using ElectronicShop.Application.ProductPhotos.Queries.GetPhotoByProductId;
 using ElectronicShop.Utilities.SystemConstants;
 using ElectronicShop.WebApi.ActionFilters;
 using ElectronicShop.WebApi.AuthorizeRoles;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -35,6 +37,17 @@ namespace ElectronicShop.WebApi.Controllers
             var command = new DeleteProductPhotoCommand(photoId);
 
             var result = await _mediator.Send(command);
+
+            return Ok(result);
+        }
+
+        [HttpGet("{productId}/get-all")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAll(int productId)
+        {
+            var query = new GetPhotoByProductIdQuery(productId);
+
+            var result = await _mediator.Send(query);
 
             return Ok(result);
         }

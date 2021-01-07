@@ -2,6 +2,7 @@
 using ElectronicShop.Application.Authentications.Commands.ExternalLogins;
 using ElectronicShop.Application.Categories.Commands.CreateCategory;
 using ElectronicShop.Application.Categories.Models;
+using ElectronicShop.Application.ProductPhotos.Models;
 using ElectronicShop.Application.Products.Commands.CreateProduct;
 using ElectronicShop.Application.Products.Models;
 using ElectronicShop.Application.Users.Commands.CreateUser;
@@ -28,6 +29,8 @@ namespace ElectronicShop.Application.Common.Mapper
             CreateMap<CreateProductCommand, Product>();
 
             CreateMap<Product, ProductVm>();
+
+            CreateMap<ProductPhoto, PhotoVm>();
         }
     }
 }
