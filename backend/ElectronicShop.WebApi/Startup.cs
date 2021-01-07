@@ -28,6 +28,7 @@ using System;
 using System.Text;
 using ElectronicShop.Application.ProductPhotos.Services;
 using ProductService = ElectronicShop.Application.Products.Services.ProductService;
+using ElectronicShop.Application.Orders.Services;
 
 namespace ElectronicShop.WebApi
 {
@@ -156,6 +157,7 @@ namespace ElectronicShop.WebApi
 
             // DI
             services.AddTransient<IStorageService, FileStorageService>();
+            services.AddTransient<IOrderService, OrderService>();
             services.AddTransient<IProductPhotoService, ProductPhotoService>();
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<ICategoryService, CategoryService>();

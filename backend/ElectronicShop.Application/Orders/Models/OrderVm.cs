@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 
-namespace ElectronicShop.Data.Entities
+namespace ElectronicShop.Application.Orders.Models
 {
-    public class Order
+    public class OrderVm
     {
         public int Id { get; set; }
 
@@ -26,13 +25,5 @@ namespace ElectronicShop.Data.Entities
         public int StatusId { get; set; }
 
         public int UserId { get; set; }
-
-        public User User { get; set; }
-
-        public OrderStatus OrderStatus { get; set; }
-
-        public List<OrderDetail> OrderDetails { get; set; }
-
-        public List<OrderStatusDetail> OrderStatusDetails { get; set; }
     }
 }
