@@ -2,6 +2,8 @@
 using ElectronicShop.Application.Authentications.Commands.ExternalLogins;
 using ElectronicShop.Application.Categories.Commands.CreateCategory;
 using ElectronicShop.Application.Categories.Models;
+using ElectronicShop.Application.Orders.Commands.CreateOrder;
+using ElectronicShop.Application.Orders.Models;
 using ElectronicShop.Application.ProductPhotos.Models;
 using ElectronicShop.Application.Products.Commands.CreateProduct;
 using ElectronicShop.Application.Products.Models;
@@ -31,6 +33,10 @@ namespace ElectronicShop.Application.Common.Mapper
             CreateMap<Product, ProductVm>();
 
             CreateMap<ProductPhoto, PhotoVm>();
+
+            CreateMap<CreateOrderCommand, Order>();
+
+            CreateMap<Order, OrderVm>();
         }
     }
 }
