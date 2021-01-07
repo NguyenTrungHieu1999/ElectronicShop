@@ -1,0 +1,29 @@
+﻿using ElectronicShop.Application.Common.Models;
+using ElectronicShop.Application.Orders.Models;
+using ElectronicShop.Application.Orders.Services;
+using MediatR;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace ElectronicShop.Application.Orders.Queries.GetOrderByUserId
+{
+    public class GetOrderByUserIdQuery : IRequest<ApiResult<List<OrderVm>>>
+    {
+    }
+
+    public class GetOrderByUserIdHandle : IRequestHandler<GetOrderByUserIdQuery, ApiResult<List<OrderVm>>>
+    {
+        private readonly IOrderService _orderService;
+
+        public GetOrderByUserIdHandle(IOrderService orderService)
+        {
+            _orderService = orderService;
+        }
+
+        public async Task<ApiResult<List<OrderVm>>> Handle(GetOrderByUserIdQuery request, CancellationToken cancellationToken)
+        {
+            return await _orderService.GetOrderByUserId();
+        }
+    }
+}

@@ -4,134 +4,109 @@ using ElectronicShop.Application.Users.Commands.DisableAccount;
 using ElectronicShop.Application.Users.Commands.UpdateUser;
 using ElectronicShop.Application.Users.Queries.GetAllUser;
 using ElectronicShop.Application.Users.Queries.GetUserById;
+using ElectronicShop.Utilities.SystemConstants;
 using ElectronicShop.WebApi.ActionFilters;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace ElectronicShop.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UsersController : BaseController
     {
         private readonly IMediator _mediator;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UsersController(IMediator mediator)
+        public UsersController(IMediator mediator, IHttpContextAccessor httpContextAccessor)
         {
             _mediator = mediator;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        /// <summary>
-        /// Đăng ký thông tin tài khoản
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
         [HttpPost("create")]
-        [AllowAnonymous]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [AllowAnonymous]
         public async Task<IActionResult> Create([FromBody] CreateUserCommand request)
         {
-            var result = await _mediator.Send(request);
-
-            return result.IsSuccessed ? (IActionResult)Ok(result) : BadRequest(result);
+            return Ok(await _mediator.Send(request));
         }
 
-        /// <summary>
-        /// Cập nhật thông tin người dùng (chức năng dành cho Admin)
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
         [HttpPut("update")]
-        [Authorize(Roles = "Admin")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [Authorize(Roles = Constants.ADMIN)]
         public async Task<IActionResult> Update([FromBody] UpdateUserCommand request)
         {
-            var result = await _mediator.Send(request);
-
-            return result.IsSuccessed ? (IActionResult)Ok(result) : BadRequest(result);
+            return Ok(await _mediator.Send(request));
         }
 
-        /// <summary>
-        /// Cập nhật thông tin cá nhân người đăng nhập hiện tại
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
         [HttpPut("update/me")]
         [Authorize]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> UpdateMe([FromBody] UpdateUserCommand request)
         {
-            // Kiểm tra mã người dùng hiện tại thông qua session và request có khớp không
+            string _userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            var result = await _mediator.Send(request);
+            if (!_userId.Equals(request.Id.ToString()))
+            {
+                return Ok(new { message = "Thông tin chỉnh sửa không khớp với người dùng hiện tại." });
+            }
 
-            return result.IsSuccessed ? (IActionResult)Ok(result) : BadRequest(result);
-        } 
+            return Ok(await _mediator.Send(request));
 
-        /// <summary>
-        /// Xóa tài khoản người dùng (chức năng của Admin)
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
+        }
+
         [HttpDelete("delete/{userId}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = Constants.ADMIN)]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> Delete(int userId)
         {
             var query = new DeleteUserCommand(userId);
 
-            var result = await _mediator.Send(query);
-
-            return result.IsSuccessed ? (IActionResult)Ok(result) : BadRequest(result);
+            return Ok(await _mediator.Send(query));
         }
 
-        /// <summary>
-        /// Khóa tài khoản người dùng (chức năng dành cho Admin)
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
         [HttpPut("disable/{userId}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = Constants.ADMIN)]
         public async Task<IActionResult> DisableAccount(int userId)
         {
-            var query = new DisableAccountCommand(userId);
+            var command = new DisableAccountCommand(userId);
 
-            var result = await _mediator.Send(query);
-
-            return Ok(result);
+            return Ok(await _mediator.Send(command));
         }
 
-        /// <summary>
-        /// Lấy thông tin người dùng theo mã userId
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
         [HttpGet("{userId}")]
-        [Authorize]
-        public async Task<IActionResult> GetUserById (int userId)
+        [Authorize(Roles = Constants.ADMIN)]
+        public async Task<IActionResult> GetUserById(int userId)
         {
             var query = new GetByIdUserQuery(userId);
 
-            var result = await _mediator.Send(query);
-
-            return Ok(result);
+            return Ok(await _mediator.Send(query));
         }
 
-        /// <summary>
-        /// Lấy thông tin của tất cả người dùng (chức năng dành cho Admin)
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [HttpGet("me")]
+        [Authorize]
+        public async Task<IActionResult> GetProfile()
+        {
+            string _userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var query = new GetByIdUserQuery(Int32.Parse(_userId));
+
+            return Ok(await _mediator.Send(query));
+        }
+
+        [HttpGet("get-all")]
+        [Authorize(Roles = Constants.ADMIN)]
         public async Task<IActionResult> GetAllUser()
         {
             var query = new GetAllUserQuery();
 
-            var result = await _mediator.Send(query);
-
-            return Ok(result);
+            return Ok(await _mediator.Send(query));
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace ElectronicShop.Data.Entities
+﻿using System;
+
+namespace ElectronicShop.Data.Entities
 {
     public class ProductReview
     {
@@ -11,6 +13,8 @@
         public double RateStar { get; set; }
 
         public string Text { get; set; }
+
+        public DateTime CreateDate { get; set; }
 
         public User User { get; set; }
 

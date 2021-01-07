@@ -19,8 +19,7 @@ namespace ElectronicShop.Data.Configurations
                 .HasColumnType("DateTime");
 
             builder.Property(x => x.ModifiedDate)
-                .HasColumnType("DateTime")
-                .IsRequired();
+                .HasColumnType("DateTime");
 
             builder.Property(x => x.DeliveryDate)
                 .HasColumnType("DateTime")
@@ -48,6 +47,11 @@ namespace ElectronicShop.Data.Configurations
             builder.HasOne(x => x.OrderStatus)
                 .WithMany(x => x.Orders)
                 .HasForeignKey(x => x.StatusId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(x => x.User)
+                .WithMany(x => x.Orders)
+                .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

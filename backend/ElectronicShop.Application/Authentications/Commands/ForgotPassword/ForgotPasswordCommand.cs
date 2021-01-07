@@ -1,6 +1,7 @@
 ﻿using ElectronicShop.Application.Authentications.Services;
 using ElectronicShop.Application.Common.Models;
 using MediatR;
+using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,6 +9,7 @@ namespace ElectronicShop.Application.Authentications.Commands.ForgotPassword
 {
     public class ForgotPasswordCommand : IRequest<ApiResult<string>>
     {
+        [Required, DataType(DataType.EmailAddress)]
         public string Email { get; set; }
     }
 

@@ -1,6 +1,8 @@
 ﻿using ElectronicShop.Application.Authentications.Commands.Authenticate;
+using ElectronicShop.Application.Authentications.Commands.ExternalLogins;
 using ElectronicShop.Application.Authentications.Commands.ForgotPassword;
 using ElectronicShop.Application.Authentications.Commands.ResetPassword;
+using ElectronicShop.Application.Authentications.Commands.SignOut;
 using ElectronicShop.Infrastructure.SendMail;
 using ElectronicShop.WebApi.ActionFilters;
 using MediatR;
@@ -17,35 +19,32 @@ namespace ElectronicShop.WebApi.Controllers
         private readonly IMediator _mediator;
         private readonly IMailer _mailer;
         private readonly IUrlHelper _urlHelper;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthController(IMediator mediator, IMailer mailer, IUrlHelper urlHelper, IHttpContextAccessor httpContextAccessor)
+        public AuthController(IMediator mediator, IMailer mailer, IUrlHelper urlHelper)
         {
             _mediator = mediator;
             _mailer = mailer;
             _urlHelper = urlHelper;
-            _httpContextAccessor = httpContextAccessor;
         }
 
-        /// <summary>
-        /// Chức năng đăng nhập
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> Authenticate([FromBody] AuthenticateCommand request)
         {
             var result = await _mediator.Send(request);
 
-            return result.IsSuccessed ? (IActionResult)Ok(result) : BadRequest(result);
+            return Ok(result);
         }
 
-        /// <summary>
-        /// Chức năng quên mật khẩu
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
+        [HttpPost("external-logins")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> ExternalLogins(ExternalLoginsCommand command)
+        {
+            var result = await _mediator.Send(command);
+
+            return Ok(result);
+        }
+
         [HttpPost("forgot-password")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordCommand request)
@@ -58,11 +57,11 @@ namespace ElectronicShop.WebApi.Controllers
             }
 
             var callbackUrl = _urlHelper.Action(
-               controller: "ForgotPassword",
-               action: "ResetPassword",
-               values: new { email = request.Email, result.ResultObj },
-               protocol: _httpContextAccessor.HttpContext.Request.Scheme,
-               host: "localhost:5001"
+               controller: "",
+               action: "",
+               values: new { email = request.Email, token = result.ResultObj },
+               protocol: HttpContext.Request.Scheme,
+               host: "localhost:3001"
            );
 
             await _mailer.SenEmailAsync(request.Email, "Reset Password", callbackUrl);
@@ -70,16 +69,19 @@ namespace ElectronicShop.WebApi.Controllers
             return Ok(result);
         }
 
-        /// <summary>
-        /// Chức năng tạo lại mật khẩu
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
         [HttpPost("reset-password")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand request)
         {
             await _mediator.Send(request);
+
+            return Ok();
+        }
+
+        [HttpPost("sign-out")]
+        public async Task<IActionResult> SignOut()
+        {
+            await _mediator.Send(new SignOutCommand());
 
             return NoContent();
         }

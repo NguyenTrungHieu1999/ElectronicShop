@@ -41,17 +41,11 @@ namespace ElectronicShop.Data.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("DateTime");
 
-                    b.Property<string>("Icon")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
-
                     b.Property<string>("ModifiedBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(30)")
                         .HasMaxLength(30);
 
-                    b.Property<DateTime>("ModifiedDate")
+                    b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("DateTime");
 
                     b.Property<string>("Name")
@@ -62,7 +56,7 @@ namespace ElectronicShop.Data.Migrations
                     b.Property<int>("ProductTypeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("RootId")
+                    b.Property<int?>("RootId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -86,10 +80,10 @@ namespace ElectronicShop.Data.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("DateTime");
 
-                    b.Property<DateTime>("ModifiedDate")
+                    b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("DateTime");
 
-                    b.Property<int>("ParentId")
+                    b.Property<int?>("ParentId")
                         .HasColumnType("int");
 
                     b.Property<int>("ProductId")
@@ -152,7 +146,7 @@ namespace ElectronicShop.Data.Migrations
                     b.Property<DateTime>("DeliveryDate")
                         .HasColumnType("DateTime");
 
-                    b.Property<DateTime>("ModifiedDate")
+                    b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("DateTime");
 
                     b.Property<bool>("Paid")
@@ -179,7 +173,7 @@ namespace ElectronicShop.Data.Migrations
                     b.Property<decimal>("TotalMoney")
                         .HasColumnType("decimal(18,0)");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -302,11 +296,10 @@ namespace ElectronicShop.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ModifiedBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(30)")
                         .HasMaxLength(30);
 
-                    b.Property<DateTime>("ModifiedDate")
+                    b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("DateTime");
 
                     b.Property<string>("Name")
@@ -347,9 +340,7 @@ namespace ElectronicShop.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(500)")
-                        .HasMaxLength(500);
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -366,6 +357,9 @@ namespace ElectronicShop.Data.Migrations
                         .HasAnnotation("SqlServer:IdentityIncrement", 1)
                         .HasAnnotation("SqlServer:IdentitySeed", 1)
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("DateTime");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -397,6 +391,9 @@ namespace ElectronicShop.Data.Migrations
                         .HasAnnotation("SqlServer:IdentityIncrement", 1)
                         .HasAnnotation("SqlServer:IdentitySeed", 1)
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Icon")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -478,11 +475,10 @@ namespace ElectronicShop.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasColumnType("nvarchar(500)")
                         .HasMaxLength(500);
 
-                    b.Property<DateTime>("Birthday")
+                    b.Property<DateTime?>("Birthday")
                         .HasColumnType("DateTime");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -504,7 +500,6 @@ namespace ElectronicShop.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstMiddleName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
@@ -512,7 +507,6 @@ namespace ElectronicShop.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(20)")
                         .HasMaxLength(20);
 
@@ -526,7 +520,7 @@ namespace ElectronicShop.Data.Migrations
                         .HasColumnType("nvarchar(30)")
                         .HasMaxLength(30);
 
-                    b.Property<DateTime>("ModifiedDate")
+                    b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("DateTime");
 
                     b.Property<string>("NormalizedEmail")
@@ -539,7 +533,6 @@ namespace ElectronicShop.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(11)")
                         .HasMaxLength(11);
 
@@ -680,8 +673,7 @@ namespace ElectronicShop.Data.Migrations
                     b.HasOne("ElectronicShop.Data.Entities.Category", "Parent")
                         .WithMany("Children")
                         .HasForeignKey("RootId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ElectronicShop.Data.Entities.Comment", b =>
@@ -689,8 +681,7 @@ namespace ElectronicShop.Data.Migrations
                     b.HasOne("ElectronicShop.Data.Entities.Comment", "Parent")
                         .WithMany("Children")
                         .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ElectronicShop.Data.Entities.Product", "Product")
                         .WithMany("Comments")
@@ -728,9 +719,11 @@ namespace ElectronicShop.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ElectronicShop.Data.Entities.User", null)
+                    b.HasOne("ElectronicShop.Data.Entities.User", "User")
                         .WithMany("Orders")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ElectronicShop.Data.Entities.OrderDetail", b =>

@@ -9,33 +9,28 @@ using System.Threading.Tasks;
 
 namespace ElectronicShop.Application.Users.Commands.UpdateUser
 {
-    public class UpdateUserCommand : IRequest<ApiResult<bool>>
+    public class UpdateUserCommand : IRequest<ApiResult<string>>
     {
         public int Id { get; set; }
 
-        [Required, StringLength(50, MinimumLength = 1)]
         public string FirstMiddleName { get; set; }
 
-        [Required, StringLength(30, MinimumLength = 1)]
         public string LastName { get; set; }
 
-        [Required, DataType(DataType.Date)]
-        public DateTime Birthday { get; set; }
+        public DateTime? Birthday { get; set; }
 
-        [Required]
         public Gender Gender { get; set; }
 
-        [Required, DataType(DataType.PhoneNumber), StringLength(11)]
-        [Phone]
         public string PhoneNumber { get; set; }
 
         public string Address { get; set; }
 
-        [Required]
         public UserStatus Status { get; set; }
+
+        public string UserInRole { get; set; }
     }
 
-    public class UpdateUserHandle : IRequestHandler<UpdateUserCommand, ApiResult<bool>>
+    public class UpdateUserHandle : IRequestHandler<UpdateUserCommand, ApiResult<string>>
     {
         private readonly IUserService _userService;
 
@@ -44,7 +39,7 @@ namespace ElectronicShop.Application.Users.Commands.UpdateUser
             _userService = userService;
         }
 
-        public async Task<ApiResult<bool>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<string>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
             return await _userService.UpdateAsync(request);
         }

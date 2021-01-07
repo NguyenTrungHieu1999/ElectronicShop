@@ -1,11 +1,14 @@
 using AutoMapper;
 using ElectronicShop.Application.Authentications.Services;
+using ElectronicShop.Application.Categories.Services;
+using ElectronicShop.Application.Common.Mapper;
 using ElectronicShop.Application.Common.Repositories.Wrapper;
+using ElectronicShop.Application.Products.Services;
 using ElectronicShop.Application.Users.Services;
 using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
+using ElectronicShop.Infrastructure.FileImage;
 using ElectronicShop.Infrastructure.SendMail;
-using ElectronicShop.Utilities.Mapper;
 using ElectronicShop.WebApi.ActionFilters;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -23,6 +26,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Text;
+using ElectronicShop.Application.ProductPhotos.Services;
+using ProductService = ElectronicShop.Application.Products.Services.ProductService;
+using ElectronicShop.Application.Orders.Services;
 
 namespace ElectronicShop.WebApi
 {
@@ -36,17 +42,31 @@ namespace ElectronicShop.WebApi
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        [Obsolete]
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.WithOrigins("http://localhost:3000/", "http://localhost:3001/")
+                       .AllowAnyMethod()
+                       .AllowAnyHeader()
+                       .AllowCredentials()
+                       .SetIsOriginAllowed((host) => true);
+            }));
+
             // Model state validation filter ASP.NET Core
             services.AddScoped<ValidationFilterAttribute>();
 
             // Handler for MediatR query ASP.Net Core
             services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
 
+            // Fix .Net Core 3.1 possible object cycle was detected which is not supported
+            services.AddControllers()
+                .AddNewtonsoftJson(options =>
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                );
+
             // Compatibility version for ASP.NET Core MVC
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc();//.SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             // For use Session
             services.AddDistributedMemoryCache();
@@ -60,60 +80,67 @@ namespace ElectronicShop.WebApi
 
             // In the accepted answer "Bearer " is required to be written before the actual token. 
             // A similar approach in which typing "Bearer " can be skipped is the following:
-            services.AddSwaggerGen(c =>
+            // Enable Swagger   
+            services.AddSwaggerGen(swagger =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ElectronicShop", Version = "v1" });
-
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                //This is to generate the Default UI of Swagger Documentation  
+                swagger.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "JWT Token Authentication API",
+                    Description = "ASP.NET Core 3.1 Web API"
+                });
+                // To Enable authorization using Swagger (JWT)  
+                swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {
                     Name = "Authorization",
                     Type = SecuritySchemeType.ApiKey,
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-                    Description = "JWT Authorization header using the Bearer scheme."
+                    Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\"",
                 });
+                swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                          new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer"
+                                }
+                            },
+                            new string[] {}
 
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                 {
-                     {
-                           new OpenApiSecurityScheme
-                             {
-                                 Reference = new OpenApiReference
-                                 {
-                                     Type = ReferenceType.SecurityScheme,
-                                     Id = "Bearer"
-                                 }
-                             },
-                             new string[] {}
-                     }
-                 });
+                    }
+                });
             });
 
-            // Configure the authentication schema with JWT bearer options
-            services.AddAuthentication(options =>
+            services.AddAuthentication(option =>
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
             })
-           // Adding Jwt Bearer
-           .AddJwtBearer(options =>
-           {
-               options.SaveToken = true;
-               options.RequireHttpsMetadata = false;
-               options.TokenValidationParameters = new TokenValidationParameters()
-               {
-                   ValidateIssuerSigningKey = true,
-                   ValidateIssuer = true,
-                   ValidateAudience = true,
-                   ValidAudience = Configuration["JWT:ValidAudience"],
-                   ValidIssuer = Configuration["JWT:ValidIssuer"],
-                   RequireExpirationTime = true,
-                   ValidateLifetime = true,
-                   ClockSkew = TimeSpan.Zero,
-                   IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
-               };
-           });
+            .AddGoogle(option =>
+            {
+                option.ClientId = "266745939810-8pkul8mbskjscf713hlrticfepc1a38m.apps.googleusercontent.com";
+                option.ClientSecret = "ufNwpN33IK1gfmsfa502LIR_";
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = false,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = Configuration["Jwt:ValidIssuer"],
+                    ValidAudience = Configuration["Jwt:ValidAudience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Secret"]))
+                };
+            });
 
             // For use AutoMapper
             services.AddAutoMapper(typeof(ElectronicShopProfile));
@@ -124,24 +151,26 @@ namespace ElectronicShop.WebApi
                 .AddEntityFrameworkStores<ElectronicShopDbContext>()
                 .AddDefaultTokenProviders();
 
-            // For .NET Core MVC Page Not Refreshing After Changes
-            services.AddControllersWithViews().AddRazorRuntimeCompilation();
-
             // Insert SMTP settings parser and initialize a singleton object that will handle mail service
             services.Configure<SmtpSettings>(Configuration.GetSection("SmtpSettings"));
             services.AddSingleton<IMailer, Mailer>();
 
             // DI
+            services.AddTransient<IStorageService, FileStorageService>();
+            services.AddTransient<IOrderService, OrderService>();
+            services.AddTransient<IProductPhotoService, ProductPhotoService>();
+            services.AddTransient<IProductService, ProductService>();
+            services.AddTransient<ICategoryService, CategoryService>();
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<UserManager<User>, UserManager<User>>();
             services.AddTransient<SignInManager<User>, SignInManager<User>>();
             services.AddTransient<IRepositoryWrapper, RepositoryWrapper>();
 
-            services.AddControllers();
-
+            // Fix Create Url.Action is null
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
-            services.AddScoped<IUrlHelper>(x => {
+            services.AddScoped<IUrlHelper>(x =>
+            {
                 var actionContext = x.GetRequiredService<IActionContextAccessor>().ActionContext;
                 var factory = x.GetRequiredService<IUrlHelperFactory>();
                 return factory.GetUrlHelper(actionContext);
@@ -159,12 +188,16 @@ namespace ElectronicShop.WebApi
 
             app.UseHttpsRedirection();
 
-            app.UseRouting();
+            app.UseStaticFiles();
 
-            app.UseAuthentication();
+            app.UseRouting();
 
             // Configure the authentication schema with JWT bearer options
             app.UseAuthorization();
+
+            app.UseAuthentication();
+
+            app.UseCors("MyPolicy");
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();

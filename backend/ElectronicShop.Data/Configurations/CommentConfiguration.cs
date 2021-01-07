@@ -24,7 +24,7 @@ namespace ElectronicShop.Data.Configurations
 
             builder.Property(x => x.ModifiedDate)
                 .HasColumnType("DateTime")
-                .IsRequired();
+                .IsRequired(false);
 
             builder.Property(x => x.UserId)
                 .IsRequired();

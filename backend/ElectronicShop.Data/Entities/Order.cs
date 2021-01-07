@@ -9,7 +9,7 @@ namespace ElectronicShop.Data.Entities
 
         public DateTime CreatedDate { get; set; }
 
-        public DateTime ModifiedDate { get; set; }
+        public DateTime? ModifiedDate { get; set; }
 
         public DateTime DeliveryDate { get; set; }//Ngày giao dự kiến
 
@@ -24,6 +24,10 @@ namespace ElectronicShop.Data.Entities
         public decimal TotalMoney { get; set; }
 
         public int StatusId { get; set; }
+
+        public int UserId { get; set; }
+
+        public User User { get; set; }
 
         public OrderStatus OrderStatus { get; set; }
 
