@@ -16,16 +16,13 @@ namespace ElectronicShop.Data.Configurations
                 .UseIdentityColumn();
 
             builder.Property(x => x.FirstMiddleName)
-                .HasMaxLength(50)
-                .IsRequired();
+                .HasMaxLength(50);
 
             builder.Property(x => x.LastName)
-                .HasMaxLength(20)
-                .IsRequired();
+                .HasMaxLength(20);
 
             builder.Property(x => x.Address)
-                .HasMaxLength(500)
-                .IsRequired();
+                .HasMaxLength(500);
 
             builder.Property(x => x.Status)
                 .IsRequired();
@@ -57,8 +54,7 @@ namespace ElectronicShop.Data.Configurations
                 .IsRequired();
 
             builder.Property(x => x.PhoneNumber)
-                .HasMaxLength(11)
-                .IsRequired();
+                .HasMaxLength(11);
         }
     }
 }

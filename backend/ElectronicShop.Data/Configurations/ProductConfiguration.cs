@@ -46,8 +46,7 @@ namespace ElectronicShop.Data.Configurations
               .HasColumnType("DateTime");
 
             builder.Property(x => x.ModifiedDate)
-                .HasColumnType("DateTime")
-                .IsRequired();
+                .HasColumnType("DateTime");
 
             builder.Property(x => x.CreatedBy)
                 .HasMaxLength(30)
@@ -55,7 +54,7 @@ namespace ElectronicShop.Data.Configurations
 
             builder.Property(x => x.ModifiedBy)
                 .HasMaxLength(30)
-                .IsRequired();
+                .IsRequired(false);
 
             builder.HasOne(x => x.Category)
                 .WithMany(x => x.Products)

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ElectronicShop.Application.Authentications.Commands.ResetPassword
 {
-    public class ResetPasswordCommand : IRequest<ApiResult<bool>>
+    public class ResetPasswordCommand : IRequest<ApiResult<string>>
     {
         [Required]
         public string Token { get; set; }
@@ -19,7 +19,7 @@ namespace ElectronicShop.Application.Authentications.Commands.ResetPassword
 
         [Required]
         [DataType(DataType.Password)]
-        [RegularExpression("(?=^.{8,10}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+}{\":;'?/>.<,])(?!.*\\s).*$", ErrorMessage = "Validation for 8-10 characters with characters,numbers,1 upper case letter and special characters.")]
+        [RegularExpression("(?=^.{8,30}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+}{\":;'?/>.<,])(?!.*\\s).*$", ErrorMessage = "Validation for 8-30 characters with characters,numbers,1 upper case letter and special characters.")]
         public string Password { get; set; }
 
         [Required]
@@ -28,7 +28,7 @@ namespace ElectronicShop.Application.Authentications.Commands.ResetPassword
         public string ConfirmPassword { get; set; }
     }
 
-    public class ResetPasswordHandle : IRequestHandler<ResetPasswordCommand, ApiResult<bool>>
+    public class ResetPasswordHandle : IRequestHandler<ResetPasswordCommand, ApiResult<string>>
     {
         private readonly IAuthService _authService;
 
@@ -37,7 +37,7 @@ namespace ElectronicShop.Application.Authentications.Commands.ResetPassword
             _authService = authService;
         }
 
-        public async Task<ApiResult<bool>> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<string>> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
         {
             return await _authService.ResetPasswordAsync(request);
         }

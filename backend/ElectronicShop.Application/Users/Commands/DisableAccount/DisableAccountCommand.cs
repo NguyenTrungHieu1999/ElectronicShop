@@ -1,15 +1,12 @@
 ﻿using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Application.Users.Services;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace ElectronicShop.Application.Users.Commands.DisableAccount
 {
-    public class DisableAccountCommand : IRequest<ApiResult<bool>>
+    public class DisableAccountCommand : IRequest<ApiResult<string>>
     {
         public int UserId { get; }
 
@@ -19,7 +16,7 @@ namespace ElectronicShop.Application.Users.Commands.DisableAccount
         }
     }
 
-    public class DisableAccountHandle : IRequestHandler<DisableAccountCommand, ApiResult<bool>>
+    public class DisableAccountHandle : IRequestHandler<DisableAccountCommand, ApiResult<string>>
     {
         private readonly IUserService _userService;
 
@@ -28,7 +25,7 @@ namespace ElectronicShop.Application.Users.Commands.DisableAccount
             _userService = userService;
         }
 
-        public Task<ApiResult<bool>> Handle(DisableAccountCommand request, CancellationToken cancellationToken)
+        public Task<ApiResult<string>> Handle(DisableAccountCommand request, CancellationToken cancellationToken)
         {
             return _userService.DisableAccountAsync(request.UserId);
         }

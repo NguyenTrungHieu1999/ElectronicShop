@@ -9,13 +9,13 @@ namespace ElectronicShop.Application.Users.Services
 {
     public interface IUserService
     {
-        Task<ApiResult<bool>> CreateAsync(CreateUserCommand request);
+        Task<ApiResult<string>> CreateAsync(CreateUserCommand request);
 
-        Task<ApiResult<bool>> UpdateAsync(UpdateUserCommand request);
+        Task<ApiResult<string>> UpdateAsync(UpdateUserCommand request);
 
-        Task<ApiResult<bool>> DeleteAsync(int userId);
+        Task<ApiResult<string>> DeleteAsync(int userId);
 
-        Task<ApiResult<bool>> DisableAccountAsync(int userId);
+        Task<ApiResult<string>> DisableAccountAsync(int userId);
 
         Task<ApiResult<UserVm>> GetByIdAsync(int userId);
 
