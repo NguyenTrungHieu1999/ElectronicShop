@@ -23,7 +23,7 @@ namespace ElectronicShop.Application.Orders.Queries.GetOrderByUserId
 
         public async Task<ApiResult<List<OrderVm>>> Handle(GetOrderByUserIdQuery request, CancellationToken cancellationToken)
         {
-            return await _orderService.GetOrderByUserId();
+            return await _orderService.GetOrderByUserIdAsync();
         }
     }
 }

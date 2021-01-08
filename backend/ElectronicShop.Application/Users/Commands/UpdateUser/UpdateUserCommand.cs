@@ -21,6 +21,8 @@ namespace ElectronicShop.Application.Users.Commands.UpdateUser
 
         public Gender Gender { get; set; }
 
+        [DataType(DataType.PhoneNumber)]
+        [Phone]
         public string PhoneNumber { get; set; }
 
         public string Address { get; set; }

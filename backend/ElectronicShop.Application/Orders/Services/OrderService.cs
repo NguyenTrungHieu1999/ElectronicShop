@@ -5,7 +5,6 @@ using ElectronicShop.Application.Orders.Commands.CreateOrder;
 using ElectronicShop.Application.Orders.Models;
 using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
-using ElectronicShop.Data.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -21,7 +20,7 @@ namespace ElectronicShop.Application.Orders.Services
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ElectronicShopDbContext _context;
-        private const int maxOrderStatusId = 7;
+        private const int MaxOrderStatusId = 7;
 
         public OrderService(IRepositoryWrapper repository, IMapper mapper, 
             IHttpContextAccessor httpContextAccessor, ElectronicShopDbContext context)
@@ -38,8 +37,8 @@ namespace ElectronicShop.Application.Orders.Services
             var order = _mapper.Map<Order>(command);
             order.CreatedDate = DateTime.Now;
             order.DeliveryDate = DateTime.Now.AddDays(7);
-            order.StatusId = (int)(EOrderStatus.ORDERSUCCESS + 1);
-            order.UserId = Int32.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            order.StatusId = 1;
+            order.UserId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
             // Tạo thông tin trạng thái của đơn hàng
             order.OrderStatusDetails = new List<OrderStatusDetail>()
@@ -63,9 +62,9 @@ namespace ElectronicShop.Application.Orders.Services
         {
             var order = await _repository.OrderRepository.FindByIdAsync(orderId);
 
-            if(order.StatusId <= maxOrderStatusId)
+            if(order.StatusId <= MaxOrderStatusId)
             {
-                order.StatusId = order.StatusId + 1;
+                order.StatusId += 1;
             }
 
             var orderStatus = await _context.OrderStatuses.FindAsync(order.StatusId);
@@ -96,17 +95,79 @@ namespace ElectronicShop.Application.Orders.Services
             return await Task.FromResult(new ApiSuccessResult<List<OrderVm>>(result));
         }
 
-        public async Task<ApiResult<List<OrderVm>>> GetOrderByUserId()
+        public async Task<ApiResult<List<OrderVm>>> GetOrderByUserIdAsync()
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             var orders = await _repository.OrderRepository
-                .FindByCondition(x => x.UserId == Int32.Parse(userId))
+                .FindByCondition(x => x.UserId == int.Parse(userId))
                 .ToListAsync();
 
             var result = _mapper.Map<List<OrderVm>>(orders);
 
             return await Task.FromResult(new ApiSuccessResult<List<OrderVm>>(result));
+        }
+
+        public async Task<ApiResult<OrderVm>> GetOrderByIdAsync(int orderId)
+        {
+            var order = await _repository.OrderRepository.FindByIdAsync(orderId);
+
+            var result = _mapper.Map<OrderVm>(order);
+
+            return await Task.FromResult(new ApiSuccessResult<OrderVm>(result));
+        }
+
+        public async Task<ApiResult<OrderVm>> MyOrderByIdAsync(int orderId)
+        {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var order = await _repository.OrderRepository.FindByIdAsync(orderId);
+
+            var result = _mapper.Map<OrderVm>(order);
+
+            if (order.UserId.Equals(int.Parse(userId)))
+            {
+                return await Task.FromResult(new ApiSuccessResult<OrderVm>(result));
+            }
+            
+            return await Task.FromResult(new ApiErrorResult<OrderVm>("Không tìm thấy đơn hàng."));
+        }
+
+        public async Task<ApiResult<string>> CancleOrderAsync(int orderId)
+        {
+            var order = await _repository.OrderRepository.FindByIdAsync(orderId);
+
+            order.StatusId = 8;
+            
+            // Tạo thông tin trạng thái của đơn hàng
+            order.OrderStatusDetails = new List<OrderStatusDetail>()
+            {
+                new OrderStatusDetail()
+                {
+                    StatusId = order.StatusId,
+                    CreatedDate = DateTime.Now
+                }
+            };
+            
+            _repository.OrderRepository.Update(order);
+
+            await _repository.SaveChangesAsync();
+
+            return await Task.FromResult(new ApiSuccessResult<string>("Đơn hàng đã được hủy."));
+        }
+        
+        public async Task<ApiResult<string>> CancleMyOrderAsync(int orderId)
+        {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var order = await _repository.OrderRepository.FindByIdAsync(orderId);
+
+            if (order.UserId.Equals(int.Parse(userId)))
+            {
+                return await CancleOrderAsync(orderId);
+            }
+
+            return await Task.FromResult(new ApiErrorResult<string>("Không tìm thấy đơn hàng."));
         }
     }
 }

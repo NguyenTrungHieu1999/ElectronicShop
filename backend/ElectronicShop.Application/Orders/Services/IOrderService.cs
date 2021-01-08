@@ -14,6 +14,14 @@ namespace ElectronicShop.Application.Orders.Services
 
         Task<ApiResult<List<OrderVm>>> GetAllAsync();
 
-        Task<ApiResult<List<OrderVm>>> GetOrderByUserId();
+        Task<ApiResult<List<OrderVm>>> GetOrderByUserIdAsync();
+
+        Task<ApiResult<OrderVm>> GetOrderByIdAsync(int orderId);
+
+        Task<ApiResult<OrderVm>> MyOrderByIdAsync(int orderId);
+
+        Task<ApiResult<string>> CancleOrderAsync(int orderId);
+
+        Task<ApiResult<string>> CancleMyOrderAsync(int orderId);
     }
 }

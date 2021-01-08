@@ -9,6 +9,10 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using ElectronicShop.Application.Orders.Commands.CancleMyOrder;
+using ElectronicShop.Application.Orders.Commands.CancleOrder;
+using ElectronicShop.Application.Orders.Queries.GetOrderById;
+using ElectronicShop.Application.Orders.Queries.MyOrderById;
 
 namespace ElectronicShop.WebApi.Controllers
 {
@@ -54,6 +58,34 @@ namespace ElectronicShop.WebApi.Controllers
         public async Task<IActionResult> GetOrderByUserId()
         {
             return Ok(await _mediator.Send(new GetOrderByUserIdQuery()));
+        }
+
+        [HttpGet("{orderId}")]
+        [AuthorizeRoles(Constants.ADMIN, Constants.EMP)]
+        public async Task<IActionResult> GetOrderById(int orderId)
+        {
+            return Ok(await _mediator.Send(new GetOrderByIdQuery(orderId)));
+        }
+
+        [HttpGet("my-order/id={orderId}")]
+        [Authorize]
+        public async Task<IActionResult> MyOrderById(int orderId)
+        {
+            return Ok(await _mediator.Send(new MyOrderByIdQuery(orderId)));
+        }
+
+        [HttpPost("cancle-order/id={orderId}")]
+        [AuthorizeRoles(Constants.ADMIN, Constants.EMP)]
+        public async Task<IActionResult> CancleOrder(int orderId)
+        {
+            return Ok(await _mediator.Send(new CancleOrderCommand(orderId)));
+        }
+        
+        [HttpPost("cancle-my-order/id={orderId}")]
+        [Authorize]
+        public async Task<IActionResult> CancleMyOrder(int orderId)
+        {
+            return Ok(await _mediator.Send(new CancleMyOrderCommand(orderId)));
         }
     }
 }
