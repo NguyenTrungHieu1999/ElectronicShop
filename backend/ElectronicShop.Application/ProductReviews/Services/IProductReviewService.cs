@@ -1,7 +1,12 @@
-﻿namespace ElectronicShop.Application.ProductReviews.Services
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using ElectronicShop.Application.Common.Models;
+using ElectronicShop.Data.Entities;
+
+namespace ElectronicShop.Application.ProductReviews.Services
 {
-    public class IProductReviewService
+    public interface IProductReviewService
     {
-        
+        Task<ApiResult<List<ProductReview>>> GetAllAsync();
     }
 }

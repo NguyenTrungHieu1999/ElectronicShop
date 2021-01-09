@@ -22,6 +22,8 @@
   <ItemGroup>
     <Folder Include="OrderDetails\Commands" />
     <Folder Include="Orders\Models" />
+    <Folder Include="ProductReviews\Commands" />
+    <Folder Include="ProductReviews\Queries" />
   </ItemGroup>
 
 </Project>

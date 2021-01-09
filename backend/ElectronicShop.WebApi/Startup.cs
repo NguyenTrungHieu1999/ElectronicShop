@@ -30,6 +30,7 @@ using ElectronicShop.Application.OrderDetails.Services;
 using ElectronicShop.Application.ProductPhotos.Services;
 using ProductService = ElectronicShop.Application.Products.Services.ProductService;
 using ElectronicShop.Application.Orders.Services;
+using ElectronicShop.Application.ProductReviews.Services;
 
 namespace ElectronicShop.WebApi
 {
@@ -152,6 +153,7 @@ namespace ElectronicShop.WebApi
 
             // DI
             services.AddTransient<IStorageService, FileStorageService>();
+            services.AddTransient<IProductReviewService, ProductReviewService>();
             services.AddTransient<ICommentService, CommentService>();
             services.AddTransient<IOrderDetailService, OrderDetailService>();
             services.AddTransient<IOrderService, OrderService>();
