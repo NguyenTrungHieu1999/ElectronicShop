@@ -2,7 +2,6 @@ using AutoMapper;
 using ElectronicShop.Application.Authentications.Services;
 using ElectronicShop.Application.Categories.Services;
 using ElectronicShop.Application.Common.Mapper;
-using ElectronicShop.Application.Common.Repositories.Wrapper;
 using ElectronicShop.Application.Products.Services;
 using ElectronicShop.Application.Users.Services;
 using ElectronicShop.Data.EF;
@@ -26,6 +25,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Text;
+using ElectronicShop.Application.Comments.Services;
 using ElectronicShop.Application.OrderDetails.Services;
 using ElectronicShop.Application.ProductPhotos.Services;
 using ProductService = ElectronicShop.Application.Products.Services.ProductService;
@@ -48,10 +48,10 @@ namespace ElectronicShop.WebApi
             services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
             {
                 builder.WithOrigins("http://localhost:3000/", "http://localhost:3001/")
-                       .AllowAnyMethod()
-                       .AllowAnyHeader()
-                       .AllowCredentials()
-                       .SetIsOriginAllowed((host) => true);
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials()
+                    .SetIsOriginAllowed((host) => true);
             }));
 
             // Model state validation filter ASP.NET Core
@@ -67,7 +67,7 @@ namespace ElectronicShop.WebApi
                 );
 
             // Compatibility version for ASP.NET Core MVC
-            services.AddMvc();//.SetCompatibilityVersion(CompatibilityVersion.Latest);
+            services.AddMvc(); //.SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             // For use Session
             services.AddDistributedMemoryCache();
@@ -99,49 +99,43 @@ namespace ElectronicShop.WebApi
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-                    Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\"",
+                    Description =
+                        "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\"",
                 });
                 swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
                     {
-                          new OpenApiSecurityScheme
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
                             {
-                                Reference = new OpenApiReference
-                                {
-                                    Type = ReferenceType.SecurityScheme,
-                                    Id = "Bearer"
-                                }
-                            },
-                            new string[] {}
-
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
                     }
                 });
             });
 
             services.AddAuthentication(option =>
-            {
-                option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
-            })
-            .AddGoogle(option =>
-            {
-                option.ClientId = "266745939810-8pkul8mbskjscf713hlrticfepc1a38m.apps.googleusercontent.com";
-                option.ClientSecret = "ufNwpN33IK1gfmsfa502LIR_";
-            })
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = false,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = Configuration["Jwt:ValidIssuer"],
-                    ValidAudience = Configuration["Jwt:ValidAudience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Secret"]))
-                };
-            });
+                    option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = false,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = Configuration["Jwt:ValidIssuer"],
+                        ValidAudience = Configuration["Jwt:ValidAudience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Secret"]))
+                    };
+                });
 
             // For use AutoMapper
             services.AddAutoMapper(typeof(ElectronicShopProfile));
@@ -158,6 +152,7 @@ namespace ElectronicShop.WebApi
 
             // DI
             services.AddTransient<IStorageService, FileStorageService>();
+            services.AddTransient<ICommentService, CommentService>();
             services.AddTransient<IOrderDetailService, OrderDetailService>();
             services.AddTransient<IOrderService, OrderService>();
             services.AddTransient<IProductPhotoService, ProductPhotoService>();
@@ -167,7 +162,6 @@ namespace ElectronicShop.WebApi
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<UserManager<User>, UserManager<User>>();
             services.AddTransient<SignInManager<User>, SignInManager<User>>();
-            services.AddTransient<IRepositoryWrapper, RepositoryWrapper>();
 
             // Fix Create Url.Action is null
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
@@ -177,7 +171,6 @@ namespace ElectronicShop.WebApi
                 var factory = x.GetRequiredService<IUrlHelperFactory>();
                 return factory.GetUrlHelper(actionContext);
             });
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -206,10 +199,7 @@ namespace ElectronicShop.WebApi
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
             // specifying the Swagger JSON endpoint.
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "ElectronicShop API V1");
-            });
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "ElectronicShop API V1"); });
 
             app.UseSession();
 

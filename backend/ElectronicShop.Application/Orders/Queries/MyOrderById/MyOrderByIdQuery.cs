@@ -1,13 +1,13 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using ElectronicShop.Application.Common.Models;
-using ElectronicShop.Application.Orders.Models;
 using ElectronicShop.Application.Orders.Services;
+using ElectronicShop.Data.Entities;
 using MediatR;
 
 namespace ElectronicShop.Application.Orders.Queries.MyOrderById
 {
-    public class MyOrderByIdQuery : IRequest<ApiResult<OrderVm>>
+    public class MyOrderByIdQuery : IRequest<ApiResult<Order>>
     {
         public MyOrderByIdQuery(int orderId)
         {
@@ -17,7 +17,7 @@ namespace ElectronicShop.Application.Orders.Queries.MyOrderById
         public int OrderId { get; }
     }
 
-    public class MyOrderByIdHandle : IRequestHandler<MyOrderByIdQuery, ApiResult<OrderVm>>
+    public class MyOrderByIdHandle : IRequestHandler<MyOrderByIdQuery, ApiResult<Order>>
     {
         private readonly IOrderService _orderService;
 
@@ -26,7 +26,7 @@ namespace ElectronicShop.Application.Orders.Queries.MyOrderById
             _orderService = orderService;
         }
 
-        public async Task<ApiResult<OrderVm>> Handle(MyOrderByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResult<Order>> Handle(MyOrderByIdQuery request, CancellationToken cancellationToken)
         {
             return await _orderService.MyOrderByIdAsync(request.OrderId);
         }

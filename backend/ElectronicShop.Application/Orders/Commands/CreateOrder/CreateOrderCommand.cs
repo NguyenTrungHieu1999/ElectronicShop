@@ -1,8 +1,10 @@
-﻿using ElectronicShop.Application.Common.Models;
+﻿using System.Collections.Generic;
+using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Application.Orders.Services;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
+using ElectronicShop.Application.OrderDetails.Models;
 
 namespace ElectronicShop.Application.Orders.Commands.CreateOrder
 {
@@ -23,6 +25,8 @@ namespace ElectronicShop.Application.Orders.Commands.CreateOrder
         public string PhoneNumber { get; set; }
 
         public decimal TotalMoney { get; set; }
+
+        public List<OrderDetailVm> OrderDetails { get; set; }
 
         //public int StatusId { get; set; }
     }

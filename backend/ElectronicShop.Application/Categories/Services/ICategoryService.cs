@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using ElectronicShop.Application.Categories.Commands.CreateCategory;
 using ElectronicShop.Application.Categories.Commands.UpdateCategory;
-using ElectronicShop.Application.Categories.Models;
 using ElectronicShop.Application.Common.Models;
+using ElectronicShop.Data.Entities;
 
 namespace ElectronicShop.Application.Categories.Services
 {
@@ -13,8 +13,10 @@ namespace ElectronicShop.Application.Categories.Services
 
         Task<ApiResult<string>> UpdateAsync(UpdateCategoryCommand request);
 
-        Task<ApiResult<CategoryVm>> GetById(int id);
+        Task<ApiResult<Category>> GetByIdAsync(int id);
 
-        Task<ApiResult<List<CategoryVm>>> GetAll();
+        Task<ApiResult<List<Category>>> GetAllAsync();
+
+        Task<ApiResult<List<ProductType>>> GetAllProductTypeAsync();
     }
 }

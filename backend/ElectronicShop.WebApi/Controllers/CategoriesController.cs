@@ -9,6 +9,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using ElectronicShop.Application.Categories.Queries.GetAllProductType;
 
 namespace ElectronicShop.WebApi.Controllers
 {
@@ -54,6 +55,13 @@ namespace ElectronicShop.WebApi.Controllers
             var query = new GetAllCategoryQuery();
 
             return Ok(await _mediator.Send(query));
+        }
+
+        [HttpGet("productType")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAllProductType()
+        {
+            return Ok(await _mediator.Send(new GetAllProductTypeQuery()));
         }
     }
 }

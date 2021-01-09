@@ -28,7 +28,7 @@ namespace ElectronicShop.WebApi.Controllers
         }
         
         [HttpPost("create")]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        //[ServiceFilter(typeof(ValidationFilterAttribute))]
         [Authorize]
         public async Task<IActionResult> Create(CreateOrderCommand command)
         {

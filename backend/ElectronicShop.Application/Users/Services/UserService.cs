@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using ElectronicShop.Application.Common.Models;
-using ElectronicShop.Application.Common.Repositories.Wrapper;
 using ElectronicShop.Application.Users.Commands.CreateUser;
 using ElectronicShop.Application.Users.Commands.UpdateUser;
 using ElectronicShop.Application.Users.Extensions;
@@ -10,10 +9,12 @@ using ElectronicShop.Data.Enums;
 using ElectronicShop.Utilities.SystemConstants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using ElectronicShop.Data.EF;
+using Microsoft.EntityFrameworkCore;
 
 namespace ElectronicShop.Application.Users.Services
 {
@@ -22,15 +23,15 @@ namespace ElectronicShop.Application.Users.Services
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IRepositoryWrapper _repository;
+        private readonly ElectronicShopDbContext _context;
 
         public UserService(UserManager<User> userManager, IMapper mapper,
-            IHttpContextAccessor httpContextAccessor, IRepositoryWrapper repository)
+            IHttpContextAccessor httpContextAccessor, ElectronicShopDbContext context)
         {
             _userManager = userManager;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
-            _repository = repository;
+            _context = context;
         }
 
         public async Task<ApiResult<string>> CreateAsync(CreateUserCommand request)
@@ -130,13 +131,13 @@ namespace ElectronicShop.Application.Users.Services
 
             string role = isUser ? Constants.USERROLENAME : roleName;
 
-            var useRole = await _repository.UserRoleRepository
-                .FindByCondition(x => x.UserId == user.Id)
+            var useRole = await _context.UserRoles
+                .Where(x => x.UserId == user.Id)
                 .FirstAsync();
 
-            _repository.UserRoleRepository.Delete(useRole);
+            _context.UserRoles.Remove(useRole);
 
-            await _repository.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             await _userManager.AddToRoleAsync(user, role);
         }
@@ -198,9 +199,8 @@ namespace ElectronicShop.Application.Users.Services
 
         public async Task<ApiResult<List<UserVm>>> GetAllAsync()
         {
-            var users = await _repository
-                .UserRepository
-                .FindByCondition(x => x.Status != UserStatus.DELETED)
+            var users = await _context.Users
+                .Where(x => x.Status != UserStatus.DELETED)
                 .ToListAsync();
 
             if (users is null)

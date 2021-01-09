@@ -1,13 +1,13 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using ElectronicShop.Application.Categories.Models;
 using ElectronicShop.Application.Categories.Services;
 using ElectronicShop.Application.Common.Models;
+using ElectronicShop.Data.Entities;
 using MediatR;
 
 namespace ElectronicShop.Application.Categories.Queries.GetCategoryById
 {
-    public class GetCategoryByIdQuery : IRequest<ApiResult<CategoryVm>>
+    public class GetCategoryByIdQuery : IRequest<ApiResult<Category>>
     {
         public GetCategoryByIdQuery(int id)
         {
@@ -17,7 +17,7 @@ namespace ElectronicShop.Application.Categories.Queries.GetCategoryById
         public int Id { get; }
     }
 
-    public class GetCategoryByIdHandle : IRequestHandler<GetCategoryByIdQuery, ApiResult<CategoryVm>>
+    public class GetCategoryByIdHandle : IRequestHandler<GetCategoryByIdQuery, ApiResult<Category>>
     {
         private readonly ICategoryService _categoryService;
 
@@ -26,9 +26,9 @@ namespace ElectronicShop.Application.Categories.Queries.GetCategoryById
             _categoryService = categoryService;
         }
 
-        public async Task<ApiResult<CategoryVm>> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResult<Category>> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
         {
-            return await _categoryService.GetById(request.Id);
+            return await _categoryService.GetByIdAsync(request.Id);
         }
     }
 }
