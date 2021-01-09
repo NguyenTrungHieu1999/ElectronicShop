@@ -1,5 +1,6 @@
 ﻿using ElectronicShop.Data.Configurations;
 using ElectronicShop.Data.Entities;
+using ElectronicShop.Data.Extensions;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,6 +46,9 @@ namespace ElectronicShop.Data.EF
             modelBuilder.ApplyConfiguration(new UserClaimConfiguration());
             modelBuilder.ApplyConfiguration(new UserLoginConfiguration());
             modelBuilder.ApplyConfiguration(new UserTokenConfiguration());
+            
+            // Khởi tạo giá trị ban đầu cho dữ liệu
+            modelBuilder.Seed();
         }
 
         public virtual DbSet<Category> Categories { get; set; }
