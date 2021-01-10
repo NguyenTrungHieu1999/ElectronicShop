@@ -125,7 +125,7 @@ namespace ElectronicShop.Application.Products.Services
         {
             var product = await _context.Products
                 .Include(x => x.ProductPhotos)
-                .SingleOrDefaultAsync(x => x.Id == productId);
+                .SingleOrDefaultAsync(x => x.Id == productId && x.Status != ProductStatus.HIDDEN);
 
             if (product is null)
             {
@@ -133,7 +133,6 @@ namespace ElectronicShop.Application.Products.Services
             }
 
             var path = _storageService.CreateProductPath(product.CategoryId, product.Name);
-            
 
             foreach (var p in product.ProductPhotos)
             {

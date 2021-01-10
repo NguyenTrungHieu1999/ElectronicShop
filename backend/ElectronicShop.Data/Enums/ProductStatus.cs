@@ -2,8 +2,9 @@
 {
     public enum ProductStatus
     {
-        HOT,
         DEFAULT,
+        NEW,
+        SALE,
         HIDDEN
     }
 }

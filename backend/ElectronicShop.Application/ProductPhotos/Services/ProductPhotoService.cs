@@ -20,10 +20,11 @@ namespace ElectronicShop.Application.ProductPhotos.Services
         private readonly ElectronicShopDbContext _context;
         private readonly IMapper _mapper;
 
-        public ProductPhotoService(IStorageService storageService, IMapper mapper)
+        public ProductPhotoService(IStorageService storageService, IMapper mapper, ElectronicShopDbContext context)
         {
             _storageService = storageService;
             _mapper = mapper;
+            _context = context;
         }
 
         public async Task<ApiResult<string>> CreateProductPhoto(CreateProductPhotoCommand request)

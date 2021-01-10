@@ -78,7 +78,6 @@ namespace ElectronicShop.Application.Categories.Services
         {
             var category = await _context.Categories
                 .Include(x=>x.Products)
-                .Include(x => x.ProductType)
                 .SingleOrDefaultAsync(x => x.Id == id);
 
             return await Task.FromResult(new ApiSuccessResult<Category>(category));
@@ -87,7 +86,6 @@ namespace ElectronicShop.Application.Categories.Services
         public async Task<ApiResult<List<Category>>> GetAllAsync()
         {
             var categories = await _context.Categories
-                .Include(x => x.ProductType)
                 .ToListAsync();
 
             return await Task.FromResult(new ApiSuccessResult<List<Category>>(categories));
