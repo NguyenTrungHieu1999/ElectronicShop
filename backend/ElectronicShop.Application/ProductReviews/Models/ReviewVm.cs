@@ -1,11 +1,9 @@
 ﻿using System;
 
-namespace ElectronicShop.Data.Entities
+namespace ElectronicShop.Application.ProductReviews.Models
 {
-    public class ProductReview
+    public class ReviewVm
     {
-        public int Id { get; set; }
-
         public int UserId { get; set; }
 
         public int ProductId { get; set; }
@@ -17,9 +15,7 @@ namespace ElectronicShop.Data.Entities
         public DateTime CreateDate { get; set; }
 
         public bool Status { get; set; }
-
-        public virtual User User { get; set; }
-
-        public Product Product { get; set; }
+        
+        public string UserName { get; set; }
     }
 }

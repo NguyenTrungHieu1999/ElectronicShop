@@ -152,7 +152,7 @@ namespace ElectronicShop.Application.Orders.Services
 
         public async Task<ApiResult<string>> CancleOrderAsync(int orderId)
         {
-            var order = await FindOrderByIdAsync(orderId);
+            var order = await _context.Orders.FindAsync(orderId);
 
             order.StatusId = 8;
             
@@ -177,11 +177,27 @@ namespace ElectronicShop.Application.Orders.Services
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            var order = await FindOrderByIdAsync(orderId);
+            var order = await _context.Orders.FindAsync(orderId);
 
             if (order.UserId.Equals(int.Parse(userId)))
             {
-                return await CancleOrderAsync(orderId);
+                order.StatusId = 8;
+            
+                // Tạo thông tin trạng thái của đơn hàng
+                order.OrderStatusDetails = new List<OrderStatusDetail>()
+                {
+                    new OrderStatusDetail()
+                    {
+                        StatusId = order.StatusId,
+                        CreatedDate = DateTime.Now
+                    }
+                };
+            
+                _context.Update(order);
+
+                await _context.SaveChangesAsync();
+
+                return await Task.FromResult(new ApiSuccessResult<string>("Đơn hàng đã được hủy."));
             }
 
             return await Task.FromResult(new ApiErrorResult<string>("Không tìm thấy đơn hàng."));

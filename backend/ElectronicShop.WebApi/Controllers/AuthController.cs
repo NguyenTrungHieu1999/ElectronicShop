@@ -18,13 +18,11 @@ namespace ElectronicShop.WebApi.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IMailer _mailer;
-        private readonly IUrlHelper _urlHelper;
 
-        public AuthController(IMediator mediator, IMailer mailer, IUrlHelper urlHelper)
+        public AuthController(IMediator mediator, IMailer mailer)
         {
             _mediator = mediator;
             _mailer = mailer;
-            _urlHelper = urlHelper;
         }
 
         [HttpPost]
@@ -55,16 +53,14 @@ namespace ElectronicShop.WebApi.Controllers
             {
                 return BadRequest(result);
             }
+            
+            string href = "http://localhost:3001/tao-moi-mat-khau/" + request.Email + "/" + result.ResultObj;
+            
+            string body =
+                "<h3> Quý khách vui lòng click vào đường link bên dưới để chuyển đến trang thay đổi mật khẩu.</h3>" +
+                "<a href=\"" + href + "\">Click vào đây</a>";
 
-            var callbackUrl = _urlHelper.Action(
-               controller: "",
-               action: "",
-               values: new { email = request.Email, token = result.ResultObj },
-               protocol: HttpContext.Request.Scheme,
-               host: "localhost:3001"
-           );
-
-            await _mailer.SenEmailAsync(request.Email, "Reset Password", callbackUrl);
+            await _mailer.SenEmailAsync(request.Email, "Reset Password", body);
 
             return Ok(result);
         }
@@ -73,13 +69,11 @@ namespace ElectronicShop.WebApi.Controllers
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand request)
         {
-            await _mediator.Send(request);
-
-            return Ok();
+            return Ok(  await _mediator.Send(request));
         }
 
         [HttpPost("sign-out")]
-        public async Task<IActionResult> SignOut()
+        public async Task<IActionResult> SignOut() 
         {
             await _mediator.Send(new SignOutCommand());
 

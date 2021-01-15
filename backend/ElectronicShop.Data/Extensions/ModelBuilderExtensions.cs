@@ -47,7 +47,7 @@ namespace ElectronicShop.Data.Extensions
                 {
                     Id = 3,
                     UserName = "datle",
-                    PasswordHash = hasher.HashPassword(null, "Dat@123"),
+                    PasswordHash = hasher.HashPassword(null, "DatLe@123"),
                     FirstMiddleName = "Lê Tấn",
                     LastName = "Đạt",
                     Address = "KTX Cỏ May, khu phố 6, phường Linh Trung, quận Thủ Đức, TP.HCM",
@@ -124,7 +124,7 @@ namespace ElectronicShop.Data.Extensions
                 new ProductType
                 {
                     Id = 4,
-                    Name = "Điện tử - điện lạnh",
+                    Name = "Điện tử - Điện lạnh",
                     Status = true
                 }
             );

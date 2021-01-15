@@ -15,9 +15,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -31,6 +28,7 @@ using ElectronicShop.Application.ProductPhotos.Services;
 using ProductService = ElectronicShop.Application.Products.Services.ProductService;
 using ElectronicShop.Application.Orders.Services;
 using ElectronicShop.Application.ProductReviews.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace ElectronicShop.WebApi
 {
@@ -48,7 +46,7 @@ namespace ElectronicShop.WebApi
         {
             services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
             {
-                builder.WithOrigins("http://localhost:3000/", "http://localhost:3001/")
+                builder.WithOrigins("http://localhost:3001/")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials()
@@ -123,6 +121,7 @@ namespace ElectronicShop.WebApi
                 {
                     option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    option.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 })
                 .AddJwtBearer(options =>
                 {
@@ -164,15 +163,6 @@ namespace ElectronicShop.WebApi
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<UserManager<User>, UserManager<User>>();
             services.AddTransient<SignInManager<User>, SignInManager<User>>();
-
-            // Fix Create Url.Action is null
-            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
-            services.AddScoped<IUrlHelper>(x =>
-            {
-                var actionContext = x.GetRequiredService<IActionContextAccessor>().ActionContext;
-                var factory = x.GetRequiredService<IUrlHelperFactory>();
-                return factory.GetUrlHelper(actionContext);
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

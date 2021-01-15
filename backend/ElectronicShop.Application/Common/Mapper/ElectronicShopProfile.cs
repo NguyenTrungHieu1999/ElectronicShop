@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using ElectronicShop.Application.Authentications.Commands.ExternalLogins;
 using ElectronicShop.Application.Categories.Commands.CreateCategory;
+using ElectronicShop.Application.Comments.Commands.CreateComment;
 using ElectronicShop.Application.Orders.Commands.CreateOrder;
 using ElectronicShop.Application.ProductPhotos.Models;
+using ElectronicShop.Application.ProductReviews.Commands.CreateReview;
+using ElectronicShop.Application.ProductReviews.Models;
 using ElectronicShop.Application.Products.Commands.CreateProduct;
 using ElectronicShop.Application.Users.Commands.CreateUser;
 using ElectronicShop.Application.Users.Models;
@@ -28,6 +31,12 @@ namespace ElectronicShop.Application.Common.Mapper
 
             CreateMap<CreateOrderCommand, Order>()
                 .ForMember(dest => dest.OrderDetails, act => act.Ignore());
+
+            CreateMap<CreateReviewCommand, ProductReview>();
+
+            CreateMap<CreateCommentCommand, Comment>();
+
+            CreateMap<ProductReview, ReviewVm>();
         }
     }
 }

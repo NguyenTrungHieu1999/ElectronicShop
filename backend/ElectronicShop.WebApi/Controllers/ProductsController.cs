@@ -8,6 +8,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using ElectronicShop.Application.Products.Queries.GetAllProduct;
+using ElectronicShop.Application.Products.Queries.GetProductByCateId;
 using ElectronicShop.Application.Products.Queries.GetProductById;
 using Microsoft.AspNetCore.Authorization;
 
@@ -54,6 +55,14 @@ namespace ElectronicShop.WebApi.Controllers
         {
             var query = new GetProductByIdQuery(productId);
 
+            return Ok(await _mediator.Send(query));
+        }
+
+        [HttpGet("cateId={cateId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetByCateId(int cateId)
+        {
+            var query = new GetProductByCateIdQuery(cateId);
             return Ok(await _mediator.Send(query));
         }
 

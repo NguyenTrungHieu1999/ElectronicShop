@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace ElectronicShop.Application.Products.Services
@@ -79,7 +80,7 @@ namespace ElectronicShop.Application.Products.Services
         {
             var product = await _context.Products.FindAsync(update.Id);
 
-            if(product is null)
+            if (product is null)
             {
                 return await Task.FromResult(new ApiErrorResult<string>("Không tìm thấy sản phẩm cần cập nhật"));
             }
@@ -107,7 +108,7 @@ namespace ElectronicShop.Application.Products.Services
         {
             var product = await _context.Products.FindAsync(productId);
 
-            if(product is null)
+            if (product is null)
             {
                 return await Task.FromResult(new ApiErrorResult<string>("Không tìm thấy sản phẩm cần xóa"));
             }
@@ -123,6 +124,7 @@ namespace ElectronicShop.Application.Products.Services
 
         public async Task<ApiResult<Product>> GetProductByIdAsync(int productId)
         {
+            var currentUser = _httpContextAccessor.HttpContext.User.Identity.Name;
             var product = await _context.Products
                 .Include(x => x.ProductPhotos)
                 .SingleOrDefaultAsync(x => x.Id == productId && x.Status != ProductStatus.HIDDEN);
@@ -144,6 +146,7 @@ namespace ElectronicShop.Application.Products.Services
 
         public async Task<ApiResult<List<Product>>> GetAllProductAsync(GetAllProductQuery request)
         {
+            // Lấy danh sách sản phẩm
             var products = await _context.Products
                 .Include(x => x.ProductPhotos)
                 .Where(x => x.Status != ProductStatus.HIDDEN)
@@ -153,8 +156,59 @@ namespace ElectronicShop.Application.Products.Services
             {
                 return await Task.FromResult(new ApiErrorResult<List<Product>>("Không tìm thấy sản phẩm"));
             }
-            
 
+            // Tạo đường dẫn cho toàn bộ hình ảnh của sản phẩm
+            foreach (var p in products)
+            {
+                var path = _storageService.CreateProductPath(p.CategoryId, p.Name);
+
+                foreach (var i in p.ProductPhotos)
+                {
+                    i.Url = "https://localhost:5001/" + path + "/" + i.Url;
+                }
+            }
+
+            return await Task.FromResult(new ApiSuccessResult<List<Product>>(products));
+        }
+
+        public async Task<ApiResult<List<Product>>> GetByCateIdAsync(int cateId)
+        {
+            var cate = await _context.Categories.FindAsync(cateId);
+
+            List<Product> products = new List<Product>();
+
+            // Nếu Category là Root
+            if (cate.RootId is null)
+            {
+                var query = from category in _context.Categories
+                    where category.RootId.Equals(cateId)
+                    join product in _context.Products.Include(x=>x.ProductPhotos)
+                        on category.Id equals product.CategoryId
+                    select new
+                    {
+                        P = product
+                    }.P;
+
+                foreach (var p in query)
+                {
+                    products.Add(p);
+                }
+            }
+            // Nếu Category thông thường
+            else
+            {
+                products = await _context.Products
+                    .Include(x=>x.ProductPhotos)
+                    .Where(x => x.CategoryId.Equals(cateId))
+                    .ToListAsync();   
+            }
+
+            if (products is null)
+            {
+                return await Task.FromResult(new ApiErrorResult<List<Product>>("Không tìm thấy sản phẩm"));
+            }
+
+            // Tạo đường dẫn cho toàn bộ hình ảnh của sản phẩm
             foreach (var p in products)
             {
                 var path = _storageService.CreateProductPath(p.CategoryId, p.Name);

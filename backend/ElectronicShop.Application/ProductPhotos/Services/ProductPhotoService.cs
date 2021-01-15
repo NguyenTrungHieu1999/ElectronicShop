@@ -97,7 +97,7 @@ namespace ElectronicShop.Application.ProductPhotos.Services
             {
                 result[i].Url = "https://localhost:5001/" + path + "/" + photos[i].Url;
             }
-
+            
             return await Task.FromResult(new ApiSuccessResult<List<PhotoVm>>(result));
         }
     }
