@@ -35,7 +35,12 @@ namespace ElectronicShop.Application.Orders.Services
             order.CreatedDate = DateTime.Now;
             order.DeliveryDate = DateTime.Now.AddDays(7);
             order.StatusId = 1;
-            order.UserId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var isAuth = _httpContextAccessor.HttpContext.User.Identity.IsAuthenticated;
+
+            if (isAuth)
+            {
+                order.UserId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            }
 
             // Tạo thông tin trạng thái của đơn hàng
             order.OrderStatusDetails = new List<OrderStatusDetail>()

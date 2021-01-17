@@ -54,7 +54,6 @@ namespace ElectronicShop.Application.ProductReviews.Services
         public async Task<ApiResult<string>> CreateReviewAsync(CreateReviewCommand command)
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var test = _httpContextAccessor.HttpContext.User.Identity.Name;
 
             var review = _mapper.Map<ProductReview>(command);
             

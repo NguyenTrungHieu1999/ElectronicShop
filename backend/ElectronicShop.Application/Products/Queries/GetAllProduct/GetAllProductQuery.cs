@@ -10,7 +10,6 @@ namespace ElectronicShop.Application.Products.Queries.GetAllProduct
 {
     public class GetAllProductQuery : IRequest<ApiResult<List<Product>>>
     {
-        public decimal? Price { get; set; }
     }
     
     public class GetAllProductHandle:IRequestHandler<GetAllProductQuery, ApiResult<List<Product>>>
@@ -24,7 +23,7 @@ namespace ElectronicShop.Application.Products.Queries.GetAllProduct
 
         public async Task<ApiResult<List<Product>>> Handle(GetAllProductQuery request, CancellationToken cancellationToken)
         {
-            return await _productService.GetAllProductAsync(request);
+            return await _productService.GetAllProductAsync();
         }
     }
 }

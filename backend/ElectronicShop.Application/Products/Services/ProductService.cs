@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using ElectronicShop.Application.Products.Queries.FilterProduct;
 
 namespace ElectronicShop.Application.Products.Services
 {
@@ -144,7 +145,7 @@ namespace ElectronicShop.Application.Products.Services
             return await Task.FromResult(new ApiSuccessResult<Product>(product));
         }
 
-        public async Task<ApiResult<List<Product>>> GetAllProductAsync(GetAllProductQuery request)
+        public async Task<ApiResult<List<Product>>> GetAllProductAsync()
         {
             // Lấy danh sách sản phẩm
             var products = await _context.Products
@@ -182,7 +183,7 @@ namespace ElectronicShop.Application.Products.Services
             {
                 var query = from category in _context.Categories
                     where category.RootId.Equals(cateId)
-                    join product in _context.Products.Include(x=>x.ProductPhotos)
+                    join product in _context.Products.Include(x => x.ProductPhotos)
                         on category.Id equals product.CategoryId
                     select new
                     {
@@ -198,9 +199,9 @@ namespace ElectronicShop.Application.Products.Services
             else
             {
                 products = await _context.Products
-                    .Include(x=>x.ProductPhotos)
+                    .Include(x => x.ProductPhotos)
                     .Where(x => x.CategoryId.Equals(cateId))
-                    .ToListAsync();   
+                    .ToListAsync();
             }
 
             if (products is null)
@@ -220,6 +221,36 @@ namespace ElectronicShop.Application.Products.Services
             }
 
             return await Task.FromResult(new ApiSuccessResult<List<Product>>(products));
+        }
+
+        public async Task<ApiResult<List<Product>>> FilterAsync(FilterProductQuery filter)
+        {
+            var query = await _context.Products
+                .Include(x=>x.ProductPhotos)
+                .Where(x => x.Status != ProductStatus.HIDDEN)
+                .ToListAsync();
+
+            if (!string.IsNullOrEmpty(filter.KeyWord))
+            {
+                query = query.Where(x
+                        => x.Name.Contains(filter.KeyWord)
+                           || x.Specifications.Contains(filter.KeyWord)
+                           || x.Description.Contains(filter.KeyWord))
+                    .ToList();
+            }
+            
+            // Tạo đường dẫn cho toàn bộ hình ảnh của sản phẩm
+            foreach (var p in query)
+            {
+                var path = _storageService.CreateProductPath(p.CategoryId, p.Name);
+
+                foreach (var i in p.ProductPhotos)
+                {
+                    i.Url = "https://localhost:5001/" + path + "/" + i.Url;
+                }
+            }
+
+            return await Task.FromResult(new ApiSuccessResult<List<Product>>(query));
         }
     }
 }

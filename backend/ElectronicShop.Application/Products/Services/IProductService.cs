@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Application.Products.Commands.CreateProduct;
 using ElectronicShop.Application.Products.Commands.UpdateProduct;
+using ElectronicShop.Application.Products.Queries.FilterProduct;
 using ElectronicShop.Application.Products.Queries.GetAllProduct;
 using ElectronicShop.Data.Entities;
 
@@ -18,8 +19,10 @@ namespace ElectronicShop.Application.Products.Services
 
         Task<ApiResult<Product>> GetProductByIdAsync(int productId);
 
-        Task<ApiResult<List<Product>>> GetAllProductAsync(GetAllProductQuery request);
+        Task<ApiResult<List<Product>>> GetAllProductAsync();
 
         Task<ApiResult<List<Product>>> GetByCateIdAsync(int cateId);
+
+        Task<ApiResult<List<Product>>> FilterAsync(FilterProductQuery query);
     }
 }

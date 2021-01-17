@@ -71,6 +71,7 @@ namespace ElectronicShop.Application.Authentications.Services
 
             var token = CreateToken(roles, user);
 
+            // var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             return await Task.FromResult(
                 new ApiSuccessResult<string>()
                 {
@@ -139,6 +140,8 @@ namespace ElectronicShop.Application.Authentications.Services
             var roles = await _userManager.GetRolesAsync(user);
 
             var token = CreateToken(roles, user);
+            
+            //var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             return await Task.FromResult(
                 new ApiSuccessResult<string>()

@@ -28,8 +28,8 @@ namespace ElectronicShop.WebApi.Controllers
         }
         
         [HttpPost("create")]
-        //[ServiceFilter(typeof(ValidationFilterAttribute))]
-        [Authorize]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [AllowAnonymous]
         public async Task<IActionResult> Create(CreateOrderCommand command)
         {
             return Ok(await _mediator.Send(command));
