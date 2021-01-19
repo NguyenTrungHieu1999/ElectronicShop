@@ -46,7 +46,7 @@ namespace ElectronicShop.WebApi
         {
             services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
             {
-                builder.WithOrigins("http://localhost:3001/")
+                builder.WithOrigins("http://localhost:3001/", "http://localhost:3000/")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials()

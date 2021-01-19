@@ -471,7 +471,7 @@ namespace ElectronicShop.Data.Migrations
                         new
                         {
                             Id = 4,
-                            Name = "Điện tử - điện lạnh",
+                            Name = "Điện tử - Điện lạnh",
                             Status = true
                         });
                 });
@@ -508,7 +508,7 @@ namespace ElectronicShop.Data.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "0df22fe8-9852-4a06-bb37-436c3ffe24cc",
+                            ConcurrencyStamp = "dab6305e-2619-4ab6-b53c-29fce745d557",
                             Description = "Quản trị viên",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
@@ -516,7 +516,7 @@ namespace ElectronicShop.Data.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "98f5ae4d-b5e7-4a80-a52c-a07bbf2709fd",
+                            ConcurrencyStamp = "2bb9c6f0-1d32-47ba-9fd4-e66efb7cdb58",
                             Description = "Nhân viên",
                             Name = "Emp",
                             NormalizedName = "EMP"
@@ -524,7 +524,7 @@ namespace ElectronicShop.Data.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "7e972f38-d65b-4181-a523-0a190ac7e57a",
+                            ConcurrencyStamp = "015146b3-5775-4ddf-a7a2-ee266bbe5077",
                             Description = "Người dùng đã đăng ký",
                             Name = "User",
                             NormalizedName = "USER"
@@ -659,7 +659,7 @@ namespace ElectronicShop.Data.Migrations
                             Id = 1,
                             AccessFailedCount = 0,
                             Address = "KTX Cỏ May, khu phố 6, phường Linh Trung, quận Thủ Đức, TP.HCM",
-                            ConcurrencyStamp = "20fa0618-5f3a-4675-9c62-74df5db62936",
+                            ConcurrencyStamp = "9c3397f6-9ee6-457d-82d5-652ead15cce7",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "hieutanmy321@gmail.com",
                             EmailConfirmed = false,
@@ -669,10 +669,10 @@ namespace ElectronicShop.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "HIEUTANMY321@GMAIL.COM",
                             NormalizedUserName = "HIEUNGUYEN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEHow1ML53iDIZlJimsePdQAxZJvkEp/68ruHhJkjDLLVE05aS9eiTVDPmX/bYWYmYw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEKolkhJ+wjPlvK9dBmypi75IWMYLyEqRYyomU7XMruKg8PSnJQpSgblPieREQki7AQ==",
                             PhoneNumber = "0965924083",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "3b22fe58-40f6-4679-b108-3e25fd2c2ded",
+                            SecurityStamp = "db831486-e741-4358-ac7a-4bab8db6781c",
                             Status = 0,
                             TwoFactorEnabled = false,
                             UserName = "hieunguyen"
@@ -682,7 +682,7 @@ namespace ElectronicShop.Data.Migrations
                             Id = 2,
                             AccessFailedCount = 0,
                             Address = "KTX Cỏ May, khu phố 6, phường Linh Trung, quận Thủ Đức, TP.HCM",
-                            ConcurrencyStamp = "f036d2ca-8727-416e-9877-4984552352d4",
+                            ConcurrencyStamp = "97bd01a5-bf65-424e-9a63-c2d0f979555e",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "hieu@gmail.com",
                             EmailConfirmed = false,
@@ -692,9 +692,9 @@ namespace ElectronicShop.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "HIEU@GMAIL.COM",
                             NormalizedUserName = "HIEUVO",
-                            PasswordHash = "AQAAAAEAACcQAAAAEPJnjrQ/4f91kXoDot2GzA83uTVFZTPz9yERiM+M1ipQyU7hcoqDF9JvlB9GaRq6cA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEE2gEZxXeSRreF2b8zoyhaWl+AKk6mItwTk6W/sUZGK/yR9pVYGKF8FmslqMvm6RzQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "5637077b-4857-401e-82ae-3f7ff3069f58",
+                            SecurityStamp = "5dcbde7f-2bd2-4e21-b5d4-13fe54d2f426",
                             Status = 0,
                             TwoFactorEnabled = false,
                             UserName = "hieuvo"
@@ -704,7 +704,7 @@ namespace ElectronicShop.Data.Migrations
                             Id = 3,
                             AccessFailedCount = 0,
                             Address = "KTX Cỏ May, khu phố 6, phường Linh Trung, quận Thủ Đức, TP.HCM",
-                            ConcurrencyStamp = "5ae77b54-6e41-4a1c-aeb2-03d95839da41",
+                            ConcurrencyStamp = "af347fcc-da4a-4712-95da-a82f2a0607bb",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "dat@gmail.com",
                             EmailConfirmed = false,
@@ -714,9 +714,9 @@ namespace ElectronicShop.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "DAT@GMAIL.COM",
                             NormalizedUserName = "DATLE",
-                            PasswordHash = "AQAAAAEAACcQAAAAEII79ulCzaOevqpzSF1bQtDoBWmSK/4xupv7B6KwiHFwWlAiY+NYEIXImfk5GtNpkA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEBfMXHBmT2UPt99k06iuR6guogSqNUcPyIkMmpxWqe0xlMUKmQW0JvAczGCXYJTA+Q==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "0a21a92f-b05f-49f9-83f9-10f0329f6f9d",
+                            SecurityStamp = "cba19fd2-e89d-48f9-9abb-b04ab39b871c",
                             Status = 0,
                             TwoFactorEnabled = false,
                             UserName = "datle"

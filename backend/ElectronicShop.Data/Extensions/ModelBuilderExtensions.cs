@@ -115,12 +115,12 @@ namespace ElectronicShop.Data.Extensions
                     Name = "Điện Thoại - Máy tính bảng",
                     Status = true
                 },
-                new ProductType
-                {
-                    Id = 3,
-                    Name = "Máy ảnh - Quay phim",
-                    Status = true
-                },
+               new ProductType
+               {
+                   Id = 3,
+                   Name = "Máy ảnh - Quay phim",
+                   Status = true
+               },
                 new ProductType
                 {
                     Id = 4,
