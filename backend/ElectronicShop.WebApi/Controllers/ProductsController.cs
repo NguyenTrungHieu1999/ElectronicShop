@@ -7,7 +7,9 @@ using ElectronicShop.WebApi.AuthorizeRoles;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using ElectronicShop.Application.Products.Queries.FilterProduct;
 using ElectronicShop.Application.Products.Queries.GetAllProduct;
+using ElectronicShop.Application.Products.Queries.GetProductByCateId;
 using ElectronicShop.Application.Products.Queries.GetProductById;
 using Microsoft.AspNetCore.Authorization;
 
@@ -57,11 +59,26 @@ namespace ElectronicShop.WebApi.Controllers
             return Ok(await _mediator.Send(query));
         }
 
+        [HttpGet("cateId={cateId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetByCateId(int cateId)
+        {
+            var query = new GetProductByCateIdQuery(cateId);
+            return Ok(await _mediator.Send(query));
+        }
+
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> GetAll([FromQuery] GetAllProductQuery request)
+        public async Task<IActionResult> GetAll()
         {
-            return Ok(await _mediator.Send(request));
+            return Ok(await _mediator.Send(new GetAllProductQuery()));
+        }
+
+        [HttpGet("search")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Filter([FromQuery] FilterProductQuery query)
+        {
+            return Ok(await _mediator.Send(query));
         }
     }
 }

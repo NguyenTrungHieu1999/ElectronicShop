@@ -2,9 +2,7 @@
 using ElectronicShop.Application.Categories.Commands.CreateCategory;
 using ElectronicShop.Application.Categories.Commands.UpdateCategory;
 using ElectronicShop.Application.Categories.Extensions;
-using ElectronicShop.Application.Categories.Models;
 using ElectronicShop.Application.Common.Models;
-using ElectronicShop.Application.Common.Repositories.Wrapper;
 using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
 using Microsoft.AspNetCore.Http;
@@ -17,15 +15,12 @@ namespace ElectronicShop.Application.Categories.Services
 {
     public class CategoryService : ICategoryService
     {
-        private readonly IRepositoryWrapper _repository;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ElectronicShopDbContext _context;
 
-        public CategoryService(IRepositoryWrapper repository, IMapper mapper, 
-            IHttpContextAccessor httpContextAccessor, ElectronicShopDbContext context)
+        public CategoryService(IMapper mapper, IHttpContextAccessor httpContextAccessor, ElectronicShopDbContext context)
         {
-            _repository = repository;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
             _context = context;
@@ -43,9 +38,9 @@ namespace ElectronicShop.Application.Categories.Services
 
             try
             {
-                await _repository.CategoryRepository.CreateAsync(category);
+                await _context.Categories.AddAsync(category);
 
-                await _repository.SaveChangesAsync();
+                await _context.SaveChangesAsync();
             }
             catch
             {
@@ -61,15 +56,15 @@ namespace ElectronicShop.Application.Categories.Services
 
             try
             {
-                var category = await _repository.CategoryRepository.FindByIdAsync(request.Id);
+                var category = await _context.Categories.FindAsync(request.Id);
 
                 category.Map(request);
 
                 category.ModifiedBy = username;
 
-                _repository.CategoryRepository.Update(category);
+                _context.Categories.Update(category);
 
-                await _repository.SaveChangesAsync();
+                await _context.SaveChangesAsync();
             }
             catch
             {
@@ -79,26 +74,28 @@ namespace ElectronicShop.Application.Categories.Services
             return await Task.FromResult(new ApiSuccessResult<string>("Cập nhật danh mục sản phẩm thành công"));
         }
 
-        public async Task<ApiResult<CategoryVm>> GetById(int id)
+        public async Task<ApiResult<Category>> GetByIdAsync(int id)
         {
             var category = await _context.Categories
-                .Include(x => x.ProductType)
+                .Include(x=>x.Products)
                 .SingleOrDefaultAsync(x => x.Id == id);
 
-            var result = _mapper.Map<CategoryVm>(category);
-
-            return await Task.FromResult(new ApiSuccessResult<CategoryVm>(result));
+            return await Task.FromResult(new ApiSuccessResult<Category>(category));
         }
 
-        public async Task<ApiResult<List<CategoryVm>>> GetAll()
+        public async Task<ApiResult<List<Category>>> GetAllAsync()
         {
             var categories = await _context.Categories
-                .Include(x => x.ProductType)
                 .ToListAsync();
 
-            var result = _mapper.Map<List<CategoryVm>>(categories);
+            return await Task.FromResult(new ApiSuccessResult<List<Category>>(categories));
+        }
 
-            return await Task.FromResult(new ApiSuccessResult<List<CategoryVm>>(result));
+        public async Task<ApiResult<List<ProductType>>> GetAllProductTypeAsync()
+        {
+            var productType = await _context.ProductTypes.ToListAsync();
+
+            return await Task.FromResult(new ApiSuccessResult<List<ProductType>>(productType));
         }
     }
 }

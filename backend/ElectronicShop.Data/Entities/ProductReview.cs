@@ -16,7 +16,9 @@ namespace ElectronicShop.Data.Entities
 
         public DateTime CreateDate { get; set; }
 
-        public User User { get; set; }
+        public bool Status { get; set; }
+
+        public virtual User User { get; set; }
 
         public Product Product { get; set; }
     }

@@ -2,18 +2,17 @@
 using System.Threading;
 using System.Threading.Tasks;
 using ElectronicShop.Application.Common.Models;
-using ElectronicShop.Application.Products.Models;
 using ElectronicShop.Application.Products.Services;
+using ElectronicShop.Data.Entities;
 using MediatR;
 
 namespace ElectronicShop.Application.Products.Queries.GetAllProduct
 {
-    public class GetAllProductQuery : IRequest<ApiResult<List<ProductVm>>>
+    public class GetAllProductQuery : IRequest<ApiResult<List<Product>>>
     {
-        public decimal? Price { get; set; }
     }
     
-    public class GetAllProductHandle:IRequestHandler<GetAllProductQuery, ApiResult<List<ProductVm>>>
+    public class GetAllProductHandle:IRequestHandler<GetAllProductQuery, ApiResult<List<Product>>>
     {
         private readonly IProductService _productService;
 
@@ -22,9 +21,9 @@ namespace ElectronicShop.Application.Products.Queries.GetAllProduct
             _productService = productService;
         }
 
-        public async Task<ApiResult<List<ProductVm>>> Handle(GetAllProductQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResult<List<Product>>> Handle(GetAllProductQuery request, CancellationToken cancellationToken)
         {
-            return await _productService.GetAllProductAsync(request);
+            return await _productService.GetAllProductAsync();
         }
     }
 }

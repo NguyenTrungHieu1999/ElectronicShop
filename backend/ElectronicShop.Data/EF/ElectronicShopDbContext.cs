@@ -1,5 +1,6 @@
 ﻿using ElectronicShop.Data.Configurations;
 using ElectronicShop.Data.Entities;
+using ElectronicShop.Data.Extensions;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,7 +13,6 @@ namespace ElectronicShop.Data.EF
 
         }
 
-        public ElectronicShopDbContext(){}
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -46,19 +46,22 @@ namespace ElectronicShop.Data.EF
             modelBuilder.ApplyConfiguration(new UserClaimConfiguration());
             modelBuilder.ApplyConfiguration(new UserLoginConfiguration());
             modelBuilder.ApplyConfiguration(new UserTokenConfiguration());
+            
+            // Khởi tạo giá trị ban đầu cho dữ liệu
+            modelBuilder.Seed();
         }
 
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<Comment> Comments { get; set; }
-        public DbSet<FavoriteProduct> FavoriteProducts { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderDetail> OrderDetails { get; set; }
-        public DbSet<OrderStatus> OrderStatuses { get; set; }
-        public DbSet<OrderStatusDetail> OrderStatusDetails { get; set; }
-        public DbSet<Product> Products { get; set; }
-        public DbSet<ProductPhoto> ProductPhotos { get; set; }
-        public DbSet<ProductReview> ProductReviews { get; set; }
-        public DbSet<ProductType> ProductTypes { get; set; }
-        public DbSet<WatchedProduct> WatchedProducts { get; set; }
+        public virtual DbSet<Category> Categories { get; set; }
+        public virtual DbSet<Comment> Comments { get; set; }
+        public virtual DbSet<FavoriteProduct> FavoriteProducts { get; set; }
+        public virtual DbSet<Order> Orders { get; set; }
+        public virtual DbSet<OrderDetail> OrderDetails { get; set; }
+        public virtual DbSet<OrderStatus> OrderStatuses { get; set; }
+        public virtual DbSet<OrderStatusDetail> OrderStatusDetails { get; set; }
+        public virtual DbSet<Product> Products { get; set; }
+        public virtual DbSet<ProductPhoto> ProductPhotos { get; set; }
+        public virtual DbSet<ProductReview> ProductReviews { get; set; }
+        public virtual DbSet<ProductType> ProductTypes { get; set; }
+        public virtual DbSet<WatchedProduct> WatchedProducts { get; set; }
     }
 }

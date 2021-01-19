@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ElectronicShop.Application.Common.Models;
-using ElectronicShop.Application.Common.Repositories.Wrapper;
 using ElectronicShop.Application.ProductPhotos.Commands.CreateProductPhoto;
 using ElectronicShop.Application.ProductPhotos.Models;
+using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
 using ElectronicShop.Infrastructure.FileImage;
 using Microsoft.EntityFrameworkCore;
@@ -15,20 +16,20 @@ namespace ElectronicShop.Application.ProductPhotos.Services
 {
     public class ProductPhotoService : IProductPhotoService
     {
-        private readonly IRepositoryWrapper _repository;
         private readonly IStorageService _storageService;
+        private readonly ElectronicShopDbContext _context;
         private readonly IMapper _mapper;
 
-        public ProductPhotoService(IRepositoryWrapper repository, IStorageService storageService, IMapper mapper)
+        public ProductPhotoService(IStorageService storageService, IMapper mapper, ElectronicShopDbContext context)
         {
-            _repository = repository;
             _storageService = storageService;
             _mapper = mapper;
+            _context = context;
         }
 
         public async Task<ApiResult<string>> CreateProductPhoto(CreateProductPhotoCommand request)
         {
-            var product = await _repository.ProductRepository.FindByIdAsync(request.ProductId);
+            var product = await _context.Products.FindAsync(request.ProductId);
 
             if(product is null)
             {
@@ -48,10 +49,10 @@ namespace ElectronicShop.Application.ProductPhotos.Services
                         Url = await _storageService.SaveFile(path, photo)
                     };   
                 
-                    await _repository.ProductPhotoRepository.CreateAsync(productPhoto);
+                    await _context.ProductPhotos.AddAsync(productPhoto);
                 }
 
-                await _repository.SaveChangesAsync();
+                await _context.SaveChangesAsync();
             }
             catch (Exception e)
             {
@@ -63,9 +64,9 @@ namespace ElectronicShop.Application.ProductPhotos.Services
 
         public async Task<ApiResult<string>> DeleteAsync(int id)
         {
-            var photo = await _repository.ProductPhotoRepository.FindByIdAsync(id);
+            var photo = await _context.ProductPhotos.FindAsync(id);
 
-            var product = await _repository.ProductRepository.FindByIdAsync(photo.ProductId);
+            var product = await _context.Products.FindAsync(photo.ProductId);
 
             var path = _storageService.CreateProductPath(product.CategoryId, product.Name);
             
@@ -73,20 +74,20 @@ namespace ElectronicShop.Application.ProductPhotos.Services
 
             await _storageService.DeleteFileAsync(filePath);
 
-            _repository.ProductPhotoRepository.Delete(photo);
+            _context.ProductPhotos.Remove(photo);
 
-            await _repository.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             return await Task.FromResult(new ApiSuccessResult<string>("Xóa hình ảnh thành công."));
         }
        
         public async Task<ApiResult<List<PhotoVm>>> GetByProductId(int productId)
         {
-            var photos = await _repository.ProductPhotoRepository
-                .FindByCondition(x => x.ProductId == productId)
+            var photos = await _context.ProductPhotos
+                .Where(x => x.ProductId == productId)
                 .ToListAsync();
 
-            var product = await _repository.ProductRepository.FindByIdAsync(productId);
+            var product = await _context.Products.FindAsync(productId);
 
             var result = _mapper.Map<List<PhotoVm>>(photos);
 
@@ -96,7 +97,7 @@ namespace ElectronicShop.Application.ProductPhotos.Services
             {
                 result[i].Url = "https://localhost:5001/" + path + "/" + photos[i].Url;
             }
-
+            
             return await Task.FromResult(new ApiSuccessResult<List<PhotoVm>>(result));
         }
     }
