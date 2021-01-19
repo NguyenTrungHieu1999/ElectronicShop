@@ -27,5 +27,13 @@
     <ProjectReference Include="..\ElectronicShop.Infrastructure\ElectronicShop.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\images\products\Laptop - Thiết bị IT\Laptop Lenovo IdeaPad S340 14IIL i5 1035G1 8GB 512GB Win10 (81VV003SVN)\1b70afae-e5e9-4679-8d57-a13498369666.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\images\products\Laptop - Thiết bị IT\Laptop Lenovo IdeaPad S340 14IIL i5 1035G1 8GB 512GB Win10 (81VV003SVN)\49515fce-e99a-4f39-ab06-b64a8975a968.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\images\products\Laptop - Thiết bị IT\Laptop Lenovo IdeaPad S340 14IIL i5 1035G1 8GB 512GB Win10 (81VV003SVN)\a7992510-95b9-45bc-bbd4-cd1bd5304918.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\images\products\Laptop - Thiết bị IT\Laptop Lenovo IdeaPad S340 14IIL i5 1035G1 8GB 512GB Win10 (81VV003SVN)\fd85bae0-44e1-45b0-ae84-85a8b28dc61d.jpg" />
+    <_ContentIncludedByDefault Remove="wwwroot\images\products\Laptop - Thiết bị IT\Laptop Dell Vostro 5502 i5 1135G7 8GB 256GB Win10 (70231340)\7350a800-88a6-4be4-a5e9-02be5b89ad49.jpg" />
+  </ItemGroup>
+
 
 </Project>

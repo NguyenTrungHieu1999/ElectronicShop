@@ -41,7 +41,7 @@ namespace ElectronicShop.WebApi.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{productId}/get-all")]
+        [HttpGet("productId={productId}/get-all")]
         [AllowAnonymous]
         public async Task<IActionResult> GetAll(int productId)
         {

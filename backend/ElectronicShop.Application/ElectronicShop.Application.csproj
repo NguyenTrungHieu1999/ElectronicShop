@@ -20,8 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="OrderDetails\Repositories\" />
-    <Folder Include="Orders\Extensions\" />
+    <Folder Include="OrderDetails\Commands" />
+    <Folder Include="Orders\Models" />
   </ItemGroup>
 
 </Project>

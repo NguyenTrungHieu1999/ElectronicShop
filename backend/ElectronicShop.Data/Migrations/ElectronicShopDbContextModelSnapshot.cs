@@ -146,9 +146,6 @@ namespace ElectronicShop.Data.Migrations
                     b.Property<DateTime>("DeliveryDate")
                         .HasColumnType("DateTime");
 
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("DateTime");
-
                     b.Property<bool>("Paid")
                         .HasColumnType("bit");
 
@@ -173,7 +170,7 @@ namespace ElectronicShop.Data.Migrations
                     b.Property<decimal>("TotalMoney")
                         .HasColumnType("decimal(18,0)");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -232,6 +229,48 @@ namespace ElectronicShop.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("OrderStatus");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Đặt hàng thành công"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Đã tiếp nhận"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Đang lấy hàng"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Đóng gói xong"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Bàn giao vận chuyển"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Đang vận chuyển"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "Giao hàng thành công"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Hủy đơn hàng"
+                        });
                 });
 
             modelBuilder.Entity("ElectronicShop.Data.Entities.OrderStatusDetail", b =>
@@ -367,6 +406,9 @@ namespace ElectronicShop.Data.Migrations
                     b.Property<double>("RateStar")
                         .HasColumnType("float");
 
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -406,6 +448,32 @@ namespace ElectronicShop.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ProductType");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Laptop - Thiết bị IT",
+                            Status = true
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Điện Thoại - Máy tính bảng",
+                            Status = true
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Máy ảnh - Quay phim",
+                            Status = true
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Điện tử - Điện lạnh",
+                            Status = true
+                        });
                 });
 
             modelBuilder.Entity("ElectronicShop.Data.Entities.Role", b =>
@@ -435,6 +503,32 @@ namespace ElectronicShop.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Role");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ConcurrencyStamp = "dab6305e-2619-4ab6-b53c-29fce745d557",
+                            Description = "Quản trị viên",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ConcurrencyStamp = "2bb9c6f0-1d32-47ba-9fd4-e66efb7cdb58",
+                            Description = "Nhân viên",
+                            Name = "Emp",
+                            NormalizedName = "EMP"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ConcurrencyStamp = "015146b3-5775-4ddf-a7a2-ee266bbe5077",
+                            Description = "Người dùng đã đăng ký",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        });
                 });
 
             modelBuilder.Entity("ElectronicShop.Data.Entities.RoleClaim", b =>
@@ -489,7 +583,9 @@ namespace ElectronicShop.Data.Migrations
                         .HasMaxLength(30);
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("DateTime");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DateTime")
+                        .HasDefaultValueSql("GetDate()");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -556,6 +652,75 @@ namespace ElectronicShop.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("User");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AccessFailedCount = 0,
+                            Address = "KTX Cỏ May, khu phố 6, phường Linh Trung, quận Thủ Đức, TP.HCM",
+                            ConcurrencyStamp = "9c3397f6-9ee6-457d-82d5-652ead15cce7",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "hieutanmy321@gmail.com",
+                            EmailConfirmed = false,
+                            FirstMiddleName = "Nguyễn Trung",
+                            Gender = 0,
+                            LastName = "Hiếu",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "HIEUTANMY321@GMAIL.COM",
+                            NormalizedUserName = "HIEUNGUYEN",
+                            PasswordHash = "AQAAAAEAACcQAAAAEKolkhJ+wjPlvK9dBmypi75IWMYLyEqRYyomU7XMruKg8PSnJQpSgblPieREQki7AQ==",
+                            PhoneNumber = "0965924083",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "db831486-e741-4358-ac7a-4bab8db6781c",
+                            Status = 0,
+                            TwoFactorEnabled = false,
+                            UserName = "hieunguyen"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AccessFailedCount = 0,
+                            Address = "KTX Cỏ May, khu phố 6, phường Linh Trung, quận Thủ Đức, TP.HCM",
+                            ConcurrencyStamp = "97bd01a5-bf65-424e-9a63-c2d0f979555e",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "hieu@gmail.com",
+                            EmailConfirmed = false,
+                            FirstMiddleName = "Võ Trọng",
+                            Gender = 0,
+                            LastName = "Hiếu",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "HIEU@GMAIL.COM",
+                            NormalizedUserName = "HIEUVO",
+                            PasswordHash = "AQAAAAEAACcQAAAAEE2gEZxXeSRreF2b8zoyhaWl+AKk6mItwTk6W/sUZGK/yR9pVYGKF8FmslqMvm6RzQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "5dcbde7f-2bd2-4e21-b5d4-13fe54d2f426",
+                            Status = 0,
+                            TwoFactorEnabled = false,
+                            UserName = "hieuvo"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AccessFailedCount = 0,
+                            Address = "KTX Cỏ May, khu phố 6, phường Linh Trung, quận Thủ Đức, TP.HCM",
+                            ConcurrencyStamp = "af347fcc-da4a-4712-95da-a82f2a0607bb",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "dat@gmail.com",
+                            EmailConfirmed = false,
+                            FirstMiddleName = "Lê Tấn",
+                            Gender = 0,
+                            LastName = "Đạt",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "DAT@GMAIL.COM",
+                            NormalizedUserName = "DATLE",
+                            PasswordHash = "AQAAAAEAACcQAAAAEBfMXHBmT2UPt99k06iuR6guogSqNUcPyIkMmpxWqe0xlMUKmQW0JvAczGCXYJTA+Q==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "cba19fd2-e89d-48f9-9abb-b04ab39b871c",
+                            Status = 0,
+                            TwoFactorEnabled = false,
+                            UserName = "datle"
+                        });
                 });
 
             modelBuilder.Entity("ElectronicShop.Data.Entities.UserClaim", b =>
@@ -617,6 +782,23 @@ namespace ElectronicShop.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserRole");
+
+                    b.HasData(
+                        new
+                        {
+                            RoleId = 1,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            UserId = 2
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            UserId = 3
+                        });
                 });
 
             modelBuilder.Entity("ElectronicShop.Data.Entities.UserToken", b =>
@@ -722,8 +904,7 @@ namespace ElectronicShop.Data.Migrations
                     b.HasOne("ElectronicShop.Data.Entities.User", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ElectronicShop.Data.Entities.OrderDetail", b =>

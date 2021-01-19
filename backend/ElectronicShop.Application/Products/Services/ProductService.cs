@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
 using ElectronicShop.Application.Common.Models;
-using ElectronicShop.Application.Common.Repositories.Wrapper;
 using ElectronicShop.Application.Products.Commands.CreateProduct;
 using ElectronicShop.Application.Products.Commands.UpdateProduct;
 using ElectronicShop.Application.Products.Extensions;
-using ElectronicShop.Application.Products.Models;
 using ElectronicShop.Application.Products.Queries.GetAllProduct;
 using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
@@ -15,24 +13,24 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using ElectronicShop.Application.Products.Queries.FilterProduct;
 
 namespace ElectronicShop.Application.Products.Services
 {
     public class ProductService : IProductService
     {
-        private readonly IRepositoryWrapper _repository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
         private readonly IStorageService _storageService;
         private readonly ElectronicShopDbContext _context;
 
-        public ProductService(IRepositoryWrapper repository,
+        public ProductService(
             IHttpContextAccessor httpContextAccessor, IMapper mapper,
             IStorageService storageService,
             ElectronicShopDbContext context)
         {
-            _repository = repository;
             _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
             _storageService = storageService;
@@ -67,9 +65,9 @@ namespace ElectronicShop.Application.Products.Services
                         });
                 }
 
-                await _repository.ProductRepository.CreateAsync(product);
+                await _context.Products.AddAsync(product);
 
-                await _repository.SaveChangesAsync();
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -81,9 +79,9 @@ namespace ElectronicShop.Application.Products.Services
 
         public async Task<ApiResult<string>> UpdateAsync(UpdateProductCommand update)
         {
-            var product = await _repository.ProductRepository.FindByIdAsync(update.Id);
+            var product = await _context.Products.FindAsync(update.Id);
 
-            if(product is null)
+            if (product is null)
             {
                 return await Task.FromResult(new ApiErrorResult<string>("Không tìm thấy sản phẩm cần cập nhật"));
             }
@@ -100,56 +98,56 @@ namespace ElectronicShop.Application.Products.Services
 
             product.ModifiedBy = currentUser;
 
-            _repository.ProductRepository.Update(product);
+            _context.Products.Update(product);
 
-            await _repository.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             return await Task.FromResult(new ApiSuccessResult<string>("Cập nhật sản phẩm thành công"));
         }
 
         public async Task<ApiResult<string>> DeleteAsync(int productId)
         {
-            var product = await _repository.ProductRepository.FindByIdAsync(productId);
+            var product = await _context.Products.FindAsync(productId);
 
-            if(product is null)
+            if (product is null)
             {
                 return await Task.FromResult(new ApiErrorResult<string>("Không tìm thấy sản phẩm cần xóa"));
             }
 
             product.Status = ProductStatus.HIDDEN;
 
-            _repository.ProductRepository.Update(product);
+            _context.Products.Update(product);
 
-            await _repository.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             return await Task.FromResult(new ApiSuccessResult<string>("Xóa sản phẩm thành công"));
         }
 
-        public async Task<ApiResult<ProductVm>> GetProductByIdAsync(int productId)
+        public async Task<ApiResult<Product>> GetProductByIdAsync(int productId)
         {
+            var currentUser = _httpContextAccessor.HttpContext.User.Identity.Name;
             var product = await _context.Products
                 .Include(x => x.ProductPhotos)
-                .SingleOrDefaultAsync(x => x.Id == productId);
+                .SingleOrDefaultAsync(x => x.Id == productId && x.Status != ProductStatus.HIDDEN);
 
             if (product is null)
             {
-                return await Task.FromResult(new ApiErrorResult<ProductVm>("Không tìm thấy sản phẩm"));
+                return await Task.FromResult(new ApiErrorResult<Product>("Không tìm thấy sản phẩm"));
             }
 
             var path = _storageService.CreateProductPath(product.CategoryId, product.Name);
 
-            var result = _mapper.Map<ProductVm>(product);
-
-            foreach (var p in result.ProductPhotos)
+            foreach (var p in product.ProductPhotos)
             {
                 p.Url = "https://localhost:5001/" + path + "/" + p.Url;
             }
 
-            return await Task.FromResult(new ApiSuccessResult<ProductVm>(result));
+            return await Task.FromResult(new ApiSuccessResult<Product>(product));
         }
 
-        public async Task<ApiResult<List<ProductVm>>> GetAllProductAsync(GetAllProductQuery request)
+        public async Task<ApiResult<List<Product>>> GetAllProductAsync()
         {
+            // Lấy danh sách sản phẩm
             var products = await _context.Products
                 .Include(x => x.ProductPhotos)
                 .Where(x => x.Status != ProductStatus.HIDDEN)
@@ -157,12 +155,11 @@ namespace ElectronicShop.Application.Products.Services
 
             if (products is null)
             {
-                return await Task.FromResult(new ApiErrorResult<List<ProductVm>>("Không tìm thấy sản phẩm"));
+                return await Task.FromResult(new ApiErrorResult<List<Product>>("Không tìm thấy sản phẩm"));
             }
 
-            var result = _mapper.Map<List<ProductVm>>(products);
-
-            foreach (var p in result)
+            // Tạo đường dẫn cho toàn bộ hình ảnh của sản phẩm
+            foreach (var p in products)
             {
                 var path = _storageService.CreateProductPath(p.CategoryId, p.Name);
 
@@ -172,7 +169,88 @@ namespace ElectronicShop.Application.Products.Services
                 }
             }
 
-            return await Task.FromResult(new ApiSuccessResult<List<ProductVm>>(result));
+            return await Task.FromResult(new ApiSuccessResult<List<Product>>(products));
+        }
+
+        public async Task<ApiResult<List<Product>>> GetByCateIdAsync(int cateId)
+        {
+            var cate = await _context.Categories.FindAsync(cateId);
+
+            List<Product> products = new List<Product>();
+
+            // Nếu Category là Root
+            if (cate.RootId is null)
+            {
+                var query = from category in _context.Categories
+                    where category.RootId.Equals(cateId)
+                    join product in _context.Products.Include(x => x.ProductPhotos)
+                        on category.Id equals product.CategoryId
+                    select new
+                    {
+                        P = product
+                    }.P;
+
+                foreach (var p in query)
+                {
+                    products.Add(p);
+                }
+            }
+            // Nếu Category thông thường
+            else
+            {
+                products = await _context.Products
+                    .Include(x => x.ProductPhotos)
+                    .Where(x => x.CategoryId.Equals(cateId))
+                    .ToListAsync();
+            }
+
+            if (products is null)
+            {
+                return await Task.FromResult(new ApiErrorResult<List<Product>>("Không tìm thấy sản phẩm"));
+            }
+
+            // Tạo đường dẫn cho toàn bộ hình ảnh của sản phẩm
+            foreach (var p in products)
+            {
+                var path = _storageService.CreateProductPath(p.CategoryId, p.Name);
+
+                foreach (var i in p.ProductPhotos)
+                {
+                    i.Url = "https://localhost:5001/" + path + "/" + i.Url;
+                }
+            }
+
+            return await Task.FromResult(new ApiSuccessResult<List<Product>>(products));
+        }
+
+        public async Task<ApiResult<List<Product>>> FilterAsync(FilterProductQuery filter)
+        {
+            var query = await _context.Products
+                .Include(x=>x.ProductPhotos)
+                .Where(x => x.Status != ProductStatus.HIDDEN)
+                .ToListAsync();
+
+            if (!string.IsNullOrEmpty(filter.KeyWord))
+            {
+                query = query.Where(x
+                        => x.Name.Contains(filter.KeyWord)
+                           || x.Specifications.Contains(filter.KeyWord)
+                           || x.Description.Contains(filter.KeyWord))
+                    .ToList();
+            }
+            
+            // Tạo đường dẫn cho toàn bộ hình ảnh của sản phẩm
+            foreach (var p in query)
+            {
+                var path = _storageService.CreateProductPath(p.CategoryId, p.Name);
+
+                foreach (var i in p.ProductPhotos)
+                {
+                    i.Url = "https://localhost:5001/" + path + "/" + i.Url;
+                }
+            }
+
+            return await Task.FromResult(new ApiSuccessResult<List<Product>>(query));
         }
     }
 }

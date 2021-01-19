@@ -31,7 +31,8 @@ namespace ElectronicShop.Data.Configurations
                 .IsRequired();
 
             builder.Property(x => x.CreatedDate)
-                .HasColumnType("DateTime");
+                .HasColumnType("DateTime")
+                .HasDefaultValueSql("GetDate()");
 
             builder.Property(x => x.ModifiedDate)
                 .HasColumnType("DateTime");

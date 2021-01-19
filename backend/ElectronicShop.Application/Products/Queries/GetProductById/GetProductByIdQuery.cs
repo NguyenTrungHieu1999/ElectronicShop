@@ -1,13 +1,13 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using ElectronicShop.Application.Common.Models;
-using ElectronicShop.Application.Products.Models;
 using ElectronicShop.Application.Products.Services;
+using ElectronicShop.Data.Entities;
 using MediatR;
 
 namespace ElectronicShop.Application.Products.Queries.GetProductById
 {
-    public class GetProductByIdQuery : IRequest<ApiResult<ProductVm>>
+    public class GetProductByIdQuery : IRequest<ApiResult<Product>>
     {
         public GetProductByIdQuery(int productId)
         {
@@ -17,7 +17,7 @@ namespace ElectronicShop.Application.Products.Queries.GetProductById
         public int ProductId { get; }
     }
     
-    public class GetProductByIdHandle: IRequestHandler<GetProductByIdQuery, ApiResult<ProductVm>>
+    public class GetProductByIdHandle: IRequestHandler<GetProductByIdQuery, ApiResult<Product>>
     {
         private readonly IProductService _productService;
 
@@ -26,7 +26,7 @@ namespace ElectronicShop.Application.Products.Queries.GetProductById
             _productService = productService;
         }
 
-        public async Task<ApiResult<ProductVm>> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResult<Product>> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
         {
             return await _productService.GetProductByIdAsync(request.ProductId);
         }
