@@ -2,6 +2,7 @@
 using ElectronicShop.Application.Authentications.Commands.ExternalLogins;
 using ElectronicShop.Application.Categories.Commands.CreateCategory;
 using ElectronicShop.Application.Comments.Commands.CreateComment;
+using ElectronicShop.Application.Comments.Models;
 using ElectronicShop.Application.Orders.Commands.CreateOrder;
 using ElectronicShop.Application.ProductPhotos.Models;
 using ElectronicShop.Application.ProductReviews.Commands.CreateReview;
@@ -37,6 +38,8 @@ namespace ElectronicShop.Application.Common.Mapper
             CreateMap<CreateCommentCommand, Comment>();
 
             CreateMap<ProductReview, ReviewVm>();
+
+            CreateMap<Comment, CommentVm>();
         }
     }
 }

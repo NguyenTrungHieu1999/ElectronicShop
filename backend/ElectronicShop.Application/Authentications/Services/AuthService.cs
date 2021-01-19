@@ -70,15 +70,13 @@ namespace ElectronicShop.Application.Authentications.Services
             var roles = await _userManager.GetRolesAsync(user);
 
             var token = CreateToken(roles, user);
-
-            // var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            
             return await Task.FromResult(
                 new ApiSuccessResult<string>()
                 {
                     Message = roles[0],
                     ResultObj = token
                 });
-
         }
 
         private string CreateToken(IList<string> roles, User user)
