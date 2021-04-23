@@ -26,7 +26,11 @@ namespace ElectronicShop.Application.Comments.Services
         {
             _context = context;
             _mapper = mapper;
-            _userId = int.Parse(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            if (httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+            {
+                _userId = int.Parse(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            }
         }
 
         public async Task<ApiResult<List<CommentVm>>> GetAllByProductIdAsync(int productId)
