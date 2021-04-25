@@ -1,6 +1,6 @@
 ﻿namespace ElectronicShop.Application.Carts.Services
 {
-    public class CartService
+    public class CartService : ICartService
     {
         
     }
