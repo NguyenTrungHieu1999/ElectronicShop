@@ -252,5 +252,25 @@ namespace ElectronicShop.Application.Products.Services
 
             return await Task.FromResult(new ApiSuccessResult<List<Product>>(query));
         }
+
+        public async Task<ApiResult<List<Product>>> GetNewProductsAsync()
+        {
+            var query = await _context.Products
+                .Include(x=>x.ProductPhotos)
+                .Where(x => x.Status == ProductStatus.NEW)
+                .ToListAsync();
+            
+            // Tạo đường dẫn cho toàn bộ hình ảnh của sản phẩm
+            foreach (var p in query)
+            {
+                var path = _storageService.CreateProductPath(p.CategoryId, p.Name);
+
+                foreach (var i in p.ProductPhotos)
+                {
+                    i.Url = "https://localhost:5001/" + path + "/" + i.Url;
+                }
+            }
+            return await Task.FromResult(new ApiSuccessResult<List<Product>>(query));
+        }
     }
 }

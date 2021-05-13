@@ -54,15 +54,20 @@ namespace ElectronicShop.Data.EF
 
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Comment> Comments { get; set; }
+        
         public virtual DbSet<FavoriteProduct> FavoriteProducts { get; set; }
         public virtual DbSet<Order> Orders { get; set; }
         public virtual DbSet<OrderDetail> OrderDetails { get; set; }
         public virtual DbSet<OrderStatus> OrderStatuses { get; set; }
+        
         public virtual DbSet<OrderStatusDetail> OrderStatusDetails { get; set; }
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<ProductPhoto> ProductPhotos { get; set; }
         public virtual DbSet<ProductReview> ProductReviews { get; set; }
         public virtual DbSet<ProductType> ProductTypes { get; set; }
+        
         public virtual DbSet<WatchedProduct> WatchedProducts { get; set; }
+        
+        public virtual  DbSet<Cart> Carts { get; set; }
     }
 }

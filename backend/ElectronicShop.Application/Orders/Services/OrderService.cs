@@ -30,6 +30,7 @@ namespace ElectronicShop.Application.Orders.Services
 
         public async Task<ApiResult<string>> CreateAsync(CreateOrderCommand command)
         {
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             // Tạo đơn hàng
             var order = _mapper.Map<Order>(command);
             order.CreatedDate = DateTime.Now;
@@ -72,13 +73,20 @@ namespace ElectronicShop.Application.Orders.Services
                 }
                 
                 _context.Products.Update(product);
-
             }
-
-            // Lưu thông tin
+            
             await _context.Orders.AddAsync(order);
-
-            await _context.SaveChangesAsync();
+            
+            // Lưu thông tin
+            try
+            {
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+            }
 
             return await Task.FromResult(new ApiSuccessResult<string>("Thêm đơn hàng thành công."));
         }

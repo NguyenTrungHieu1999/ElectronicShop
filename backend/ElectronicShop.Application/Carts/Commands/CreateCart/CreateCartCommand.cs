@@ -1,6 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
+using ElectronicShop.Application.Carts.Models;
+using ElectronicShop.Application.Carts.Services;
 using ElectronicShop.Application.Common.Models;
 using MediatR;
 
@@ -8,17 +11,21 @@ namespace ElectronicShop.Application.Carts.Commands.CreateCart
 {
     public class CreateCartCommand : IRequest<ApiResult<string>>
     {
-        [Required]
-        public int ProductId { get; set; }
-        [Required]
-        public int Quantity { get; set; }
+       public List<CartModel> CartModels { get; set; }
     }
     
     public class CreateCartHandle: IRequestHandler<CreateCartCommand, ApiResult<string>>
     {
-        public Task<ApiResult<string>> Handle(CreateCartCommand request, CancellationToken cancellationToken)
+        private readonly ICartService _service;
+
+        public CreateCartHandle(ICartService service)
         {
-            throw new System.NotImplementedException();
+            _service = service;
+        }
+
+        public async Task<ApiResult<string>> Handle(CreateCartCommand request, CancellationToken cancellationToken)
+        {
+            return await _service.CreateAsync(request.CartModels);
         }
     }
 }

@@ -12,6 +12,8 @@ namespace ElectronicShop.Data.Entities
 
         public int Quantity { get; set; }
 
+        public bool Status { get; set; }
+
         public User User { get; set; }
 
         public Product Product { get; set; }
