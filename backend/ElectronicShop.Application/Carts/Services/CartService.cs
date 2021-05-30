@@ -45,6 +45,16 @@ namespace ElectronicShop.Application.Carts.Services
             {
                 await _context.Carts.AddAsync(cart);
             }
+
+            var oldShoppingCarts = await _context.Carts
+                .Where(x => x.UserId == _userId&&x.Status!=false)
+                .ToListAsync();
+            
+            foreach (var item in oldShoppingCarts)
+            {
+                item.Status = false;
+                _context.Carts.Update(item);
+            }
             
             try
             {
@@ -97,18 +107,21 @@ namespace ElectronicShop.Application.Carts.Services
                 .Where(x => x.Status==true&&x.ProductId.Equals(command.ProductId)&&x.UserId.Equals(_userId))
                 .SingleOrDefaultAsync();
 
-            if (command.Quantity == 0)
+            cart.Quantity += command.Total;
+
+            if (cart.Quantity == 0)
             {
                 cart.Status = false;
             }
 
-            cart.Quantity = command.Quantity;
-            
             _context.Carts.Update(cart);
+
             await _context.SaveChangesAsync();
             
             return await Task.FromResult(new ApiSuccessResult<string>("Cập nhật giỏ hàng thành công"));
         }
+
+
 
         public async Task<ApiResult<string>> RemoveAllCart()
         {

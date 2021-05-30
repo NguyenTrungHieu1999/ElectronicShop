@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Threading;
-using System.Threading.Tasks;
-using ElectronicShop.Application.Carts.Models;
+﻿using ElectronicShop.Application.Carts.Models;
 using ElectronicShop.Application.Carts.Services;
 using ElectronicShop.Application.Common.Models;
 using MediatR;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ElectronicShop.Application.Carts.Commands.CreateCart
 {

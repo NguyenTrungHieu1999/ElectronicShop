@@ -11,8 +11,9 @@ namespace ElectronicShop.Application.Carts.Commands.UpdateCart
     {
         [Required]
         public int ProductId { get; set; }
+
         [Required]
-        public int Quantity { get; set; }
+        public int Total { get; set; }
     }
     
     public class UpdateCartHandle: IRequestHandler<UpdateCartCommand, ApiResult<string>>

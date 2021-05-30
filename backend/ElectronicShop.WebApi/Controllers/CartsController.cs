@@ -3,7 +3,7 @@ using ElectronicShop.Application.Carts.Commands.AddCart;
 using ElectronicShop.Application.Carts.Commands.CreateCart;
 using ElectronicShop.Application.Carts.Commands.RemoveCart;
 using ElectronicShop.Application.Carts.Commands.UpdateCart;
-using ElectronicShop.Application.Carts.Queries;
+using ElectronicShop.Application.Carts.Queries.GetAllCartByUserId;
 using ElectronicShop.WebApi.ActionFilters;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

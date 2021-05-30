@@ -24,6 +24,7 @@ using System;
 using System.Text;
 using ElectronicShop.Application.Carts.Services;
 using ElectronicShop.Application.Comments.Services;
+using ElectronicShop.Application.Favorites.Services;
 using ElectronicShop.Application.OrderDetails.Services;
 using ElectronicShop.Application.ProductPhotos.Services;
 using ProductService = ElectronicShop.Application.Products.Services.ProductService;
@@ -165,6 +166,7 @@ namespace ElectronicShop.WebApi
             services.AddTransient<UserManager<User>, UserManager<User>>();
             services.AddTransient<SignInManager<User>, SignInManager<User>>();
             services.AddTransient<ICartService, CartService>();
+            services.AddTransient<IFavoriteService, FavoriteService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

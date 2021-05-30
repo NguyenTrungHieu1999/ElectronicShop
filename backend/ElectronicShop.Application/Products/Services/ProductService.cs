@@ -3,7 +3,6 @@ using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Application.Products.Commands.CreateProduct;
 using ElectronicShop.Application.Products.Commands.UpdateProduct;
 using ElectronicShop.Application.Products.Extensions;
-using ElectronicShop.Application.Products.Queries.GetAllProduct;
 using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
 using ElectronicShop.Data.Enums;
@@ -13,7 +12,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using ElectronicShop.Application.Products.Queries.FilterProduct;
 
@@ -176,7 +174,7 @@ namespace ElectronicShop.Application.Products.Services
         {
             var cate = await _context.Categories.FindAsync(cateId);
 
-            List<Product> products = new List<Product>();
+            var products = new List<Product>();
 
             // Nếu Category là Root
             if (cate.RootId is null)

@@ -6,12 +6,12 @@ using ElectronicShop.Application.Carts.Services;
 using ElectronicShop.Application.Common.Models;
 using MediatR;
 
-namespace ElectronicShop.Application.Carts.Queries
+namespace ElectronicShop.Application.Carts.Queries.GetAllCartByUserId
 {
     public class GetAllCartByUserIdQuery : IRequest<ApiResult<List<CartVm>>>
-    {}
-    
-    public class GetAllCartByUserIdHandle: IRequestHandler<GetAllCartByUserIdQuery, ApiResult<List<CartVm>>>
+    { }
+
+    public class GetAllCartByUserIdHandle : IRequestHandler<GetAllCartByUserIdQuery, ApiResult<List<CartVm>>>
     {
         private readonly ICartService _cartService;
 
