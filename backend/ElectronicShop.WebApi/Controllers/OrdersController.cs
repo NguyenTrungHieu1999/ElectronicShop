@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using ElectronicShop.Application.Orders.Commands.CancleMyOrder;
 using ElectronicShop.Application.Orders.Commands.CancleOrder;
 using ElectronicShop.Application.Orders.Queries.GetOrderById;
+using ElectronicShop.Application.Orders.Queries.HaveOrder;
 using ElectronicShop.Application.Orders.Queries.MyOrderById;
 
 namespace ElectronicShop.WebApi.Controllers
@@ -86,6 +87,13 @@ namespace ElectronicShop.WebApi.Controllers
         public async Task<IActionResult> CancleMyOrder(int orderId)
         {
             return Ok(await _mediator.Send(new CancleMyOrderCommand(orderId)));
+        }
+
+        [HttpGet("haveOrder/{productId}")]
+        [Authorize]
+        public async Task<IActionResult> HaveOrder(int productId)
+        {
+            return Ok(await _mediator.Send(new HaveOrderQuery(productId)));
         }
     }
 }

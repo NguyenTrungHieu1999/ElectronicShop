@@ -40,7 +40,8 @@ namespace ElectronicShop.Application.Orders.Services
 
             if (isAuth)
             {
-                order.UserId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                order.UserId =
+                    int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             }
 
             // Tạo thông tin trạng thái của đơn hàng
@@ -52,17 +53,17 @@ namespace ElectronicShop.Application.Orders.Services
                     CreatedDate = DateTime.Now
                 }
             };
-            
+
             // Tạo thông tin cho chi tiết đơn hàng
             order.OrderDetails = new List<OrderDetail>();
 
             foreach (var detail in command.OrderDetails)
             {
                 var orderDetail = new OrderDetail();
-                
+
                 orderDetail.Map(detail);
                 order.OrderDetails.Add(orderDetail);
-                
+
                 // Cập nhật số lượng sản phẩm tồn sau khi đặt hàng thành công
                 var product = await _context.Products.FindAsync(detail.ProductId);
                 product.Inventory -= detail.Quantity;
@@ -71,12 +72,12 @@ namespace ElectronicShop.Application.Orders.Services
                 {
                     return await Task.FromResult(new ApiErrorResult<string>("Số lượng hàng ở kho không còn đủ."));
                 }
-                
+
                 _context.Products.Update(product);
             }
-            
+
             await _context.Orders.AddAsync(order);
-            
+
             // Lưu thông tin
             try
             {
@@ -95,7 +96,7 @@ namespace ElectronicShop.Application.Orders.Services
         {
             var order = await _context.Orders.FindAsync(orderId);
 
-            if(order.StatusId <= MaxOrderStatusId)
+            if (order.StatusId <= MaxOrderStatusId)
             {
                 order.StatusId += 1;
             }
@@ -116,7 +117,8 @@ namespace ElectronicShop.Application.Orders.Services
 
             await _context.SaveChangesAsync();
 
-            return await Task.FromResult(new ApiSuccessResult<string>("Bạn đã cập nhật trạng thái thành " + orderStatus.Name));
+            return await Task.FromResult(
+                new ApiSuccessResult<string>("Bạn đã cập nhật trạng thái thành " + orderStatus.Name));
         }
 
         public async Task<ApiResult<List<Order>>> GetAllAsync()
@@ -159,7 +161,7 @@ namespace ElectronicShop.Application.Orders.Services
             {
                 return await Task.FromResult(new ApiSuccessResult<Order>(order));
             }
-            
+
             return await Task.FromResult(new ApiErrorResult<Order>("Không tìm thấy đơn hàng."));
         }
 
@@ -168,7 +170,7 @@ namespace ElectronicShop.Application.Orders.Services
             var order = await _context.Orders.FindAsync(orderId);
 
             order.StatusId = 8;
-            
+
             // Tạo thông tin trạng thái của đơn hàng
             order.OrderStatusDetails = new List<OrderStatusDetail>()
             {
@@ -178,42 +180,39 @@ namespace ElectronicShop.Application.Orders.Services
                     CreatedDate = DateTime.Now
                 }
             };
-            
+
             _context.Update(order);
 
             await _context.SaveChangesAsync();
 
             return await Task.FromResult(new ApiSuccessResult<string>("Đơn hàng đã được hủy."));
         }
-        
+
         public async Task<ApiResult<string>> CancleMyOrderAsync(int orderId)
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             var order = await _context.Orders.FindAsync(orderId);
 
-            if (order.UserId.Equals(int.Parse(userId)))
+            if (!order.UserId.Equals(int.Parse(userId)))
+                return await Task.FromResult(new ApiErrorResult<string>("Không tìm thấy đơn hàng."));
+            order.StatusId = 8;
+
+            // Tạo thông tin trạng thái của đơn hàng
+            order.OrderStatusDetails = new List<OrderStatusDetail>()
             {
-                order.StatusId = 8;
-            
-                // Tạo thông tin trạng thái của đơn hàng
-                order.OrderStatusDetails = new List<OrderStatusDetail>()
+                new OrderStatusDetail()
                 {
-                    new OrderStatusDetail()
-                    {
-                        StatusId = order.StatusId,
-                        CreatedDate = DateTime.Now
-                    }
-                };
-            
-                _context.Update(order);
+                    StatusId = order.StatusId,
+                    CreatedDate = DateTime.Now
+                }
+            };
 
-                await _context.SaveChangesAsync();
+            _context.Update(order);
 
-                return await Task.FromResult(new ApiSuccessResult<string>("Đơn hàng đã được hủy."));
-            }
+            await _context.SaveChangesAsync();
 
-            return await Task.FromResult(new ApiErrorResult<string>("Không tìm thấy đơn hàng."));
+            return await Task.FromResult(new ApiSuccessResult<string>("Đơn hàng đã được hủy."));
         }
 
         private async Task<Order> FindOrderByIdAsync(int orderId)
