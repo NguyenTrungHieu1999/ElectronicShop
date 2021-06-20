@@ -6,6 +6,7 @@ using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Data.EF;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace ElectronicShop.Application.Orders.Queries.HaveOrder
 {
@@ -18,7 +19,7 @@ namespace ElectronicShop.Application.Orders.Queries.HaveOrder
 
         public int ProductId { get; }
     }
-    
+
     public class HaveOrderHandle : IRequestHandler<HaveOrderQuery, ApiResult<bool>>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -39,10 +40,15 @@ namespace ElectronicShop.Application.Orders.Queries.HaveOrder
                 where d.ProductId.Equals(request.ProductId)
                 select new
                 {
-                    i = d.Id
+                    i = d.ProductId
                 };
 
-            if (query.Count() > 0)
+            if (query.Count() <= 0) return await Task.FromResult(new ApiErrorResult<bool>("false"));
+
+            var review = await _context.ProductReviews
+                .Where(x => x.UserId == int.Parse(userId) && x.ProductId.Equals(request.ProductId))
+                .SingleOrDefaultAsync(cancellationToken: cancellationToken);
+            if (review == null)
             {
                 return await Task.FromResult(new ApiSuccessResult<bool>(true));
             }

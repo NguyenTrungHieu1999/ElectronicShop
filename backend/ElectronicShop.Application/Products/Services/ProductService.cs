@@ -67,7 +67,7 @@ namespace ElectronicShop.Application.Products.Services
 
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch
             {
                 return new ApiErrorResult<string>("Thêm sản phẩm thất bại");
             }
@@ -223,20 +223,18 @@ namespace ElectronicShop.Application.Products.Services
 
         public async Task<ApiResult<List<Product>>> FilterAsync(FilterProductQuery filter)
         {
+            if (string.IsNullOrWhiteSpace(filter.KeyWord))
+                return await Task.FromResult(new ApiErrorResult<List<Product>>(""));
             var query = await _context.Products
-                .Include(x=>x.ProductPhotos)
-                .Where(x => x.Status != ProductStatus.HIDDEN)
+                .Include(x => x.ProductPhotos)
+                .Where(x => x.Status != ProductStatus.HIDDEN
+                            && x.Name.Contains(filter.KeyWord)
+                            || x.Description.Contains(filter.KeyWord)
+                            || x.Specifications.Contains(filter.KeyWord)
+                            || _context.SoundsLike(x.Name) == _context.SoundsLike(filter.KeyWord)
+                            || _context.SoundsLike(x.Description) == _context.SoundsLike(filter.KeyWord))
                 .ToListAsync();
-
-            if (!string.IsNullOrEmpty(filter.KeyWord))
-            {
-                query = query.Where(x
-                        => x.Name.Contains(filter.KeyWord)
-                           || x.Specifications.Contains(filter.KeyWord)
-                           || x.Description.Contains(filter.KeyWord))
-                    .ToList();
-            }
-            
+                
             // Tạo đường dẫn cho toàn bộ hình ảnh của sản phẩm
             foreach (var p in query)
             {
@@ -254,10 +252,10 @@ namespace ElectronicShop.Application.Products.Services
         public async Task<ApiResult<List<Product>>> GetNewProductsAsync()
         {
             var query = await _context.Products
-                .Include(x=>x.ProductPhotos)
+                .Include(x => x.ProductPhotos)
                 .Where(x => x.Status == ProductStatus.NEW)
                 .ToListAsync();
-            
+
             // Tạo đường dẫn cho toàn bộ hình ảnh của sản phẩm
             foreach (var p in query)
             {
@@ -268,6 +266,7 @@ namespace ElectronicShop.Application.Products.Services
                     i.Url = "https://localhost:5001/" + path + "/" + i.Url;
                 }
             }
+
             return await Task.FromResult(new ApiSuccessResult<List<Product>>(query));
         }
     }
