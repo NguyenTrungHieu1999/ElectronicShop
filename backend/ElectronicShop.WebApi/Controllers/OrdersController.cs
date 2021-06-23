@@ -69,7 +69,7 @@ namespace ElectronicShop.WebApi.Controllers
                               + "<div style=\"position: absolute;\">" + "<table border=\"1px\" style=\"border-spacing: 0\"><tr><th>Mã Sản phẩm</th><th>Tên sản phẩm</th><th>Số lượng</th><th>Đơn giá</th></tr>";
                 body = orderDetails.Aggregate(body, (current, item) => current + ("<tr><th><p>" + item.Id + "</p></th>" + "<th><p>" + item.ProductName + "</p></th>" + "<th><p>" + item.Quantity + "</p></th>" + "<th><p>" + item.Price.ToString("N0") + " VND </p></th></tr>"));
                 body += "</table><p style=\"padding-right:10px\" >Tổng tiền: <span style=\"color: red\">" + command.TotalMoney.ToString("N0") + " VND</span></p><h4>Một lần nữa ElectronicShop cảm ơn quý khách!!!</h4></div>";
-                await _mailer.SenEmailAsync("hieutanmy321@gmail.com", "Thông tin đặt hàng", body);
+                await _mailer.SenEmailAsync(command.Email, "Thông tin đặt hàng", body);
             }
             return Ok(result);
         }
