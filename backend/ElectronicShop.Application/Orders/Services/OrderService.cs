@@ -229,7 +229,7 @@ namespace ElectronicShop.Application.Orders.Services
         public async Task<ApiResult<List<SellingProductsVM>>> SellingProducts(int m, int y)
         {
             var sellingProducts = _context.Orders
-                .Where(o => o.CreatedDate.Month.Equals(m))
+                .Where(o => o.CreatedDate.Month.Equals(m) && o.CreatedDate.Year.Equals(y) && o.StatusId.Equals(MaxOrderStatusId))
                 .Join(_context.OrderDetails, o => o.Id, od => od.OrderId, (o, od) => new { o, od })
                 .Join(_context.Products, @t => @t.od.ProductId, p => p.Id, (@t, p) => new { @t, p })
                 .GroupBy(@t => new
