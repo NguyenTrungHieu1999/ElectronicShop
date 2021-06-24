@@ -21,6 +21,7 @@ using ElectronicShop.Application.Orders.Queries.MyOrderById;
 using ElectronicShop.Data.EF;
 using ElectronicShop.Infrastructure.SendMail;
 using Microsoft.AspNetCore.Http;
+using ElectronicShop.Application.Orders.Queries.GetSellingProducts;
 
 namespace ElectronicShop.WebApi.Controllers
 {
@@ -76,7 +77,7 @@ namespace ElectronicShop.WebApi.Controllers
 
         [HttpPost("{orderId}/change-status")]
         [AuthorizeRoles(Constants.ADMIN, Constants.EMP)]
-        public async Task<IActionResult> ChangeStatus(int orderId)
+        public async Task<IActionResult> ChangeStatus([FromQuery] int orderId)
         {
             var command = new ChangeOrderStatusCommand(orderId);
 
@@ -101,37 +102,44 @@ namespace ElectronicShop.WebApi.Controllers
 
         [HttpGet("{orderId}")]
         [AuthorizeRoles(Constants.ADMIN, Constants.EMP)]
-        public async Task<IActionResult> GetOrderById(int orderId)
+        public async Task<IActionResult> GetOrderById([FromQuery] int orderId)
         {
             return Ok(await _mediator.Send(new GetOrderByIdQuery(orderId)));
         }
 
         [HttpGet("my-order/id={orderId}")]
         [Authorize]
-        public async Task<IActionResult> MyOrderById(int orderId)
+        public async Task<IActionResult> MyOrderById([FromQuery] int orderId)
         {
             return Ok(await _mediator.Send(new MyOrderByIdQuery(orderId)));
         }
 
         [HttpPost("cancle-order/id={orderId}")]
         [AuthorizeRoles(Constants.ADMIN, Constants.EMP)]
-        public async Task<IActionResult> CancleOrder(int orderId)
+        public async Task<IActionResult> CancleOrder([FromQuery] int orderId)
         {
             return Ok(await _mediator.Send(new CancleOrderCommand(orderId)));
         }
         
         [HttpPost("cancle-my-order/id={orderId}")]
         [Authorize]
-        public async Task<IActionResult> CancleMyOrder(int orderId)
+        public async Task<IActionResult> CancleMyOrder([FromQuery] int orderId)
         {
             return Ok(await _mediator.Send(new CancleMyOrderCommand(orderId)));
         }
 
         [HttpGet("haveOrder/{productId}")]
         [Authorize]
-        public async Task<IActionResult> HaveOrder(int productId)
+        public async Task<IActionResult> HaveOrder([FromQuery]int productId)
         {
             return Ok(await _mediator.Send(new HaveOrderQuery(productId)));
+        }
+
+        [HttpGet("sellingProducts/m={month}/y={year}")]
+        [AuthorizeRoles(Constants.ADMIN, Constants.EMP)]
+        public async Task<IActionResult> SellingProducts(int month, int year)
+        {
+            return Ok(await _mediator.Send(new GetSellingProductsQuery(month, year)));
         }
     }
 }

@@ -11,6 +11,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using ElectronicShop.Application.OrderDetails.Extensions;
+using ElectronicShop.Application.Orders.Models;
 
 namespace ElectronicShop.Application.Orders.Services
 {
@@ -223,6 +224,44 @@ namespace ElectronicShop.Application.Orders.Services
                 .FirstAsync(x => x.Id == orderId);
 
             return order;
+        }
+
+        public async Task<ApiResult<List<SellingProductsVM>>> SellingProducts(int m, int y)
+        {
+            var sellingProducts = _context.Orders
+                .Where(o => o.CreatedDate.Month.Equals(m))
+                .Join(_context.OrderDetails, o => o.Id, od => od.OrderId, (o, od) => new { o, od })
+                .Join(_context.Products, @t => @t.od.ProductId, p => p.Id, (@t, p) => new { @t, p })
+                .GroupBy(@t => new
+                {
+                    @t.p.Id,
+                    @t.p.Name,
+                    @t.p.Price,
+                    @t.p.Status,
+                }, @t => @t.@t.od)
+                .Select(result => new
+                {
+                    id = result.Key.Id,
+                    name = result.Key.Name,
+                    price = result.Key.Price,
+                    quantity = result.Sum(x => x.Quantity),
+                    status = result.Key.Status
+                });
+
+            var results = new List<SellingProductsVM>();
+            foreach (var i in sellingProducts)
+            {
+                results.Add(new SellingProductsVM
+                {
+                    Id = i.id,
+                    Name = i.name,
+                    Price = i.price,
+                    Quantity = i.quantity,
+                    Status = i.status
+                });
+            }
+
+            return await Task.FromResult(new ApiSuccessResult<List<SellingProductsVM>>(results));
         }
     }
 }
