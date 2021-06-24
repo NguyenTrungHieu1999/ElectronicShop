@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using ElectronicShop.Application.Products.Queries.FilterProduct;
 using ElectronicShop.Application.Products.Queries.GetAllProduct;
+using ElectronicShop.Application.Products.Queries.GetNewProducts;
 using ElectronicShop.Application.Products.Queries.GetProductByCateId;
 using ElectronicShop.Application.Products.Queries.GetProductById;
 using Microsoft.AspNetCore.Authorization;
@@ -74,6 +75,13 @@ namespace ElectronicShop.WebApi.Controllers
             return Ok(await _mediator.Send(new GetAllProductQuery()));
         }
 
+        [HttpGet("get-new-products")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetNew()
+        {
+            return Ok(await _mediator.Send(new GetNewProductsQuery()));
+        }
+        
         [HttpGet("search")]
         [AllowAnonymous]
         public async Task<IActionResult> Filter([FromQuery] FilterProductQuery query)

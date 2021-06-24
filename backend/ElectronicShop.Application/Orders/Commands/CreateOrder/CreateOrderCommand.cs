@@ -28,6 +28,9 @@ namespace ElectronicShop.Application.Orders.Commands.CreateOrder
 
         [Required]
         public string PhoneNumber { get; set; }
+        
+        [Required]
+        public string Email { get; set; }
 
         [Required]
         public decimal TotalMoney { get; set; }

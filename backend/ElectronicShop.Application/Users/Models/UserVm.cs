@@ -23,6 +23,10 @@ namespace ElectronicShop.Application.Users.Models
 
         public string Address { get; set; }
 
+        public DateTime CreatedDate { get; set; }
+
+        public DateTime? ModifiedDate { get; set; }
+
         public UserStatus Status { get; set; }
 
         public string UserInRole { get; set; }
