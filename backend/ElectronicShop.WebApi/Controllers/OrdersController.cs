@@ -137,6 +137,7 @@ namespace ElectronicShop.WebApi.Controllers
 
         [HttpGet("sellingProducts/m={month}/y={year}")]
         [AuthorizeRoles(Constants.ADMIN, Constants.EMP)]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> SellingProducts(int month, int year)
         {
             return Ok(await _mediator.Send(new GetSellingProductsQuery(month, year)));
