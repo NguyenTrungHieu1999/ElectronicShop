@@ -46,6 +46,8 @@ namespace ElectronicShop.Data.Entities
 
         public List<FavoriteProduct> FavoriteProducts { get; set; }
 
+        public List<Cart> Carts { get; set; }
+
         public List<Comment> Comments { get; set; }
     }
 }

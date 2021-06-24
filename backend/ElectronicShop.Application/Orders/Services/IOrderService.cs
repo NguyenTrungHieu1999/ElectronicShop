@@ -2,6 +2,7 @@
 using ElectronicShop.Application.Orders.Commands.CreateOrder;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ElectronicShop.Application.Orders.Models;
 using ElectronicShop.Data.Entities;
 
 namespace ElectronicShop.Application.Orders.Services
@@ -23,5 +24,7 @@ namespace ElectronicShop.Application.Orders.Services
         Task<ApiResult<string>> CancleOrderAsync(int orderId);
 
         Task<ApiResult<string>> CancleMyOrderAsync(int orderId);
+
+        Task<ApiResult<List<SellingProductsVM>>> SellingProducts(int m, int y);
     }
 }

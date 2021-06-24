@@ -18,6 +18,8 @@ namespace ElectronicShop.Data.Entities
         public string ReceiversAddress { get; set; }
 
         public string PhoneNumber { get; set; }
+        
+        public string Email { get; set; }
 
         public decimal TotalMoney { get; set; }
 

@@ -3,7 +3,6 @@ using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Application.Products.Commands.CreateProduct;
 using ElectronicShop.Application.Products.Commands.UpdateProduct;
 using ElectronicShop.Application.Products.Extensions;
-using ElectronicShop.Application.Products.Queries.GetAllProduct;
 using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
 using ElectronicShop.Data.Enums;
@@ -13,7 +12,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using ElectronicShop.Application.Products.Queries.FilterProduct;
 
@@ -69,7 +67,7 @@ namespace ElectronicShop.Application.Products.Services
 
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch
             {
                 return new ApiErrorResult<string>("Thêm sản phẩm thất bại");
             }
@@ -176,7 +174,7 @@ namespace ElectronicShop.Application.Products.Services
         {
             var cate = await _context.Categories.FindAsync(cateId);
 
-            List<Product> products = new List<Product>();
+            var products = new List<Product>();
 
             // Nếu Category là Root
             if (cate.RootId is null)
@@ -225,20 +223,39 @@ namespace ElectronicShop.Application.Products.Services
 
         public async Task<ApiResult<List<Product>>> FilterAsync(FilterProductQuery filter)
         {
+            if (string.IsNullOrWhiteSpace(filter.KeyWord))
+                return await Task.FromResult(new ApiErrorResult<List<Product>>(""));
             var query = await _context.Products
-                .Include(x=>x.ProductPhotos)
-                .Where(x => x.Status != ProductStatus.HIDDEN)
+                .Include(x => x.ProductPhotos)
+                .Where(x => x.Status != ProductStatus.HIDDEN
+                            && x.Name.Contains(filter.KeyWord)
+                            || x.Description.Contains(filter.KeyWord)
+                            || x.Specifications.Contains(filter.KeyWord)
+                            || _context.SoundsLike(x.Name) == _context.SoundsLike(filter.KeyWord)
+                            || _context.SoundsLike(x.Description) == _context.SoundsLike(filter.KeyWord))
+                .ToListAsync();
+                
+            // Tạo đường dẫn cho toàn bộ hình ảnh của sản phẩm
+            foreach (var p in query)
+            {
+                var path = _storageService.CreateProductPath(p.CategoryId, p.Name);
+
+                foreach (var i in p.ProductPhotos)
+                {
+                    i.Url = "https://localhost:5001/" + path + "/" + i.Url;
+                }
+            }
+
+            return await Task.FromResult(new ApiSuccessResult<List<Product>>(query));
+        }
+
+        public async Task<ApiResult<List<Product>>> GetNewProductsAsync()
+        {
+            var query = await _context.Products
+                .Include(x => x.ProductPhotos)
+                .Where(x => x.Status == ProductStatus.NEW)
                 .ToListAsync();
 
-            if (!string.IsNullOrEmpty(filter.KeyWord))
-            {
-                query = query.Where(x
-                        => x.Name.Contains(filter.KeyWord)
-                           || x.Specifications.Contains(filter.KeyWord)
-                           || x.Description.Contains(filter.KeyWord))
-                    .ToList();
-            }
-            
             // Tạo đường dẫn cho toàn bộ hình ảnh của sản phẩm
             foreach (var p in query)
             {

@@ -65,18 +65,11 @@ namespace ElectronicShop.Application.Authentications.Services
                 return new ApiErrorResult<string>("Đăng nhập thất bại");
             }
 
-            _httpContextAccessor.HttpContext.Session.SetComplexData(Constants.CURRENTUSER, user);
-
             var roles = await _userManager.GetRolesAsync(user);
 
             var token = CreateToken(roles, user);
-            
-            return await Task.FromResult(
-                new ApiSuccessResult<string>()
-                {
-                    Message = roles[0],
-                    ResultObj = token
-                });
+
+            return await Task.FromResult(new ApiSuccessResult<string>(token));
         }
 
         private string CreateToken(IList<string> roles, User user)
@@ -91,14 +84,14 @@ namespace ElectronicShop.Application.Authentications.Services
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Secret"]));
 
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
                 _config["JWT:ValidIssuer"],
                 _config["JWT:ValidAudience"],
                 claims,
                 expires: DateTime.Now.AddHours(2),
-                signingCredentials: creds);
+                signingCredentials: cred);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
@@ -139,15 +132,7 @@ namespace ElectronicShop.Application.Authentications.Services
 
             var token = CreateToken(roles, user);
             
-            //var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-            return await Task.FromResult(
-                new ApiSuccessResult<string>()
-                {
-                    Message = roles[0],
-                    ResultObj = token
-                });
-
+            return await Task.FromResult(new ApiSuccessResult<string>(token));
         }
 
         public async Task<bool> SignOutAsync()

@@ -1,4 +1,5 @@
-﻿using ElectronicShop.Data.Configurations;
+﻿using System;
+using ElectronicShop.Data.Configurations;
 using ElectronicShop.Data.Entities;
 using ElectronicShop.Data.Extensions;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -30,6 +31,7 @@ namespace ElectronicShop.Data.EF
             modelBuilder.ApplyConfiguration(new CategoryConfiguration());
             modelBuilder.ApplyConfiguration(new CommentConfiguration());
             modelBuilder.ApplyConfiguration(new FavoriteProductConfiguration());
+            modelBuilder.ApplyConfiguration(new CartConfiguration());
             modelBuilder.ApplyConfiguration(new OrderConfiguration());
             modelBuilder.ApplyConfiguration(new OrderDetailConfiguration());
             modelBuilder.ApplyConfiguration(new OrderStatusConfiguration());
@@ -46,7 +48,7 @@ namespace ElectronicShop.Data.EF
             modelBuilder.ApplyConfiguration(new UserClaimConfiguration());
             modelBuilder.ApplyConfiguration(new UserLoginConfiguration());
             modelBuilder.ApplyConfiguration(new UserTokenConfiguration());
-            
+
             // Khởi tạo giá trị ban đầu cho dữ liệu
             modelBuilder.Seed();
         }
@@ -63,5 +65,12 @@ namespace ElectronicShop.Data.EF
         public virtual DbSet<ProductReview> ProductReviews { get; set; }
         public virtual DbSet<ProductType> ProductTypes { get; set; }
         public virtual DbSet<WatchedProduct> WatchedProducts { get; set; }
+        public virtual  DbSet<Cart> Carts { get; set; }
+        
+        [DbFunction("udfSoundex", "")]
+        public string SoundsLike(string input)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

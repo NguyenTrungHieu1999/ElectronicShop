@@ -54,7 +54,7 @@ namespace ElectronicShop.Application.ProductPhotos.Services
 
                 await _context.SaveChangesAsync();
             }
-            catch (Exception e)
+            catch
             {
                 throw;
             }
