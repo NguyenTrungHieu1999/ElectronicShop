@@ -97,7 +97,7 @@ namespace ElectronicShop.Application.Orders.Services
         {
             var order = await _context.Orders.FindAsync(orderId);
 
-            if (order.StatusId <= MaxOrderStatusId)
+            if (order.StatusId < MaxOrderStatusId)
             {
                 order.StatusId += 1;
             }
