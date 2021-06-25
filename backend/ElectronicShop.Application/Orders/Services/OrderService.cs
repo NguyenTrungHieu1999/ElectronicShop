@@ -41,8 +41,7 @@ namespace ElectronicShop.Application.Orders.Services
 
             if (isAuth)
             {
-                order.UserId =
-                    int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                order.UserId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             }
 
             // Tạo thông tin trạng thái của đơn hàng
@@ -158,7 +157,7 @@ namespace ElectronicShop.Application.Orders.Services
 
             var order = await FindOrderByIdAsync(orderId);
 
-            if (order.UserId.Equals(int.Parse(userId)))
+            if (order != null && order.UserId.Equals(int.Parse(userId)))
             {
                 return await Task.FromResult(new ApiSuccessResult<Order>(order));
             }
@@ -168,9 +167,21 @@ namespace ElectronicShop.Application.Orders.Services
 
         public async Task<ApiResult<string>> CancleOrderAsync(int orderId)
         {
-            var order = await _context.Orders.FindAsync(orderId);
+            var order = await _context.Orders.Where(x => x.Id == orderId && x.StatusId != 8).SingleOrDefaultAsync();
+
+            if (order == null)
+                return await Task.FromResult(new ApiErrorResult<string>("Không tìm thấy đơn hàng."));
 
             order.StatusId = 8;
+
+            var orderDetails = await _context.OrderDetails.Where(x => x.OrderId.Equals(orderId)).ToListAsync();
+
+            foreach (var item in orderDetails)
+            {
+                var product = await _context.Products.FindAsync(item.ProductId);
+                product.Inventory += item.Quantity;
+                _context.Update(product);
+            }
 
             // Tạo thông tin trạng thái của đơn hàng
             order.OrderStatusDetails = new List<OrderStatusDetail>()
@@ -193,11 +204,20 @@ namespace ElectronicShop.Application.Orders.Services
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            var order = await _context.Orders.FindAsync(orderId);
+            var order = await _context.Orders.Where(x => x.Id == orderId && x.StatusId != 8).SingleOrDefaultAsync();
 
-            if (!order.UserId.Equals(int.Parse(userId)))
+            if (order == null && !order.UserId.Equals(int.Parse(userId)))
                 return await Task.FromResult(new ApiErrorResult<string>("Không tìm thấy đơn hàng."));
             order.StatusId = 8;
+
+            var orderDetails = await _context.OrderDetails.Where(x => x.OrderId.Equals(orderId)).ToListAsync();
+
+            foreach (var item in orderDetails)
+            {
+                var product = await _context.Products.FindAsync(item.ProductId);
+                product.Inventory += item.Quantity;
+                _context.Update(product);
+            }
 
             // Tạo thông tin trạng thái của đơn hàng
             order.OrderStatusDetails = new List<OrderStatusDetail>()
@@ -219,9 +239,10 @@ namespace ElectronicShop.Application.Orders.Services
         private async Task<Order> FindOrderByIdAsync(int orderId)
         {
             var order = await _context.Orders
+                .Where(x => x.Id == orderId)
                 .Include(x => x.OrderDetails)
                 .Include(x => x.OrderStatusDetails)
-                .FirstAsync(x => x.Id == orderId);
+                .SingleOrDefaultAsync();
 
             return order;
         }
@@ -239,6 +260,7 @@ namespace ElectronicShop.Application.Orders.Services
                     @t.p.Price,
                     @t.p.Status,
                 }, @t => @t.@t.od)
+                .OrderByDescending(s=>s.Sum(x=>x.Quantity))
                 .Select(result => new
                 {
                     id = result.Key.Id,

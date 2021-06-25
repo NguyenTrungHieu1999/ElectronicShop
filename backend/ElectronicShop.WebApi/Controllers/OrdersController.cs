@@ -31,14 +31,12 @@ namespace ElectronicShop.WebApi.Controllers
     {
         private readonly IMediator _mediator;
         private readonly ElectronicShopDbContext _context;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMailer _mailer;
 
-        public OrdersController(IMediator mediator, ElectronicShopDbContext context, IHttpContextAccessor httpContextAccessor, IMailer mailer)
+        public OrdersController(IMediator mediator, ElectronicShopDbContext context, IMailer mailer)
         {
             _mediator = mediator;
             _context = context;
-            _httpContextAccessor = httpContextAccessor;
             _mailer = mailer;
         }
         
@@ -77,7 +75,7 @@ namespace ElectronicShop.WebApi.Controllers
 
         [HttpPost("{orderId}/change-status")]
         [AuthorizeRoles(Constants.ADMIN, Constants.EMP)]
-        public async Task<IActionResult> ChangeStatus([FromQuery] int orderId)
+        public async Task<IActionResult> ChangeStatus(int orderId)
         {
             var command = new ChangeOrderStatusCommand(orderId);
 
@@ -102,35 +100,35 @@ namespace ElectronicShop.WebApi.Controllers
 
         [HttpGet("{orderId}")]
         [AuthorizeRoles(Constants.ADMIN, Constants.EMP)]
-        public async Task<IActionResult> GetOrderById([FromQuery] int orderId)
+        public async Task<IActionResult> GetOrderById(int orderId)
         {
             return Ok(await _mediator.Send(new GetOrderByIdQuery(orderId)));
         }
 
         [HttpGet("my-order/id={orderId}")]
         [Authorize]
-        public async Task<IActionResult> MyOrderById([FromQuery] int orderId)
+        public async Task<IActionResult> MyOrderById(int orderId)
         {
             return Ok(await _mediator.Send(new MyOrderByIdQuery(orderId)));
         }
 
         [HttpPost("cancle-order/id={orderId}")]
         [AuthorizeRoles(Constants.ADMIN, Constants.EMP)]
-        public async Task<IActionResult> CancleOrder([FromQuery] int orderId)
+        public async Task<IActionResult> CancleOrder(int orderId)
         {
             return Ok(await _mediator.Send(new CancleOrderCommand(orderId)));
         }
         
         [HttpPost("cancle-my-order/id={orderId}")]
         [Authorize]
-        public async Task<IActionResult> CancleMyOrder([FromQuery] int orderId)
+        public async Task<IActionResult> CancleMyOrder(int orderId)
         {
             return Ok(await _mediator.Send(new CancleMyOrderCommand(orderId)));
         }
 
         [HttpGet("haveOrder/{productId}")]
         [Authorize]
-        public async Task<IActionResult> HaveOrder([FromQuery]int productId)
+        public async Task<IActionResult> HaveOrder(int productId)
         {
             return Ok(await _mediator.Send(new HaveOrderQuery(productId)));
         }

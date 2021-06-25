@@ -10,10 +10,10 @@ namespace ElectronicShop.Application.Orders.Commands.CancleOrder
     {
         public CancleOrderCommand(int orderId)
         {
-            this.orderId = orderId;
+            OrderId = orderId;
         }
 
-        public int orderId { get; }
+        public int OrderId { get; }
     }
     
     public class CancleOrderHandle:IRequestHandler<CancleOrderCommand, ApiResult<string>>
@@ -27,7 +27,7 @@ namespace ElectronicShop.Application.Orders.Commands.CancleOrder
 
         public async Task<ApiResult<string>> Handle(CancleOrderCommand request, CancellationToken cancellationToken)
         {
-            return await _orderService.CancleOrderAsync(request.orderId);
+            return await _orderService.CancleOrderAsync(request.OrderId);
         }
     }
 }
