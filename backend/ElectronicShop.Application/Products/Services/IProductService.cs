@@ -16,7 +16,8 @@ namespace ElectronicShop.Application.Products.Services
         Task<ApiResult<Product>> GetProductByIdAsync(int productId);
         Task<ApiResult<List<Product>>> GetAllProductAsync();
         Task<ApiResult<List<Product>>> GetByCateIdAsync(int cateId);
-        Task<ApiResult<List<Product>>> FilterAsync(FilterProductQuery query);
+        Task<ApiResult<List<Product>>> SearchAsync(SearchProductQuery query);
         Task<ApiResult<List<Product>>> GetNewProductsAsync();
+        Task<ApiResult<List<Product>>> FilterAsync(FilterProductQuery query);
     }
 }

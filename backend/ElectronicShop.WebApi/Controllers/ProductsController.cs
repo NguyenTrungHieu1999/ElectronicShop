@@ -84,7 +84,14 @@ namespace ElectronicShop.WebApi.Controllers
         
         [HttpGet("search")]
         [AllowAnonymous]
-        public async Task<IActionResult> Filter([FromQuery] FilterProductQuery query)
+        public async Task<IActionResult> Search([FromQuery] SearchProductQuery query)
+        {
+            return Ok(await _mediator.Send(query));
+        }
+
+        [HttpGet("filter")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Filter([FromQuery]FilterProductQuery query)
         {
             return Ok(await _mediator.Send(query));
         }

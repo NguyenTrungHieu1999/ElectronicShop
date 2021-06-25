@@ -180,13 +180,13 @@ namespace ElectronicShop.Application.Products.Services
             if (cate.RootId is null)
             {
                 var query = from category in _context.Categories
-                    where category.RootId.Equals(cateId)
-                    join product in _context.Products.Include(x => x.ProductPhotos)
-                        on category.Id equals product.CategoryId
-                    select new
-                    {
-                        P = product
-                    }.P;
+                            where category.RootId.Equals(cateId)
+                            join product in _context.Products.Include(x => x.ProductPhotos)
+                                on category.Id equals product.CategoryId
+                            select new
+                            {
+                                P = product
+                            }.P;
 
                 foreach (var p in query)
                 {
@@ -221,7 +221,7 @@ namespace ElectronicShop.Application.Products.Services
             return await Task.FromResult(new ApiSuccessResult<List<Product>>(products));
         }
 
-        public async Task<ApiResult<List<Product>>> FilterAsync(FilterProductQuery filter)
+        public async Task<ApiResult<List<Product>>> SearchAsync(SearchProductQuery filter)
         {
             if (string.IsNullOrWhiteSpace(filter.KeyWord))
                 return await Task.FromResult(new ApiErrorResult<List<Product>>(""));
@@ -234,7 +234,7 @@ namespace ElectronicShop.Application.Products.Services
                             || _context.SoundsLike(x.Name) == _context.SoundsLike(filter.KeyWord)
                             || _context.SoundsLike(x.Description) == _context.SoundsLike(filter.KeyWord))
                 .ToListAsync();
-                
+
             // Tạo đường dẫn cho toàn bộ hình ảnh của sản phẩm
             foreach (var p in query)
             {
@@ -252,8 +252,8 @@ namespace ElectronicShop.Application.Products.Services
         public async Task<ApiResult<List<Product>>> GetNewProductsAsync()
         {
             var query = await _context.Products
-                .Include(x => x.ProductPhotos)
                 .Where(x => x.Status == ProductStatus.NEW)
+                .Include(x => x.ProductPhotos)
                 .ToListAsync();
 
             // Tạo đường dẫn cho toàn bộ hình ảnh của sản phẩm
@@ -268,6 +268,38 @@ namespace ElectronicShop.Application.Products.Services
             }
 
             return await Task.FromResult(new ApiSuccessResult<List<Product>>(query));
+        }
+
+        public async Task<ApiResult<List<Product>>> FilterAsync(FilterProductQuery query)
+        {
+            var products = query.Sorted switch
+            {
+                1 => await _context.Products.Where(x=>x.Status!=ProductStatus.HIDDEN).Include(x => x.ProductPhotos).OrderBy(x => x.Price).ToListAsync(),
+                2 => await _context.Products.Where(x => x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos).OrderByDescending(x => x.Price).ToListAsync(),
+                _ => await _context.Products.Where(x => x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos).ToListAsync(),
+            };
+
+            products = query.Price switch
+            {
+                1 => products.Where(x => x.Price < 10000000).ToList(),
+                2 => products.Where(x => x.Price >= 10000000 && x.Price < 20000000).ToList(),
+                3 => products.Where(x => x.Price >= 20000000 && x.Price < 40000000).ToList(),
+                4 => products.Where(x => x.Price >= 40000000).ToList(),
+                _ => products.ToList(),
+            };
+
+            // Tạo đường dẫn cho toàn bộ hình ảnh của sản phẩm
+            foreach (var p in products)
+            {
+                var path = _storageService.CreateProductPath(p.CategoryId, p.Name);
+
+                foreach (var i in p.ProductPhotos)
+                {
+                    i.Url = "https://localhost:5001/" + path + "/" + i.Url;
+                }
+            }
+
+            return await Task.FromResult(new ApiSuccessResult<List<Product>>(products));
         }
     }
 }
