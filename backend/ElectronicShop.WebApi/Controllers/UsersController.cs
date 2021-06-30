@@ -3,6 +3,7 @@ using ElectronicShop.Application.Users.Commands.DeleteUser;
 using ElectronicShop.Application.Users.Commands.DisableAccount;
 using ElectronicShop.Application.Users.Commands.UpdateUser;
 using ElectronicShop.Application.Users.Queries.GetAllUser;
+using ElectronicShop.Application.Users.Queries.GetLoginHistory;
 using ElectronicShop.Application.Users.Queries.GetUserById;
 using ElectronicShop.Utilities.SystemConstants;
 using ElectronicShop.WebApi.ActionFilters;
@@ -106,6 +107,13 @@ namespace ElectronicShop.WebApi.Controllers
         {
             var query = new GetAllUserQuery();
 
+            return Ok(await _mediator.Send(query));
+        }
+
+        [HttpGet("get-login-history")]
+        [Authorize(Roles = Constants.ADMIN)]
+        public async Task<IActionResult> GetLoginHistory([FromQuery] GetLoginHistoryQuery query)
+        {            
             return Ok(await _mediator.Send(query));
         }
     }

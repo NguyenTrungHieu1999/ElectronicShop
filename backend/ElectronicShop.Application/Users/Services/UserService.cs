@@ -219,5 +219,37 @@ namespace ElectronicShop.Application.Users.Services
 
             return await Task.FromResult(new ApiSuccessResult<List<UserVm>>(result));
         }
+
+        public async Task<ApiResult<List<LoginHistoryVm>>> GetLoginHistoryAsync(int m, int y)
+        {
+            var listLoginHistory = from r in _context.Roles
+                                        where r.Name.Equals("User")
+                                   join ur in _context.UserRoles on r.Id equals ur.RoleId
+                                   join u in _context.Users on ur.UserId equals u.Id
+                                   join lh in _context.LoginHistories on u.Id equals lh.UserId
+                                        where lh.AccessTime.Month.Equals(m) && lh.AccessTime.Year.Equals(y)
+                                   group lh by new { u.Id, u.UserName, u.Email } into list
+                                   select new
+                                   {
+                                       userId = list.Key.Id,
+                                       userName = list.Key.UserName,
+                                       email = list.Key.Email,
+                                       quatity = list.Count()
+                                   };
+
+            var result = new List<LoginHistoryVm>();
+            foreach (var lh in listLoginHistory)
+            {
+                result.Add(new LoginHistoryVm
+                {
+                    UserId = lh.userId,
+                    Username = lh.userName,
+                    Email = lh.email,
+                    Quantity = lh.quatity
+                });
+            }
+
+            return await Task.FromResult(new ApiSuccessResult<List<LoginHistoryVm>>(result));
+        }
     }
 }

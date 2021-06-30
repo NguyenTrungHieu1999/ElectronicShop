@@ -3,6 +3,7 @@ using ElectronicShop.Application.Authentications.Commands.Authenticate;
 using ElectronicShop.Application.Authentications.Commands.ExternalLogins;
 using ElectronicShop.Application.Authentications.Commands.ResetPassword;
 using ElectronicShop.Application.Common.Models;
+using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
 using ElectronicShop.Data.Enums;
 using ElectronicShop.Utilities.Session;
@@ -27,15 +28,17 @@ namespace ElectronicShop.Application.Authentications.Services
         private readonly IConfiguration _config;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ElectronicShopDbContext _context;
 
         public AuthService(UserManager<User> userManager, SignInManager<User> signInManager,
-            IConfiguration config, IHttpContextAccessor httpContextAccessor, IMapper mapper)
+            IConfiguration config, IHttpContextAccessor httpContextAccessor, IMapper mapper, ElectronicShopDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _config = config;
             _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
+            _context = context;
         }
 
         public async Task<ApiResult<string>> AuthenticateAsync(AuthenticateCommand request)
@@ -64,6 +67,15 @@ namespace ElectronicShop.Application.Authentications.Services
             {
                 return new ApiErrorResult<string>("Đăng nhập thất bại");
             }
+
+            var loginHistory = new LoginHistory 
+            { 
+                UserId = user.Id, 
+                AccessTime = DateTime.Now
+            };
+
+            await _context.LoginHistories.AddAsync(loginHistory);
+            await _context.SaveChangesAsync();
 
             var roles = await _userManager.GetRolesAsync(user);
 
@@ -128,10 +140,19 @@ namespace ElectronicShop.Application.Authentications.Services
 
             await _signInManager.SignInAsync(user, isPersistent: false);
 
+            var loginHistory = new LoginHistory
+            {
+                UserId = user.Id,
+                AccessTime = DateTime.Now
+            };
+
+            await _context.LoginHistories.AddAsync(loginHistory);
+            await _context.SaveChangesAsync();
+
             var roles = await _userManager.GetRolesAsync(user);
 
             var token = CreateToken(roles, user);
-            
+
             return await Task.FromResult(new ApiSuccessResult<string>(token));
         }
 
