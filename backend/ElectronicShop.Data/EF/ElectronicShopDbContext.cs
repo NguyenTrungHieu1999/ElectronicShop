@@ -48,6 +48,7 @@ namespace ElectronicShop.Data.EF
             modelBuilder.ApplyConfiguration(new UserClaimConfiguration());
             modelBuilder.ApplyConfiguration(new UserLoginConfiguration());
             modelBuilder.ApplyConfiguration(new UserTokenConfiguration());
+            modelBuilder.ApplyConfiguration(new LoginHistoryConfiguration());
 
             // Khởi tạo giá trị ban đầu cho dữ liệu
             modelBuilder.Seed();
@@ -66,6 +67,8 @@ namespace ElectronicShop.Data.EF
         public virtual DbSet<ProductType> ProductTypes { get; set; }
         public virtual DbSet<WatchedProduct> WatchedProducts { get; set; }
         public virtual  DbSet<Cart> Carts { get; set; }
+        public virtual DbSet<LoginHistory> LoginHistories { get; set; }
+
         
         [DbFunction("udfSoundex", "")]
         public string SoundsLike(string input)

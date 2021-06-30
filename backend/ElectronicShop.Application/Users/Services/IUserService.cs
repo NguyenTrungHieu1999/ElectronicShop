@@ -20,5 +20,7 @@ namespace ElectronicShop.Application.Users.Services
         Task<ApiResult<UserVm>> GetByIdAsync(int userId);
 
         Task<ApiResult<List<UserVm>>> GetAllAsync();
+
+        Task<ApiResult<List<LoginHistoryVm>>> GetLoginHistoryAsync(int m, int y);
     }
 }
