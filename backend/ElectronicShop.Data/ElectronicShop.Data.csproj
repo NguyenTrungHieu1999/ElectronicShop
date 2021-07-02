@@ -7,6 +7,8 @@
 	<ItemGroup>
 	  <Compile Remove="Migrations\20210702120114_upgradetheOrderandOrderStatusDetailtables.cs" />
 	  <Compile Remove="Migrations\20210702120114_upgradetheOrderandOrderStatusDetailtables.Designer.cs" />
+	  <Compile Remove="Migrations\20210702145457_upgrade-order-table.cs" />
+	  <Compile Remove="Migrations\20210702145457_upgrade-order-table.Designer.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

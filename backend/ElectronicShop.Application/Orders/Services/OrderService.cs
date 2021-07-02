@@ -11,6 +11,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using ElectronicShop.Application.OrderDetails.Extensions;
+using ElectronicShop.Application.Orders.Commands.EmpCreateOrder;
 using ElectronicShop.Application.Orders.Models;
 using ElectronicShop.Infrastructure.FileImage;
 
@@ -88,6 +89,60 @@ namespace ElectronicShop.Application.Orders.Services
 
             await _context.Orders.AddAsync(order);
 
+            // Lưu thông tin
+            try
+            {
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                return await Task.FromResult(new ApiErrorResult<Order>("Thêm đơn hàng thất bại"));
+            }
+
+            return await Task.FromResult(new ApiSuccessResult<Order>(order));
+        }
+
+        public async Task<ApiResult<Order>> EmpCreateAsync(EmpCreateOrderCommand command)
+        {
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            var order = _mapper.Map<Order>(command);
+            order.CreatedDate = DateTime.Now;
+            order.StatusId = MaxOrderStatusId;
+            
+            // Tạo thông tin trạng thái của đơn hàng
+            order.OrderStatusDetails = new List<OrderStatusDetail>()
+            {
+                new OrderStatusDetail()
+                {
+                    StatusId = order.StatusId,
+                    CreatedDate = DateTime.Now,
+                    EmpId = _userId
+                }
+            };
+            // Tạo thông tin cho chi tiết đơn hàng
+            order.OrderDetails = new List<OrderDetail>();
+            foreach (var detail in command.OrderDetails)
+            {
+                var orderDetail = new OrderDetail();
+
+                orderDetail.Map(detail);
+                order.OrderDetails.Add(orderDetail);
+
+                // Cập nhật số lượng sản phẩm tồn sau khi đặt hàng thành công
+                var product = await _context.Products.FindAsync(detail.ProductId);
+                product.Inventory -= detail.Quantity;
+
+                if (product.Inventory < 0)
+                {
+                    return await Task.FromResult(new ApiErrorResult<Order>("Số lượng hàng ở kho không còn đủ."));
+                }
+
+                _context.Products.Update(product);
+            }
+            
+            await _context.Orders.AddAsync(order);
             // Lưu thông tin
             try
             {

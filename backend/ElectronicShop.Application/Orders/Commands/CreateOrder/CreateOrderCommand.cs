@@ -12,12 +12,6 @@ namespace ElectronicShop.Application.Orders.Commands.CreateOrder
 {
     public class CreateOrderCommand : IRequest<ApiResult<Order>>
     {
-        //public DateTime CreatedDate { get; set; }
-
-        //public DateTime? ModifiedDate { get; set; }
-
-        //public DateTime DeliveryDate { get; set; }//Ngày giao dự kiến
-
         [Required]
         public bool Paid { get; set; }//Đã thanh toán
 
@@ -39,8 +33,6 @@ namespace ElectronicShop.Application.Orders.Commands.CreateOrder
         public string Note { get; set; }
 
         public List<OrderDetailVm> OrderDetails { get; set; }
-
-        //public int StatusId { get; set; }
     }
 
     public class CreateOrderHandle : IRequestHandler<CreateOrderCommand, ApiResult<Order>>

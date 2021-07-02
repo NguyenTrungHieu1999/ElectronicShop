@@ -20,7 +20,7 @@ namespace ElectronicShop.Data.Configurations
 
             builder.Property(x => x.DeliveryDate)
                 .HasColumnType("DateTime")
-                .IsRequired();
+                .IsRequired(false);
 
             builder.Property(x => x.Paid)
                 .IsRequired();
@@ -31,7 +31,7 @@ namespace ElectronicShop.Data.Configurations
 
             builder.Property(x => x.ReceiversAddress)
                 .HasMaxLength(200)
-                .IsRequired();
+                .IsRequired(false);
 
             builder.Property(x => x.PhoneNumber)
                 .HasMaxLength(11)
@@ -40,6 +40,9 @@ namespace ElectronicShop.Data.Configurations
             builder.Property(x => x.TotalMoney)
                 .HasColumnType("decimal(18,0)")
                 .HasDefaultValue(0)
+                .IsRequired();
+
+            builder.Property(x => x.Email)
                 .IsRequired();
 
             builder.HasOne(x => x.OrderStatus)

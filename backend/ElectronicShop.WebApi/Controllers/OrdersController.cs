@@ -1,27 +1,26 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
+﻿using ElectronicShop.Application.Orders.Commands.CancleMyOrder;
+using ElectronicShop.Application.Orders.Commands.CancleOrder;
 using ElectronicShop.Application.Orders.Commands.ChangeOrderStatus;
 using ElectronicShop.Application.Orders.Commands.CreateOrder;
+using ElectronicShop.Application.Orders.Commands.EmpCreateOrder;
+using ElectronicShop.Application.Orders.Models;
 using ElectronicShop.Application.Orders.Queries.GetAllOrder;
+using ElectronicShop.Application.Orders.Queries.GetOrderById;
 using ElectronicShop.Application.Orders.Queries.GetOrderByUserId;
+using ElectronicShop.Application.Orders.Queries.GetSellingProducts;
+using ElectronicShop.Application.Orders.Queries.HaveOrder;
+using ElectronicShop.Application.Orders.Queries.MyOrderById;
+using ElectronicShop.Data.EF;
+using ElectronicShop.Infrastructure.SendMail;
 using ElectronicShop.Utilities.SystemConstants;
 using ElectronicShop.WebApi.ActionFilters;
 using ElectronicShop.WebApi.AuthorizeRoles;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using ElectronicShop.Application.Orders.Commands.CancleMyOrder;
-using ElectronicShop.Application.Orders.Commands.CancleOrder;
-using ElectronicShop.Application.Orders.Models;
-using ElectronicShop.Application.Orders.Queries.GetOrderById;
-using ElectronicShop.Application.Orders.Queries.HaveOrder;
-using ElectronicShop.Application.Orders.Queries.MyOrderById;
-using ElectronicShop.Data.EF;
-using ElectronicShop.Infrastructure.SendMail;
-using Microsoft.AspNetCore.Http;
-using ElectronicShop.Application.Orders.Queries.GetSellingProducts;
 
 namespace ElectronicShop.WebApi.Controllers
 {
@@ -73,6 +72,14 @@ namespace ElectronicShop.WebApi.Controllers
             return Ok(result);
         }
 
+        [HttpPost("emp-create")]
+        [Authorize(Roles = Constants.EMP)]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> EmpCreate(EmpCreateOrderCommand command)
+        {
+            return Ok(await _mediator.Send(command));
+        }
+
         [HttpPost("{orderId}/change-status")]
         [AuthorizeRoles(Constants.ADMIN, Constants.EMP)]
         public async Task<IActionResult> ChangeStatus(int orderId)
@@ -84,7 +91,7 @@ namespace ElectronicShop.WebApi.Controllers
                 if (result.ResultObj.StatusId.Equals(2) || result.ResultObj.StatusId.Equals(7))
                 {
                     string body = "<h3>Đơn hàng của quý khách đang ở trạng thái: " + result.ResultObj.OrderStatus.Name + ". Cảm ơn quý khách đã mua hàng ở ElectronicShop. Nếu quý khách muốn theo dõi trạng thái đơn hàng thì hãy đăng nhập vào hệ thống website vào phần đơn hàng để kiểm tra." + "</h3>";
-                    await _mailer.SenEmailAsync(result.ResultObj.Email, "Cập nhật trạng thái đơnn hàng", body);
+                    await _mailer.SenEmailAsync(result.ResultObj.Email, "Cập nhật trạng thái đơn hàng", body);
                 }
             }
 
