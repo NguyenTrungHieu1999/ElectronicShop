@@ -9,13 +9,13 @@ namespace ElectronicShop.Application.Orders.Services
 {
     public interface IOrderService
     {
-        Task<ApiResult<string>> CreateAsync(CreateOrderCommand command);
+        Task<ApiResult<Order>> CreateAsync(CreateOrderCommand command);
 
-        Task<ApiResult<string>> ChangeStatusAsync(int orderId);
+        Task<ApiResult<Order>> ChangeStatusAsync(int orderId);
 
         Task<ApiResult<List<Order>>> GetAllAsync();
 
-        Task<ApiResult<List<Order>>> GetOrderByUserIdAsync();
+        Task<ApiResult<List<List<OrderVm>>>> GetOrderByUserIdAsync();
 
         Task<ApiResult<Order>> GetOrderByIdAsync(int orderId);
 

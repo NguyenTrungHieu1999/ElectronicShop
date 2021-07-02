@@ -39,6 +39,7 @@ namespace ElectronicShop.Data.Configurations
 
             builder.Property(x => x.TotalMoney)
                 .HasColumnType("decimal(18,0)")
+                .HasDefaultValue(0)
                 .IsRequired();
 
             builder.HasOne(x => x.OrderStatus)

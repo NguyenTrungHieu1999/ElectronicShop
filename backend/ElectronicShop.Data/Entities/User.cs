@@ -48,5 +48,7 @@ namespace ElectronicShop.Data.Entities
         public List<UserToken> UserTokens { get; set; }
 
         public List<LoginHistory> LoginHistories { get; set; }
+
+        public List<OrderStatusDetail> OrderStatusDetails { get; set; }
     }
 }

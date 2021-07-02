@@ -21,6 +21,8 @@ namespace ElectronicShop.Data.Entities
         
         public string Email { get; set; }
 
+        public string Note { get; set; }
+
         public decimal TotalMoney { get; set; }
 
         public int StatusId { get; set; }

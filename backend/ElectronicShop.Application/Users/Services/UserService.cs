@@ -45,23 +45,18 @@ namespace ElectronicShop.Application.Users.Services
             }
 
             var user = _mapper.Map<User>(request);
-
             user.CreatedDate = DateTime.Now;
-
             user.Status = UserStatus.ACTIVE;
 
             try
             {
                 await _userManager.CreateAsync(user, request.Password);
-
                 await AddUserRoleAsync(user, request.UserInRole);
             }
             catch
             {
                 await _userManager.DeleteAsync(user);
-
-                return await Task.FromResult(
-                    new ApiErrorResult<string>("Đăng ký thất bại, không thể thêm quyền cho người dùng."));
+                return await Task.FromResult(new ApiErrorResult<string>("Đăng ký thất bại, không thể thêm quyền cho người dùng."));
             }
 
             return await Task.FromResult(new ApiSuccessResult<string>("Thêm người dùng thành công"));
@@ -71,11 +66,8 @@ namespace ElectronicShop.Application.Users.Services
         private async Task AddUserRoleAsync(User user, string roleName)
         {
             var isAdmin = _httpContextAccessor.HttpContext.User.IsInRole(Constants.ADMIN);
-
             var currentUser = _httpContextAccessor.HttpContext.User.Identity.Name;
-
-            string role = Constants.USERROLENAME;
-
+            var role = Constants.USERROLENAME;
             user.CreatedBy = user.UserName;
 
             if (isAdmin)
@@ -85,21 +77,19 @@ namespace ElectronicShop.Application.Users.Services
             }
 
             await _userManager.UpdateAsync(user);
-
             await _userManager.AddToRoleAsync(user, role);
         }
 
         public async Task<ApiResult<string>> UpdateAsync(UpdateUserCommand request)
         {
             var isAuthen = _httpContextAccessor.HttpContext.User.Identity.IsAuthenticated;
-
             if (isAuthen is false)
             {
                 return new ApiErrorResult<string>("Mời đăng nhập vào tài khoản!");
             }
 
             var user = await _userManager.FindByIdAsync(request.Id.ToString());
-
+            
             if (user is null)
             {
                 return new ApiErrorResult<string>("Người dùng không tồn tại");
@@ -110,11 +100,8 @@ namespace ElectronicShop.Application.Users.Services
             try
             {
                 await UpdateUserRoleAsync(user, request.UserInRole);
-
                 user.Map(request);
-
                 user.ModifiedBy = username;
-
                 await _userManager.UpdateAsync(user);
             }
             catch
@@ -128,31 +115,26 @@ namespace ElectronicShop.Application.Users.Services
         private async Task UpdateUserRoleAsync(User user, string roleName)
         {
             var isUser = _httpContextAccessor.HttpContext.User.IsInRole(Constants.USER);
-
-            string role = isUser ? Constants.USERROLENAME : roleName;
+            var role = isUser ? Constants.USERROLENAME : roleName;
 
             var useRole = await _context.UserRoles
                 .Where(x => x.UserId == user.Id)
                 .FirstAsync();
 
             _context.UserRoles.Remove(useRole);
-
             await _context.SaveChangesAsync();
-
             await _userManager.AddToRoleAsync(user, role);
         }
 
         public async Task<ApiResult<string>> DeleteAsync(int userId)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
-
             if (user is null)
             {
                 return new ApiErrorResult<string>("Người dùng không tồn tại");
             }
 
             user.Status = UserStatus.DELETED;
-
             var result = await _userManager.UpdateAsync(user);
 
             if (result.Succeeded)
@@ -189,9 +171,7 @@ namespace ElectronicShop.Application.Users.Services
             }
 
             var result = _mapper.Map<UserVm>(user);
-
             var roles = await _userManager.GetRolesAsync(user);
-
             result.UserInRole = roles[0];
 
             return await Task.FromResult(new ApiSuccessResult<UserVm>(result));
@@ -222,20 +202,20 @@ namespace ElectronicShop.Application.Users.Services
 
         public async Task<ApiResult<List<LoginHistoryVm>>> GetLoginHistoryAsync(int m, int y)
         {
-            var listLoginHistory = from r in _context.Roles
-                                        where r.Name.Equals("User")
-                                   join ur in _context.UserRoles on r.Id equals ur.RoleId
-                                   join u in _context.Users on ur.UserId equals u.Id
-                                   join lh in _context.LoginHistories on u.Id equals lh.UserId
-                                        where lh.AccessTime.Month.Equals(m) && lh.AccessTime.Year.Equals(y)
-                                   group lh by new { u.Id, u.UserName, u.Email } into list
-                                   select new
-                                   {
-                                       userId = list.Key.Id,
-                                       userName = list.Key.UserName,
-                                       email = list.Key.Email,
-                                       quatity = list.Count()
-                                   };
+            var listLoginHistory = _context.Roles.Where(r => r.Name.Equals("User"))
+                .Join(_context.UserRoles, r => r.Id, ur => ur.RoleId, (r, ur) => new {r, ur})
+                .Join(_context.Users, @t => @t.ur.UserId, u => u.Id, (@t, u) => new {@t, u})
+                .Join(_context.LoginHistories, @t => @t.u.Id, lh => lh.UserId, (@t, lh) => new {@t, lh})
+                .Where(@t => @t.lh.AccessTime.Month.Equals(m) && @t.lh.AccessTime.Year.Equals(y))
+                .GroupBy(@t => new {@t.@t.u.Id, @t.@t.u.UserName, @t.@t.u.Email}, @t => @t.lh)
+                .OrderByDescending(x=>x.Count())
+                .Select(list => new
+                {
+                    userId = list.Key.Id,
+                    userName = list.Key.UserName,
+                    email = list.Key.Email,
+                    quatity = list.Count()
+                });
 
             var result = new List<LoginHistoryVm>();
             foreach (var lh in listLoginHistory)

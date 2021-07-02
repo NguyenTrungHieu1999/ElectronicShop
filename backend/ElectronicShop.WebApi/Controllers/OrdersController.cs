@@ -39,7 +39,7 @@ namespace ElectronicShop.WebApi.Controllers
             _context = context;
             _mailer = mailer;
         }
-        
+
         [HttpPost("create")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         [AllowAnonymous]
@@ -67,7 +67,7 @@ namespace ElectronicShop.WebApi.Controllers
                               + "<p><strong> Số điện thoại:</strong> " + command.PhoneNumber + "</p>"
                               + "<div style=\"position: absolute;\">" + "<table border=\"1px\" style=\"border-spacing: 0\"><tr><th>Mã Sản phẩm</th><th>Tên sản phẩm</th><th>Số lượng</th><th>Đơn giá</th></tr>";
                 body = orderDetails.Aggregate(body, (current, item) => current + ("<tr><th><p>" + item.Id + "</p></th>" + "<th><p>" + item.ProductName + "</p></th>" + "<th><p>" + item.Quantity + "</p></th>" + "<th><p>" + item.Price.ToString("N0") + " VND </p></th></tr>"));
-                body += "</table><p style=\"padding-right:10px\" >Tổng tiền: <span style=\"color: red\">" + command.TotalMoney.ToString("N0") + " VND</span></p><h4>Một lần nữa ElectronicShop cảm ơn quý khách!!!</h4></div>";
+                body += "</table><p style=\"padding-right:10px\" >Tổng tiền: <span style=\"color: red\">" + result.ResultObj.TotalMoney.ToString("N0") + " VND</span></p><h4>Một lần nữa ElectronicShop cảm ơn quý khách!!!</h4></div>";
                 await _mailer.SenEmailAsync(command.Email, "Thông tin đặt hàng", body);
             }
             return Ok(result);
@@ -77,9 +77,16 @@ namespace ElectronicShop.WebApi.Controllers
         [AuthorizeRoles(Constants.ADMIN, Constants.EMP)]
         public async Task<IActionResult> ChangeStatus(int orderId)
         {
-            var command = new ChangeOrderStatusCommand(orderId);
+            var result = await _mediator.Send(new ChangeOrderStatusCommand(orderId));
 
-            var result = await _mediator.Send(command);
+            if (result.IsSuccessed)
+            {
+                if (result.ResultObj.StatusId.Equals(2) || result.ResultObj.StatusId.Equals(7))
+                {
+                    string body = "<h3>Đơn hàng của quý khách đang ở trạng thái: " + result.ResultObj.OrderStatus.Name + ". Cảm ơn quý khách đã mua hàng ở ElectronicShop. Nếu quý khách muốn theo dõi trạng thái đơn hàng thì hãy đăng nhập vào hệ thống website vào phần đơn hàng để kiểm tra." + "</h3>";
+                    await _mailer.SenEmailAsync(result.ResultObj.Email, "Cập nhật trạng thái đơnn hàng", body);
+                }
+            }
 
             return Ok(result);
         }
@@ -118,7 +125,7 @@ namespace ElectronicShop.WebApi.Controllers
         {
             return Ok(await _mediator.Send(new CancleOrderCommand(orderId)));
         }
-        
+
         [HttpPost("cancle-my-order/id={orderId}")]
         [Authorize]
         public async Task<IActionResult> CancleMyOrder(int orderId)

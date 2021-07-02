@@ -272,19 +272,19 @@ namespace ElectronicShop.Application.Products.Services
 
         public async Task<ApiResult<List<Product>>> FilterAsync(FilterProductQuery query)
         {
-            var products = query.Sorted switch
+            var products = query.Price switch
             {
-                1 => await _context.Products.Where(x=>x.Status!=ProductStatus.HIDDEN).Include(x => x.ProductPhotos).OrderBy(x => x.Price).ToListAsync(),
-                2 => await _context.Products.Where(x => x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos).OrderByDescending(x => x.Price).ToListAsync(),
+                1 => await _context.Products.Where(x => x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos).Where(x => x.Price < 10000000).ToListAsync(),
+                2 => await _context.Products.Where(x => x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos).Where(x => x.Price >= 10000000 && x.Price < 20000000).ToListAsync(),
+                3 => await _context.Products.Where(x => x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos).Where(x => x.Price >= 20000000 && x.Price < 40000000).ToListAsync(),
+                4 => await _context.Products.Where(x => x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos).Where(x => x.Price >= 40000000).ToListAsync(),
                 _ => await _context.Products.Where(x => x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos).ToListAsync(),
             };
 
-            products = query.Price switch
+            products = query.Sorted switch
             {
-                1 => products.Where(x => x.Price < 10000000).ToList(),
-                2 => products.Where(x => x.Price >= 10000000 && x.Price < 20000000).ToList(),
-                3 => products.Where(x => x.Price >= 20000000 && x.Price < 40000000).ToList(),
-                4 => products.Where(x => x.Price >= 40000000).ToList(),
+                1 => products.OrderBy(x => x.Price).ToList(),
+                2 => products.OrderByDescending(x => x.Price).ToList(),
                 _ => products.ToList(),
             };
 

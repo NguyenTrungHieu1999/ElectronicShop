@@ -40,20 +40,12 @@ namespace ElectronicShop.Application.Orders.Queries.HaveOrder
                 where d.ProductId.Equals(request.ProductId)
                 select new
                 {
-                    i = d.ProductId
+                    i = o.Id
                 };
 
             if (query.Count() <= 0) return await Task.FromResult(new ApiErrorResult<bool>("false"));
 
-            var review = await _context.ProductReviews
-                .Where(x => x.UserId == int.Parse(userId) && x.ProductId.Equals(request.ProductId))
-                .SingleOrDefaultAsync(cancellationToken: cancellationToken);
-            if (review == null)
-            {
-                return await Task.FromResult(new ApiSuccessResult<bool>(true));
-            }
-
-            return await Task.FromResult(new ApiErrorResult<bool>("false"));
+            return await Task.FromResult(new ApiSuccessResult<bool>(true));
         }
     }
 }

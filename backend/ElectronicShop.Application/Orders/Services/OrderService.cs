@@ -12,6 +12,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using ElectronicShop.Application.OrderDetails.Extensions;
 using ElectronicShop.Application.Orders.Models;
+using ElectronicShop.Infrastructure.FileImage;
 
 namespace ElectronicShop.Application.Orders.Services
 {
@@ -21,19 +22,26 @@ namespace ElectronicShop.Application.Orders.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ElectronicShopDbContext _context;
         private const int MaxOrderStatusId = 7;
-
-        public OrderService(IMapper mapper, IHttpContextAccessor httpContextAccessor, ElectronicShopDbContext context)
+        private readonly IStorageService _storageService;
+        private readonly int _userId;
+        public OrderService(IMapper mapper, IHttpContextAccessor httpContextAccessor, ElectronicShopDbContext context, IStorageService storageService)
         {
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
             _context = context;
+            _storageService = storageService;
+            if (httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+            {
+                _userId = int.Parse(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            }
         }
 
-        public async Task<ApiResult<string>> CreateAsync(CreateOrderCommand command)
+        public async Task<ApiResult<Order>> CreateAsync(CreateOrderCommand command)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync();
             // Tạo đơn hàng
             var order = _mapper.Map<Order>(command);
+            order.TotalMoney = 0;
             order.CreatedDate = DateTime.Now;
             order.DeliveryDate = DateTime.Now.AddDays(7);
             order.StatusId = 1;
@@ -41,7 +49,7 @@ namespace ElectronicShop.Application.Orders.Services
 
             if (isAuth)
             {
-                order.UserId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                order.UserId = _userId;
             }
 
             // Tạo thông tin trạng thái của đơn hàng
@@ -59,6 +67,8 @@ namespace ElectronicShop.Application.Orders.Services
 
             foreach (var detail in command.OrderDetails)
             {
+                order.TotalMoney += detail.Price * detail.Quantity;
+
                 var orderDetail = new OrderDetail();
 
                 orderDetail.Map(detail);
@@ -70,7 +80,7 @@ namespace ElectronicShop.Application.Orders.Services
 
                 if (product.Inventory < 0)
                 {
-                    return await Task.FromResult(new ApiErrorResult<string>("Số lượng hàng ở kho không còn đủ."));
+                    return await Task.FromResult(new ApiErrorResult<Order>("Số lượng hàng ở kho không còn đủ."));
                 }
 
                 _context.Products.Update(product);
@@ -87,14 +97,15 @@ namespace ElectronicShop.Application.Orders.Services
             catch
             {
                 await transaction.RollbackAsync();
+                return await Task.FromResult(new ApiErrorResult<Order>("Thêm đơn hàng thất bại"));
             }
 
-            return await Task.FromResult(new ApiSuccessResult<string>("Thêm đơn hàng thành công."));
+            return await Task.FromResult(new ApiSuccessResult<Order>(order));
         }
 
-        public async Task<ApiResult<string>> ChangeStatusAsync(int orderId)
+        public async Task<ApiResult<Order>> ChangeStatusAsync(int orderId)
         {
-            var order = await _context.Orders.FindAsync(orderId);
+            var order = await _context.Orders.Where(x=>x.Id.Equals(orderId)).Include(x=>x.OrderStatus).SingleOrDefaultAsync();
 
             if (order.StatusId < MaxOrderStatusId)
             {
@@ -109,7 +120,8 @@ namespace ElectronicShop.Application.Orders.Services
                 new OrderStatusDetail()
                 {
                     StatusId = order.StatusId,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = DateTime.Now,
+                    EmpId = _userId
                 }
             };
 
@@ -118,7 +130,11 @@ namespace ElectronicShop.Application.Orders.Services
             await _context.SaveChangesAsync();
 
             return await Task.FromResult(
-                new ApiSuccessResult<string>("Bạn đã cập nhật trạng thái thành " + orderStatus.Name));
+                new ApiSuccessResult<Order> 
+                { 
+                    Message = "Bạn đã cập nhật trạng thái thành " + orderStatus.Name,
+                    ResultObj = order
+                });
         }
 
         public async Task<ApiResult<List<Order>>> GetAllAsync()
@@ -131,17 +147,45 @@ namespace ElectronicShop.Application.Orders.Services
             return await Task.FromResult(new ApiSuccessResult<List<Order>>(orders));
         }
 
-        public async Task<ApiResult<List<Order>>> GetOrderByUserIdAsync()
+        public async Task<ApiResult<List<List<OrderVm>>>> GetOrderByUserIdAsync()
         {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var results = new List<List<OrderVm>>();
 
             var orders = await _context.Orders
-                .Include(x => x.OrderDetails)
-                .Include(x => x.OrderStatusDetails)
-                .Where(x => x.UserId == int.Parse(userId))
+                .Include(od => od.OrderDetails)
+                .Where(o => o.UserId == _userId)
                 .ToListAsync();
 
-            return await Task.FromResult(new ApiSuccessResult<List<Order>>(orders));
+            foreach (var o in orders.Where(o => o is { }))
+            {
+                var orderStatus = await _context.OrderStatuses.Where(osd => osd.Id.Equals(o.StatusId)).SingleOrDefaultAsync();
+                var ordersVm = new List<OrderVm>();
+                foreach (var od in o.OrderDetails)
+                {
+                    var product = await _context.Products.Where(x => x.Id.Equals(od.ProductId))
+                        .Include(x => x.ProductPhotos)
+                        .SingleOrDefaultAsync();
+                    if (product != null)
+                    {
+                        ordersVm.Add(new OrderVm
+                        {
+                            ProductId = product.Id,
+                            CateId = product.CategoryId,
+                            Alias = product.Alias,
+                            OrderId = o.Id,
+                            OrderStatus = orderStatus.Name,
+                            Price = product.Price,
+                            ProductName = product.Name,
+                            ProductPhoto = "https://localhost:5001/" + _storageService.CreateProductPath(product.CategoryId, product.Name) + "/" + product.ProductPhotos[0].Url,
+                            Quantity = od.Quantity,
+                            TotalPrice = product.Price * od.Quantity
+                        });
+                    }
+                }
+                results.Add(ordersVm);
+            }
+
+            return await Task.FromResult(new ApiSuccessResult<List<List<OrderVm>>>(results));
         }
 
         public async Task<ApiResult<Order>> GetOrderByIdAsync(int orderId)
@@ -153,11 +197,9 @@ namespace ElectronicShop.Application.Orders.Services
 
         public async Task<ApiResult<Order>> MyOrderByIdAsync(int orderId)
         {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-
             var order = await FindOrderByIdAsync(orderId);
 
-            if (order != null && order.UserId.Equals(int.Parse(userId)))
+            if (order != null && order.UserId.Equals(_userId))
             {
                 return await Task.FromResult(new ApiSuccessResult<Order>(order));
             }
@@ -189,7 +231,8 @@ namespace ElectronicShop.Application.Orders.Services
                 new OrderStatusDetail()
                 {
                     StatusId = order.StatusId,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = DateTime.Now,
+                    EmpId = _userId
                 }
             };
 
@@ -202,11 +245,9 @@ namespace ElectronicShop.Application.Orders.Services
 
         public async Task<ApiResult<string>> CancleMyOrderAsync(int orderId)
         {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-
             var order = await _context.Orders.Where(x => x.Id == orderId && x.StatusId != 8).SingleOrDefaultAsync();
 
-            if (order == null && !order.UserId.Equals(int.Parse(userId)))
+            if (order == null && !order.UserId.Equals(_userId))
                 return await Task.FromResult(new ApiErrorResult<string>("Không tìm thấy đơn hàng."));
             order.StatusId = 8;
 
@@ -260,7 +301,7 @@ namespace ElectronicShop.Application.Orders.Services
                     @t.p.Price,
                     @t.p.Status,
                 }, @t => @t.@t.od)
-                .OrderByDescending(s=>s.Sum(x=>x.Quantity))
+                .OrderByDescending(s => s.Sum(x => x.Quantity))
                 .Select(result => new
                 {
                     id = result.Key.Id,

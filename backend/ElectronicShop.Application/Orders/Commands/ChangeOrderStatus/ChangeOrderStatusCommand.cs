@@ -1,12 +1,13 @@
 ﻿using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Application.Orders.Services;
+using ElectronicShop.Data.Entities;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace ElectronicShop.Application.Orders.Commands.ChangeOrderStatus
 {
-    public class ChangeOrderStatusCommand : IRequest<ApiResult<string>>
+    public class ChangeOrderStatusCommand : IRequest<ApiResult<Order>>
     {
         public int OrderId { get; set; }
 
@@ -16,7 +17,7 @@ namespace ElectronicShop.Application.Orders.Commands.ChangeOrderStatus
         }
     }
 
-    public class ChangeOrderStatusHandle : IRequestHandler<ChangeOrderStatusCommand, ApiResult<string>>
+    public class ChangeOrderStatusHandle : IRequestHandler<ChangeOrderStatusCommand, ApiResult<Order>>
     {
         private readonly IOrderService _orderService;
 
@@ -25,7 +26,7 @@ namespace ElectronicShop.Application.Orders.Commands.ChangeOrderStatus
             _orderService = orderService;
         }
 
-        public async Task<ApiResult<string>> Handle(ChangeOrderStatusCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<Order>> Handle(ChangeOrderStatusCommand request, CancellationToken cancellationToken)
         {
             return await _orderService.ChangeStatusAsync(request.OrderId);
         }
