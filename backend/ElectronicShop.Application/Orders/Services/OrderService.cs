@@ -111,7 +111,7 @@ namespace ElectronicShop.Application.Orders.Services
             order.Paid = true;
             order.CreatedDate = DateTime.Now;
             order.StatusId = MaxOrderStatusId;
-            
+
             // Tạo thông tin trạng thái của đơn hàng
             order.OrderStatusDetails = new List<OrderStatusDetail>()
             {
@@ -142,7 +142,7 @@ namespace ElectronicShop.Application.Orders.Services
 
                 _context.Products.Update(product);
             }
-            
+
             await _context.Orders.AddAsync(order);
             // Lưu thông tin
             try
@@ -161,7 +161,7 @@ namespace ElectronicShop.Application.Orders.Services
 
         public async Task<ApiResult<Order>> ChangeStatusAsync(int orderId)
         {
-            var order = await _context.Orders.Where(x=>x.Id.Equals(orderId)).Include(x=>x.OrderStatus).SingleOrDefaultAsync();
+            var order = await _context.Orders.Where(x => x.Id.Equals(orderId)).Include(x => x.OrderStatus).SingleOrDefaultAsync();
 
             if (order.StatusId < MaxOrderStatusId)
             {
@@ -186,8 +186,8 @@ namespace ElectronicShop.Application.Orders.Services
             await _context.SaveChangesAsync();
 
             return await Task.FromResult(
-                new ApiSuccessResult<Order> 
-                { 
+                new ApiSuccessResult<Order>
+                {
                     Message = "Bạn đã cập nhật trạng thái thành " + orderStatus.Name,
                     ResultObj = order
                 });
@@ -263,12 +263,12 @@ namespace ElectronicShop.Application.Orders.Services
             return await Task.FromResult(new ApiErrorResult<Order>("Không tìm thấy đơn hàng."));
         }
 
-        public async Task<ApiResult<string>> CancleOrderAsync(int orderId)
+        public async Task<ApiResult<Order>> CancleOrderAsync(int orderId)
         {
             var order = await _context.Orders.Where(x => x.Id == orderId && x.StatusId != 8).SingleOrDefaultAsync();
 
             if (order == null)
-                return await Task.FromResult(new ApiErrorResult<string>("Không tìm thấy đơn hàng."));
+                return await Task.FromResult(new ApiErrorResult<Order>("Không tìm thấy đơn hàng."));
 
             order.StatusId = 8;
 
@@ -296,7 +296,7 @@ namespace ElectronicShop.Application.Orders.Services
 
             await _context.SaveChangesAsync();
 
-            return await Task.FromResult(new ApiSuccessResult<string>("Đơn hàng đã được hủy."));
+            return await Task.FromResult(new ApiSuccessResult<Order>(order));
         }
 
         public async Task<ApiResult<string>> CancleMyOrderAsync(int orderId)

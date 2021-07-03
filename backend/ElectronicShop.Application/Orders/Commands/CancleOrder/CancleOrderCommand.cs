@@ -2,11 +2,12 @@
 using System.Threading.Tasks;
 using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Application.Orders.Services;
+using ElectronicShop.Data.Entities;
 using MediatR;
 
 namespace ElectronicShop.Application.Orders.Commands.CancleOrder
 {
-    public class CancleOrderCommand : IRequest<ApiResult<string>>
+    public class CancleOrderCommand : IRequest<ApiResult<Order>>
     {
         public CancleOrderCommand(int orderId)
         {
@@ -16,7 +17,7 @@ namespace ElectronicShop.Application.Orders.Commands.CancleOrder
         public int OrderId { get; }
     }
     
-    public class CancleOrderHandle:IRequestHandler<CancleOrderCommand, ApiResult<string>>
+    public class CancleOrderHandle:IRequestHandler<CancleOrderCommand, ApiResult<Order>>
     {
         private readonly IOrderService _orderService;
 
@@ -25,7 +26,7 @@ namespace ElectronicShop.Application.Orders.Commands.CancleOrder
             _orderService = orderService;
         }
 
-        public async Task<ApiResult<string>> Handle(CancleOrderCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<Order>> Handle(CancleOrderCommand request, CancellationToken cancellationToken)
         {
             return await _orderService.CancleOrderAsync(request.OrderId);
         }

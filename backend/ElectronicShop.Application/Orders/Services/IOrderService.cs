@@ -17,7 +17,7 @@ namespace ElectronicShop.Application.Orders.Services
         Task<ApiResult<List<List<OrderVm>>>> GetOrderByUserIdAsync();
         Task<ApiResult<Order>> GetOrderByIdAsync(int orderId);
         Task<ApiResult<Order>> MyOrderByIdAsync(int orderId);
-        Task<ApiResult<string>> CancleOrderAsync(int orderId);
+        Task<ApiResult<Order>> CancleOrderAsync(int orderId);
         Task<ApiResult<string>> CancleMyOrderAsync(int orderId);
         Task<ApiResult<List<SellingProductsVM>>> SellingProducts(int m, int y);
     }

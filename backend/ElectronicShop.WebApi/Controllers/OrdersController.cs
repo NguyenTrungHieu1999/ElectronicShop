@@ -90,7 +90,7 @@ namespace ElectronicShop.WebApi.Controllers
             {
                 if (result.ResultObj.StatusId.Equals(2) || result.ResultObj.StatusId.Equals(7))
                 {
-                    string body = "<h3>Đơn hàng của quý khách đang ở trạng thái: " + result.ResultObj.OrderStatus.Name + ". Cảm ơn quý khách đã mua hàng ở ElectronicShop. Nếu quý khách muốn theo dõi trạng thái đơn hàng thì hãy đăng nhập vào hệ thống website vào phần đơn hàng để kiểm tra." + "</h3>";
+                    string body = "<h3>Đơn hàng có mã số " + result.ResultObj.Id + " đặt ngày " + result.ResultObj.CreatedDate.ToShortDateString() + " của quý khách đang ở trạng thái: " + result.ResultObj.OrderStatus.Name + ". Cảm ơn quý khách đã mua hàng ở ElectronicShop. Nếu quý khách muốn theo dõi trạng thái đơn hàng thì hãy đăng nhập vào hệ thống website vào phần đơn hàng để kiểm tra." + "</h3>";
                     await _mailer.SenEmailAsync(result.ResultObj.Email, "Cập nhật trạng thái đơn hàng", body);
                 }
             }
@@ -130,7 +130,18 @@ namespace ElectronicShop.WebApi.Controllers
         [AuthorizeRoles(Constants.ADMIN, Constants.EMP)]
         public async Task<IActionResult> CancleOrder(int orderId)
         {
-            return Ok(await _mediator.Send(new CancleOrderCommand(orderId)));
+            var result = await _mediator.Send(new CancleOrderCommand(orderId));
+            if (result.IsSuccessed)
+            {
+                var str = "";
+                if (result.ResultObj.Paid)
+                {
+                    str = " Chúng tôi sẽ hoàn tiền cho quý khách trong thời gian sớm nhất.";
+                }
+                string body = "<h3>Đơn hàng có mã số " + result.ResultObj.Id + " đặt ngày " + result.ResultObj.CreatedDate.ToShortDateString() + " đã được hủy." + str + " Cảm ơn quý khách đã mua hàng ở ElectronicShop." + "</h3>";
+                await _mailer.SenEmailAsync(result.Message, "Thông báo đơn hàng được hủy", body);
+            }
+            return Ok();
         }
 
         [HttpPost("cancle-my-order/id={orderId}")]
