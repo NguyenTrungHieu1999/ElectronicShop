@@ -13,9 +13,6 @@ namespace ElectronicShop.Application.Orders.Commands.EmpCreateOrder
     public class EmpCreateOrderCommand : IRequest<ApiResult<Order>>
     {
         [Required]
-        public bool Paid { get; set; }//Đã thanh toán
-
-        [Required]
         public string Receiver { get; set; }
 
         [Required]

@@ -108,6 +108,7 @@ namespace ElectronicShop.Application.Orders.Services
         {
             await using var transaction = await _context.Database.BeginTransactionAsync();
             var order = _mapper.Map<Order>(command);
+            order.Paid = true;
             order.CreatedDate = DateTime.Now;
             order.StatusId = MaxOrderStatusId;
             
