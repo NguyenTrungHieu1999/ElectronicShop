@@ -43,6 +43,7 @@ namespace ElectronicShop.Application.Authentications.Services
 
         public async Task<ApiResult<string>> AuthenticateAsync(AuthenticateCommand request)
         {
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             var user = await _userManager.FindByEmailAsync(request.Email);
 
             if (user is null || user.Status.Equals(UserStatus.DELETED))
@@ -74,8 +75,17 @@ namespace ElectronicShop.Application.Authentications.Services
                 AccessTime = DateTime.Now
             };
 
-            await _context.LoginHistories.AddAsync(loginHistory);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.LoginHistories.AddAsync(loginHistory);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception e)
+            {
+                await transaction.RollbackAsync();
+                return new ApiErrorResult<string>("Đăng nhập thất bại");
+            }
 
             var roles = await _userManager.GetRolesAsync(user);
 
@@ -84,7 +94,7 @@ namespace ElectronicShop.Application.Authentications.Services
             return await Task.FromResult(new ApiSuccessResult<string>(token));
         }
 
-        private string CreateToken(IList<string> roles, User user)
+        private string CreateToken(IEnumerable<string> roles, User user)
         {
             var claims = new[]
             {
@@ -111,7 +121,7 @@ namespace ElectronicShop.Application.Authentications.Services
         public async Task<ApiResult<string>> ExternalLogins(ExternalLoginsCommand command)
         {
             var user = await _userManager.FindByEmailAsync(command.Email);
-
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             var signInResult = await _signInManager
                 .ExternalLoginSignInAsync(command.LoginProvider, command.ProviderKey,
                 isPersistent: false, bypassTwoFactor: true);
@@ -119,11 +129,8 @@ namespace ElectronicShop.Application.Authentications.Services
             if (user is null && !signInResult.Succeeded)
             {
                 user = _mapper.Map<User>(command);
-
                 user.Status = UserStatus.ACTIVE;
-
                 user.Gender = Gender.MALE;
-
                 user.CreatedDate = DateTime.Now;
 
                 await _userManager.CreateAsync(user);
@@ -146,8 +153,17 @@ namespace ElectronicShop.Application.Authentications.Services
                 AccessTime = DateTime.Now
             };
 
-            await _context.LoginHistories.AddAsync(loginHistory);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.LoginHistories.AddAsync(loginHistory);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception e)
+            {
+                await transaction.RollbackAsync();
+                return new ApiErrorResult<string>("Đăng nhập thất bại");
+            }
 
             var roles = await _userManager.GetRolesAsync(user);
 
@@ -159,9 +175,7 @@ namespace ElectronicShop.Application.Authentications.Services
         public async Task<bool> SignOutAsync()
         {
             await _signInManager.SignOutAsync();
-
             _httpContextAccessor.HttpContext.Session.Remove(Constants.CURRENTUSER);
-
             return true;
         }
 

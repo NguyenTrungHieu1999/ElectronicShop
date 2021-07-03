@@ -56,7 +56,7 @@ namespace ElectronicShop.Application.ProductPhotos.Services
             }
             catch
             {
-                throw;
+                return await Task.FromResult(new ApiErrorResult<string>("Thêm hình ảnh thất bại!"));
             }
 
             return await Task.FromResult(new ApiSuccessResult<string>("Thêm hình ảnh thành công!"));

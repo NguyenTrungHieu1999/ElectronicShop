@@ -301,7 +301,7 @@ namespace ElectronicShop.Application.Orders.Services
 
         public async Task<ApiResult<string>> CancleMyOrderAsync(int orderId)
         {
-            var order = await _context.Orders.Where(x => x.Id == orderId && x.StatusId != 8).SingleOrDefaultAsync();
+            var order = await _context.Orders.Where(x => x.Id == orderId && x.StatusId < 3).SingleOrDefaultAsync();
 
             if (order == null && !order.UserId.Equals(_userId))
                 return await Task.FromResult(new ApiErrorResult<string>("Không tìm thấy đơn hàng."));

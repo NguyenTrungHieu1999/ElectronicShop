@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using ElectronicShop.Application.Common.Models;
@@ -25,9 +26,7 @@ namespace ElectronicShop.Application.Carts.Services
             
             if (httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
             {
-                _userId = int.Parse(httpContextAccessor.HttpContext.User
-                    .FindFirst(ClaimTypes.NameIdentifier)
-                    .Value);
+                _userId = int.Parse(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             }
         }
         
@@ -94,9 +93,15 @@ namespace ElectronicShop.Application.Carts.Services
                 Quantity = command.Quantity,
                 Status = true
             };
-
-            await _context.AddAsync(cart);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.AddAsync(cart);
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                return await Task.FromResult(new ApiErrorResult<string>("Thêm vào giỏ hàng thất bại!"));
+            }
 
             return await Task.FromResult(new ApiSuccessResult<string>("Thêm vào giỏ hàng thành công!"));
         }
@@ -106,7 +111,12 @@ namespace ElectronicShop.Application.Carts.Services
             var cart = await _context.Carts
                 .Where(x => x.Status==true&&x.ProductId.Equals(command.ProductId)&&x.UserId.Equals(_userId))
                 .SingleOrDefaultAsync();
-
+            
+            if (cart is null)
+            {
+                return await Task.FromResult(new ApiErrorResult<string>("Cập nhật giỏ hàng thất bại"));
+            }
+            
             cart.Quantity += command.Total;
 
             if (cart.Quantity == 0)

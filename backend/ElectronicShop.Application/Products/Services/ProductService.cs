@@ -37,6 +37,8 @@ namespace ElectronicShop.Application.Products.Services
 
         public async Task<ApiResult<string>> CreateAsync(CreateProductCommand request)
         {
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            
             var currentUser = _httpContextAccessor.HttpContext.User.Identity.Name;
 
             var product = _mapper.Map<Product>(request);
@@ -66,13 +68,16 @@ namespace ElectronicShop.Application.Products.Services
                 await _context.Products.AddAsync(product);
 
                 await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+                
+                return new ApiSuccessResult<string>("Thêm sản phẩm thành công");
             }
             catch
             {
+                await transaction.RollbackAsync();
                 return new ApiErrorResult<string>("Thêm sản phẩm thất bại");
             }
-
-            return new ApiSuccessResult<string>("Thêm sản phẩm thành công");
         }
 
         public async Task<ApiResult<string>> UpdateAsync(UpdateProductCommand update)
