@@ -73,7 +73,7 @@ namespace ElectronicShop.WebApi.Controllers
         }
 
         [HttpPost("emp-create")]
-        [Authorize(Roles = Constants.EMP)]
+        [AuthorizeRoles(Constants.ADMIN, Constants.EMP)]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> EmpCreate(EmpCreateOrderCommand command)
         {
