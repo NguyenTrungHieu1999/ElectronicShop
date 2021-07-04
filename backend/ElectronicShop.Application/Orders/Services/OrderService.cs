@@ -108,9 +108,13 @@ namespace ElectronicShop.Application.Orders.Services
         {
             await using var transaction = await _context.Database.BeginTransactionAsync();
             var order = _mapper.Map<Order>(command);
-            order.Paid = true;
             order.CreatedDate = DateTime.Now;
-            order.StatusId = MaxOrderStatusId;
+            order.StatusId = 2;
+
+            if(command.ReceiversAddress is null)
+            {
+                order.ReceiversAddress = "Số 1, Võ Văn Ngân, P.Linh Chiểu, Q.Thủ Đức, TP HCM";
+            }
 
             // Tạo thông tin trạng thái của đơn hàng
             order.OrderStatusDetails = new List<OrderStatusDetail>()
@@ -203,19 +207,33 @@ namespace ElectronicShop.Application.Orders.Services
             return await Task.FromResult(new ApiSuccessResult<List<Order>>(orders));
         }
 
-        public async Task<ApiResult<List<List<OrderVm>>>> GetOrderByUserIdAsync()
+        public async Task<ApiResult<List<OrderVm>>> GetOrderByUserIdAsync()
         {
-            var results = new List<List<OrderVm>>();
+            var results = new List<OrderVm>();
 
             var orders = await _context.Orders
-                .Include(od => od.OrderDetails)
                 .Where(o => o.UserId == _userId)
+                .Include(od => od.OrderDetails)
+                .Include(ods => ods.OrderStatusDetails)
                 .ToListAsync();
 
             foreach (var o in orders.Where(o => o is { }))
             {
                 var orderStatus = await _context.OrderStatuses.Where(osd => osd.Id.Equals(o.StatusId)).SingleOrDefaultAsync();
-                var ordersVm = new List<OrderVm>();
+                var ordersVm = new OrderVm
+                {
+                    OrderId = o.Id,
+                    OrderStatus = orderStatus.Name,
+                    TotalPrice = o.TotalMoney,
+                    Receiver = o.Receiver,
+                    ReceiversAddress = o.ReceiversAddress,
+                    PhoneNumber = o.PhoneNumber,
+                    DeliveryDate = o.DeliveryDate,
+                    OrderStatusDetails = o.OrderStatusDetails
+                };
+
+                ordersVm.Products = new List<ListProduct>();
+
                 foreach (var od in o.OrderDetails)
                 {
                     var product = await _context.Products.Where(x => x.Id.Equals(od.ProductId))
@@ -223,25 +241,22 @@ namespace ElectronicShop.Application.Orders.Services
                         .SingleOrDefaultAsync();
                     if (product != null)
                     {
-                        ordersVm.Add(new OrderVm
+                        ordersVm.Products.Add(new ListProduct
                         {
                             ProductId = product.Id,
                             CateId = product.CategoryId,
                             Alias = product.Alias,
-                            OrderId = o.Id,
-                            OrderStatus = orderStatus.Name,
                             Price = product.Price,
                             ProductName = product.Name,
-                            ProductPhoto = "https://localhost:5001/" + _storageService.CreateProductPath(product.CategoryId, product.Name) + "/" + product.ProductPhotos[0].Url,
                             Quantity = od.Quantity,
-                            TotalPrice = product.Price * od.Quantity
+                            ProductPhoto = "https://localhost:5001/" + _storageService.CreateProductPath(product.CategoryId, product.Name) + "/" + product.ProductPhotos[0].Url,
                         });
                     }
                 }
                 results.Add(ordersVm);
             }
 
-            return await Task.FromResult(new ApiSuccessResult<List<List<OrderVm>>>(results));
+            return await Task.FromResult(new ApiSuccessResult<List<OrderVm>>(results));
         }
 
         public async Task<ApiResult<Order>> GetOrderByIdAsync(int orderId)

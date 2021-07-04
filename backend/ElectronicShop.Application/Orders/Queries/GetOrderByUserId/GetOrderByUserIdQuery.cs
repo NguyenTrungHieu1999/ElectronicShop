@@ -9,11 +9,11 @@ using ElectronicShop.Data.Entities;
 
 namespace ElectronicShop.Application.Orders.Queries.GetOrderByUserId
 {
-    public class GetOrderByUserIdQuery : IRequest<ApiResult<List<List<OrderVm>>>>
+    public class GetOrderByUserIdQuery : IRequest<ApiResult<List<OrderVm>>>
     {
     }
 
-    public class GetOrderByUserIdHandle : IRequestHandler<GetOrderByUserIdQuery, ApiResult<List<List<OrderVm>>>>
+    public class GetOrderByUserIdHandle : IRequestHandler<GetOrderByUserIdQuery, ApiResult<List<OrderVm>>>
     {
         private readonly IOrderService _orderService;
 
@@ -22,7 +22,7 @@ namespace ElectronicShop.Application.Orders.Queries.GetOrderByUserId
             _orderService = orderService;
         }
 
-        public async Task<ApiResult<List<List<OrderVm>>>> Handle(GetOrderByUserIdQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResult<List<OrderVm>>> Handle(GetOrderByUserIdQuery request, CancellationToken cancellationToken)
         {
             return await _orderService.GetOrderByUserIdAsync();
         }

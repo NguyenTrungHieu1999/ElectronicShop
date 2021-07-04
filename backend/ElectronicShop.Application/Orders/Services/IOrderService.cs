@@ -14,7 +14,7 @@ namespace ElectronicShop.Application.Orders.Services
         Task<ApiResult<Order>> EmpCreateAsync(EmpCreateOrderCommand command);
         Task<ApiResult<Order>> ChangeStatusAsync(int orderId);
         Task<ApiResult<List<Order>>> GetAllAsync();
-        Task<ApiResult<List<List<OrderVm>>>> GetOrderByUserIdAsync();
+        Task<ApiResult<List<OrderVm>>> GetOrderByUserIdAsync();
         Task<ApiResult<Order>> GetOrderByIdAsync(int orderId);
         Task<ApiResult<Order>> MyOrderByIdAsync(int orderId);
         Task<ApiResult<Order>> CancleOrderAsync(int orderId);

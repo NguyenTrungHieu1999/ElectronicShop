@@ -20,7 +20,7 @@ namespace ElectronicShop.Data.Configurations
 
             builder.Property(x => x.DeliveryDate)
                 .HasColumnType("DateTime")
-                .IsRequired(false);
+                .IsRequired(true);
 
             builder.Property(x => x.Paid)
                 .IsRequired();
@@ -31,7 +31,7 @@ namespace ElectronicShop.Data.Configurations
 
             builder.Property(x => x.ReceiversAddress)
                 .HasMaxLength(200)
-                .IsRequired(false);
+                .IsRequired();
 
             builder.Property(x => x.PhoneNumber)
                 .HasMaxLength(11)

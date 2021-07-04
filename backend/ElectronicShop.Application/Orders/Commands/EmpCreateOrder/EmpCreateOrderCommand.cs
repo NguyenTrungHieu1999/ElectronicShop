@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using ElectronicShop.Application.Orders.Services;
+using System;
 
 namespace ElectronicShop.Application.Orders.Commands.EmpCreateOrder
 {
@@ -14,6 +15,14 @@ namespace ElectronicShop.Application.Orders.Commands.EmpCreateOrder
     {
         [Required]
         public string Receiver { get; set; }
+
+        [Required]
+        public DateTime DeliveryDate { get; set; }//Ngày giao dự kiến
+
+        [Required]
+        public bool Paid { get; set; }//Đã thanh toán
+
+        public string ReceiversAddress { get; set; }
 
         [Required]
         public string PhoneNumber { get; set; }
