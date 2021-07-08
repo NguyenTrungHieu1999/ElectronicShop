@@ -45,6 +45,9 @@ namespace ElectronicShop.Data.Configurations
             builder.Property(x => x.Email)
                 .IsRequired();
 
+            builder.Property(x => x.Received)
+                .IsRequired();
+
             builder.HasOne(x => x.OrderStatus)
                 .WithMany(x => x.Orders)
                 .HasForeignKey(x => x.StatusId)

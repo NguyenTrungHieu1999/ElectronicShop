@@ -1,8 +1,9 @@
-﻿using ElectronicShop.Application.Orders.Commands.CancleMyOrder;
-using ElectronicShop.Application.Orders.Commands.CancleOrder;
+﻿using ElectronicShop.Application.Orders.Commands.CancelMyOrder;
+using ElectronicShop.Application.Orders.Commands.CancelOrder;
 using ElectronicShop.Application.Orders.Commands.ChangeOrderStatus;
 using ElectronicShop.Application.Orders.Commands.CreateOrder;
 using ElectronicShop.Application.Orders.Commands.EmpCreateOrder;
+using ElectronicShop.Application.Orders.Commands.HasReceived;
 using ElectronicShop.Application.Orders.Models;
 using ElectronicShop.Application.Orders.Queries.GetAllOrder;
 using ElectronicShop.Application.Orders.Queries.GetOrderById;
@@ -90,7 +91,7 @@ namespace ElectronicShop.WebApi.Controllers
             {
                 if (result.ResultObj.StatusId.Equals(2) || result.ResultObj.StatusId.Equals(7))
                 {
-                    string body = "<h3>Đơn hàng có mã số " + result.ResultObj.Id + " đặt ngày " + result.ResultObj.CreatedDate.ToShortDateString() + " của quý khách đang ở trạng thái: " + result.ResultObj.OrderStatus.Name + ". Cảm ơn quý khách đã mua hàng ở ElectronicShop. Nếu quý khách muốn theo dõi trạng thái đơn hàng thì hãy đăng nhập vào hệ thống website vào phần đơn hàng để kiểm tra." + "</h3>";
+                    string body = "<p>Đơn hàng có mã số " + result.ResultObj.Id + " đặt ngày " + result.ResultObj.CreatedDate.ToShortDateString() + " của quý khách đang ở trạng thái: " + result.ResultObj.OrderStatus.Name + ". Cảm ơn quý khách đã mua hàng ở ElectronicShop. Nếu quý khách muốn theo dõi trạng thái đơn hàng thì hãy đăng nhập vào hệ thống website vào phần đơn hàng để kiểm tra." + "</p>";
                     await _mailer.SenEmailAsync(result.ResultObj.Email, "Cập nhật trạng thái đơn hàng", body);
                 }
             }
@@ -126,11 +127,11 @@ namespace ElectronicShop.WebApi.Controllers
             return Ok(await _mediator.Send(new MyOrderByIdQuery(orderId)));
         }
 
-        [HttpPost("cancle-order/id={orderId}")]
+        [HttpPost("cancel-order/id={orderId}")]
         [AuthorizeRoles(Constants.ADMIN, Constants.EMP)]
         public async Task<IActionResult> CancleOrder(int orderId)
         {
-            var result = await _mediator.Send(new CancleOrderCommand(orderId));
+            var result = await _mediator.Send(new CancelOrderCommand(orderId));
             if (result.IsSuccessed)
             {
                 var str = "";
@@ -138,17 +139,17 @@ namespace ElectronicShop.WebApi.Controllers
                 {
                     str = " Chúng tôi sẽ hoàn tiền cho quý khách trong thời gian sớm nhất.";
                 }
-                string body = "<h3>Đơn hàng có mã số " + result.ResultObj.Id + " đặt ngày " + result.ResultObj.CreatedDate.ToShortDateString() + " đã được hủy." + str + " Cảm ơn quý khách đã mua hàng ở ElectronicShop." + "</h3>";
-                await _mailer.SenEmailAsync(result.Message, "Thông báo đơn hàng được hủy", body);
+                string body = "<p>Đơn hàng có mã số " + result.ResultObj.Id + " đặt ngày " + result.ResultObj.CreatedDate.ToShortDateString() + " đã được hủy." + str + " Cảm ơn quý khách đã mua hàng ở ElectronicShop." + "</p>";
+                await _mailer.SenEmailAsync(result.ResultObj.Email, "Thông báo đơn hàng được hủy", body);
             }
             return Ok();
         }
 
-        [HttpPost("cancle-my-order/id={orderId}")]
+        [HttpPost("cancel-my-order/id={orderId}")]
         [Authorize]
         public async Task<IActionResult> CancleMyOrder(int orderId)
         {
-            return Ok(await _mediator.Send(new CancleMyOrderCommand(orderId)));
+            return Ok(await _mediator.Send(new CancelMyOrderCommand(orderId)));
         }
 
         [HttpGet("haveOrder/{productId}")]
@@ -164,6 +165,14 @@ namespace ElectronicShop.WebApi.Controllers
         public async Task<IActionResult> SellingProducts(int month, int year)
         {
             return Ok(await _mediator.Send(new GetSellingProductsQuery(month, year)));
+        }
+
+        [HttpPut("has-received/{orderId}")]
+        [Authorize]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> HasReceived(int orderId)
+        {
+            return Ok(await _mediator.Send(new HasReceivedCommand(orderId)));
         }
     }
 }

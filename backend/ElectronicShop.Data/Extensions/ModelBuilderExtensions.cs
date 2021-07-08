@@ -38,10 +38,10 @@ namespace ElectronicShop.Data.Extensions
                     Address = "KTX Cỏ May, khu phố 6, phường Linh Trung, quận Thủ Đức, TP.HCM",
                     Status = 0,
                     Gender = Gender.MALE,
-                    Email = "hieu@gmail.com",
+                    Email = "17110299@student.hcmute.edu.vn",
                     SecurityStamp = Guid.NewGuid().ToString("D"),
                     NormalizedUserName = "HIEUVO",
-                    NormalizedEmail = "HIEU@GMAIL.COM"
+                    NormalizedEmail = "17110299@STUDENT.HCMUTE.EDU.VN"
                 },
                 new User
                 {
@@ -138,7 +138,7 @@ namespace ElectronicShop.Data.Extensions
                 new OrderStatus
                 {
                     Id = 2,
-                    Name = "Đã tiếp nhận"
+                    Name = "Được tiếp nhận"
                 },
                 new OrderStatus
                 {
@@ -168,7 +168,7 @@ namespace ElectronicShop.Data.Extensions
                 new OrderStatus
                 {
                     Id = 8,
-                    Name = "Hủy đơn hàng"
+                    Name = "Đã hủy"
                 }
             );
         }

@@ -81,7 +81,7 @@ namespace ElectronicShop.Application.Authentications.Services
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
             }
-            catch (Exception e)
+            catch
             {
                 await transaction.RollbackAsync();
                 return new ApiErrorResult<string>("Đăng nhập thất bại");
@@ -159,7 +159,7 @@ namespace ElectronicShop.Application.Authentications.Services
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
             }
-            catch (Exception e)
+            catch
             {
                 await transaction.RollbackAsync();
                 return new ApiErrorResult<string>("Đăng nhập thất bại");

@@ -9,6 +9,8 @@
 	  <Compile Remove="Migrations\20210702120114_upgradetheOrderandOrderStatusDetailtables.Designer.cs" />
 	  <Compile Remove="Migrations\20210702145457_upgrade-order-table.cs" />
 	  <Compile Remove="Migrations\20210702145457_upgrade-order-table.Designer.cs" />
+	  <Compile Remove="Migrations\20210708062451_add-received-to-order.cs" />
+	  <Compile Remove="Migrations\20210708062451_add-received-to-order.Designer.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

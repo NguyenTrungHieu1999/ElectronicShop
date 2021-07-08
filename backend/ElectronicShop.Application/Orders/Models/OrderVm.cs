@@ -9,10 +9,12 @@ namespace ElectronicShop.Application.Orders.Models
         public int OrderId { get; set; }
         public decimal TotalPrice { get; set; }
         public string OrderStatus { get; set; }
+        public int StatusId { get; set; }
         public string Receiver { get; set; }
         public string ReceiversAddress { get; set; }
         public string PhoneNumber { get; set; }
         public DateTime DeliveryDate { get; set; }//Ngày giao dự kiến
+        public bool Received { get; set; }
         public List<ListProduct> Products { get; set; }
         public List<OrderStatusDetail> OrderStatusDetails { get; set; }
     }

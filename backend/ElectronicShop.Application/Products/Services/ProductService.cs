@@ -38,7 +38,7 @@ namespace ElectronicShop.Application.Products.Services
         public async Task<ApiResult<string>> CreateAsync(CreateProductCommand request)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync();
-            
+
             var currentUser = _httpContextAccessor.HttpContext.User.Identity.Name;
 
             var product = _mapper.Map<Product>(request);
@@ -70,7 +70,7 @@ namespace ElectronicShop.Application.Products.Services
                 await _context.SaveChangesAsync();
 
                 await transaction.CommitAsync();
-                
+
                 return new ApiSuccessResult<string>("Thêm sản phẩm thành công");
             }
             catch
@@ -186,7 +186,7 @@ namespace ElectronicShop.Application.Products.Services
             {
                 var query = from category in _context.Categories
                             where category.RootId.Equals(cateId)
-                            join product in _context.Products.Include(x => x.ProductPhotos)
+                            join product in _context.Products.Where(x => x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos)
                                 on category.Id equals product.CategoryId
                             select new
                             {
@@ -202,8 +202,8 @@ namespace ElectronicShop.Application.Products.Services
             else
             {
                 products = await _context.Products
+                    .Where(x => x.Status != ProductStatus.HIDDEN && x.CategoryId.Equals(cateId))
                     .Include(x => x.ProductPhotos)
-                    .Where(x => x.CategoryId.Equals(cateId))
                     .ToListAsync();
             }
 

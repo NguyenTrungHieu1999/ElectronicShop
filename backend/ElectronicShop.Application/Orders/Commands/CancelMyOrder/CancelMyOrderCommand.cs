@@ -4,19 +4,19 @@ using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Application.Orders.Services;
 using MediatR;
 
-namespace ElectronicShop.Application.Orders.Commands.CancleMyOrder
+namespace ElectronicShop.Application.Orders.Commands.CancelMyOrder
 {
-    public class CancleMyOrderCommand : IRequest<ApiResult<string>>
+    public class CancelMyOrderCommand : IRequest<ApiResult<string>>
     {
-        public CancleMyOrderCommand(int orderId)
+        public CancelMyOrderCommand(int orderId)
         {
             OrderId = orderId;
         }
 
         public int OrderId { get; }
     }
-    
-    public class CancleMyOrderHandle : IRequestHandler<CancleMyOrderCommand, ApiResult<string>>
+
+    public class CancleMyOrderHandle : IRequestHandler<CancelMyOrderCommand, ApiResult<string>>
     {
         private readonly IOrderService _orderService;
 
@@ -25,9 +25,9 @@ namespace ElectronicShop.Application.Orders.Commands.CancleMyOrder
             _orderService = orderService;
         }
 
-        public async Task<ApiResult<string>> Handle(CancleMyOrderCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<string>> Handle(CancelMyOrderCommand request, CancellationToken cancellationToken)
         {
-            return await _orderService.CancleMyOrderAsync(request.OrderId);
+            return await _orderService.CancelMyOrderAsync(request.OrderId);
         }
     }
 }

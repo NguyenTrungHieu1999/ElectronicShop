@@ -27,7 +27,6 @@ using ElectronicShop.Application.Comments.Services;
 using ElectronicShop.Application.Favorites.Services;
 using ElectronicShop.Application.OrderDetails.Services;
 using ElectronicShop.Application.ProductPhotos.Services;
-using ProductService = ElectronicShop.Application.Products.Services.ProductService;
 using ElectronicShop.Application.Orders.Services;
 using ElectronicShop.Application.ProductReviews.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;

@@ -43,6 +43,7 @@ namespace ElectronicShop.Application.Orders.Services
             // Tạo đơn hàng
             var order = _mapper.Map<Order>(command);
             order.TotalMoney = 0;
+            order.Received = false;
             order.CreatedDate = DateTime.Now;
             order.DeliveryDate = DateTime.Now.AddDays(7);
             order.StatusId = 1;
@@ -109,7 +110,8 @@ namespace ElectronicShop.Application.Orders.Services
             await using var transaction = await _context.Database.BeginTransactionAsync();
             var order = _mapper.Map<Order>(command);
             order.CreatedDate = DateTime.Now;
-            order.StatusId = 2;
+            order.StatusId = MaxOrderStatusId; // Mặc định đã giao hàng
+            order.Received = true; // Mặc định đã nhận hàng
 
             if(command.ReceiversAddress is null)
             {
@@ -172,6 +174,12 @@ namespace ElectronicShop.Application.Orders.Services
                 order.StatusId += 1;
             }
 
+            // Nếu trạng thái bằng giao hàng thành công thì cập nhật đã thanh toán (nếu chưa)
+            if(order.StatusId == MaxOrderStatusId)
+            {
+                order.Paid = true;
+            }
+
             var orderStatus = await _context.OrderStatuses.FindAsync(order.StatusId);
 
             // Tạo thông tin trạng thái của đơn hàng
@@ -224,11 +232,13 @@ namespace ElectronicShop.Application.Orders.Services
                 {
                     OrderId = o.Id,
                     OrderStatus = orderStatus.Name,
+                    StatusId = o.StatusId,
                     TotalPrice = o.TotalMoney,
                     Receiver = o.Receiver,
                     ReceiversAddress = o.ReceiversAddress,
                     PhoneNumber = o.PhoneNumber,
                     DeliveryDate = o.DeliveryDate,
+                    Received = o.Received,
                     OrderStatusDetails = o.OrderStatusDetails
                 };
 
@@ -278,7 +288,7 @@ namespace ElectronicShop.Application.Orders.Services
             return await Task.FromResult(new ApiErrorResult<Order>("Không tìm thấy đơn hàng."));
         }
 
-        public async Task<ApiResult<Order>> CancleOrderAsync(int orderId)
+        public async Task<ApiResult<Order>> CancelOrderAsync(int orderId)
         {
             var order = await _context.Orders.Where(x => x.Id == orderId && x.StatusId != 8).SingleOrDefaultAsync();
 
@@ -314,11 +324,11 @@ namespace ElectronicShop.Application.Orders.Services
             return await Task.FromResult(new ApiSuccessResult<Order>(order));
         }
 
-        public async Task<ApiResult<string>> CancleMyOrderAsync(int orderId)
+        public async Task<ApiResult<string>> CancelMyOrderAsync(int orderId)
         {
-            var order = await _context.Orders.Where(x => x.Id == orderId && x.StatusId < 3).SingleOrDefaultAsync();
+            var order = await _context.Orders.Where(x => x.Id == orderId && x.UserId.Equals(_userId) && x.StatusId < 3).SingleOrDefaultAsync();
 
-            if (order == null && !order.UserId.Equals(_userId))
+            if (order == null)
                 return await Task.FromResult(new ApiErrorResult<string>("Không tìm thấy đơn hàng."));
             order.StatusId = 8;
 
@@ -396,6 +406,24 @@ namespace ElectronicShop.Application.Orders.Services
             }
 
             return await Task.FromResult(new ApiSuccessResult<List<SellingProductsVM>>(results));
+        }
+
+        public async Task<ApiResult<bool>> HasReceivedAsync(int orderId)
+        {
+            var order = await _context.Orders
+                .Where(o => o.Id.Equals(orderId) && o.UserId.Equals(_userId) && o.StatusId == MaxOrderStatusId)
+                .SingleOrDefaultAsync();
+
+            if (order is null)
+            {
+                return await Task.FromResult(new ApiErrorResult<bool>("Không tìm thấy đơn hàng"));
+            }
+
+            order.Received = true;
+            _context.Update(order);
+            await _context.SaveChangesAsync();
+
+            return await Task.FromResult(new ApiSuccessResult<bool>(true));
         }
     }
 }
