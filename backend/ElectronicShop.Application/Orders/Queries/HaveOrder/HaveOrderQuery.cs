@@ -38,7 +38,7 @@ namespace ElectronicShop.Application.Orders.Queries.HaveOrder
 
             // Tìm xem người mua có mua sản phẩm và thanh toán và thời gian hiện tại có lớn hơn hạn được đánh giá không
             var query = from o in _context.Orders
-                where o.UserId.Equals(int.Parse(userId)) && o.StatusId.Equals(7) && o.DeliveryDate.AddDays(3).Date <= DateTime.Now.Date
+                where o.UserId.Equals(int.Parse(userId)) && o.StatusId.Equals(7) && o.DeliveryDate.AddDays(3).Date >= DateTime.Now.Date
                 join d in _context.OrderDetails on o.Id equals d.OrderId
                 where d.ProductId.Equals(request.ProductId)
                 select new

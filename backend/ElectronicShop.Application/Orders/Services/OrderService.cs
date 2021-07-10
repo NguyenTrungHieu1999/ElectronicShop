@@ -33,7 +33,7 @@ namespace ElectronicShop.Application.Orders.Services
             _storageService = storageService;
             if (httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
             {
-                _userId = int.Parse(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                _userId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             }
         }
 
@@ -110,10 +110,11 @@ namespace ElectronicShop.Application.Orders.Services
             await using var transaction = await _context.Database.BeginTransactionAsync();
             var order = _mapper.Map<Order>(command);
             order.CreatedDate = DateTime.Now;
+            order.Paid = true;
             order.StatusId = MaxOrderStatusId; // Mặc định đã giao hàng
             order.Received = true; // Mặc định đã nhận hàng
 
-            if(command.ReceiversAddress is null)
+            if (command.ReceiversAddress is null)
             {
                 order.ReceiversAddress = "Số 1, Võ Văn Ngân, P.Linh Chiểu, Q.Thủ Đức, TP HCM";
             }
@@ -143,7 +144,7 @@ namespace ElectronicShop.Application.Orders.Services
 
                 if (product.Inventory < 0)
                 {
-                    return await Task.FromResult(new ApiErrorResult<Order>("Số lượng hàng ở kho không còn đủ."));
+                    return await Task.FromResult(new ApiErrorResult<Order>("Số lượng hàng ở kho của sản phẩm " + product.Name + " không còn đủ."));
                 }
 
                 _context.Products.Update(product);
@@ -175,7 +176,7 @@ namespace ElectronicShop.Application.Orders.Services
             }
 
             // Nếu trạng thái bằng giao hàng thành công thì cập nhật đã thanh toán (nếu chưa)
-            if(order.StatusId == MaxOrderStatusId)
+            if (order.StatusId == MaxOrderStatusId)
             {
                 order.Paid = true;
             }

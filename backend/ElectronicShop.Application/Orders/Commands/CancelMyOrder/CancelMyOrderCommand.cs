@@ -16,11 +16,11 @@ namespace ElectronicShop.Application.Orders.Commands.CancelMyOrder
         public int OrderId { get; }
     }
 
-    public class CancleMyOrderHandle : IRequestHandler<CancelMyOrderCommand, ApiResult<string>>
+    public class CancelMyOrderHandle : IRequestHandler<CancelMyOrderCommand, ApiResult<string>>
     {
         private readonly IOrderService _orderService;
 
-        public CancleMyOrderHandle(IOrderService orderService)
+        public CancelMyOrderHandle(IOrderService orderService)
         {
             _orderService = orderService;
         }

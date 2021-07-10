@@ -19,9 +19,6 @@ namespace ElectronicShop.Application.Orders.Commands.EmpCreateOrder
         [Required]
         public DateTime DeliveryDate { get; set; }//Ngày giao dự kiến
 
-        [Required]
-        public bool Paid { get; set; }//Đã thanh toán
-
         public string ReceiversAddress { get; set; }
 
         [Required]
