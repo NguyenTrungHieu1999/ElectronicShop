@@ -36,7 +36,10 @@ namespace ElectronicShop.Application.Comments.Services
         public async Task<ApiResult<List<CommentVm>>> GetAllByProductIdAsync(int productId)
         {
             var comments = await _context.Comments
-                .Where(x=>x.ProductId.Equals(productId)).ToListAsync();
+                .Where(x=>x.ProductId.Equals(productId) && x.ParentId == null)
+                .Include(x=>x.Children)
+                .ThenInclude(x=>x.User)
+                .ToListAsync();
 
             var result = _mapper.Map<List<CommentVm>>(comments);
 

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ElectronicShop.Data.Entities;
+using System;
+using System.Collections.Generic;
 
 namespace ElectronicShop.Application.Comments.Models
 {
@@ -19,5 +21,7 @@ namespace ElectronicShop.Application.Comments.Models
         public DateTime? ModifiedDate { get; set; }
 
         public string UserName { get; set; }
+
+        public List<Comment> Children { get; set; }
     }
 }

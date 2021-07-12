@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ElectronicShop.Application.Products.Queries.FilterProduct;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ElectronicShop.Application.Products.Services
 {

@@ -14,7 +14,7 @@ namespace ElectronicShop.Application.Comments.Commands.CreateComment
 
         public int ProductId { get; set; }
 
-        // public int? ParentId { get; set; }
+        public int? ParentId { get; set; }
 
         public string Text { get; set; }
 

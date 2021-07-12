@@ -31,7 +31,7 @@ namespace ElectronicShop.Application.Orders.Services
             _httpContextAccessor = httpContextAccessor;
             _context = context;
             _storageService = storageService;
-            if (httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+            if (_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
             {
                 _userId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             }
@@ -82,7 +82,7 @@ namespace ElectronicShop.Application.Orders.Services
 
                 if (product.Inventory < 0)
                 {
-                    return await Task.FromResult(new ApiErrorResult<Order>("Số lượng hàng ở kho không còn đủ."));
+                    return await Task.FromResult(new ApiErrorResult<Order>("Số lượng hàng ở kho của sản phẩm " + product.Name + " không còn đủ."));
                 }
 
                 _context.Products.Update(product);
