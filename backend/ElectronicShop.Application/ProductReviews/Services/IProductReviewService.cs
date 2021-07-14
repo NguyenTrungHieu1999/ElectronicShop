@@ -9,10 +9,11 @@ namespace ElectronicShop.Application.ProductReviews.Services
 {
     public interface IProductReviewService
     {
-        Task<ApiResult<List<ReviewVm>>> GetAllAsync(int productId);
+        Task<ApiResult<List<ReviewVm>>> GetAllByProductIdAsync(int productId);
         Task<ApiResult<ProductReview>> GetByIdAsync(int reviewId);
         Task<ApiResult<string>> CreateReviewAsync(CreateReviewCommand command);
         Task<ApiResult<string>> DeleteAsync(int reviewId);
         Task<ApiResult<double>> TotalRateAsync(int productId);
+        Task<ApiResult<List<ProductReview>>> GetAllAsync();
     }
 }

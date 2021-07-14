@@ -22,6 +22,7 @@ namespace ElectronicShop.Application.Orders.Models
     public class ListProduct
     {
         public int ProductId { get; set; }
+        public int Inventory { get; set; }
         public string Alias { get; set; }
         public int CateId { get; set; }
         public string ProductName { get; set; }

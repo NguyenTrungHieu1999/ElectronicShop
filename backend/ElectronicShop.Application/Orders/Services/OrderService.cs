@@ -256,6 +256,7 @@ namespace ElectronicShop.Application.Orders.Services
                         {
                             ProductId = product.Id,
                             CateId = product.CategoryId,
+                            Inventory = product.Inventory,
                             Alias = product.Alias,
                             Price = product.Price,
                             ProductName = product.Name,
@@ -293,7 +294,7 @@ namespace ElectronicShop.Application.Orders.Services
         {
             var order = await _context.Orders.Where(x => x.Id == orderId && x.StatusId != 8).SingleOrDefaultAsync();
 
-            if (order == null)
+            if (order is null)
                 return await Task.FromResult(new ApiErrorResult<Order>("Không tìm thấy đơn hàng."));
 
             order.StatusId = 8;
@@ -329,7 +330,7 @@ namespace ElectronicShop.Application.Orders.Services
         {
             var order = await _context.Orders.Where(x => x.Id == orderId && x.UserId.Equals(_userId) && x.StatusId < 3).SingleOrDefaultAsync();
 
-            if (order == null)
+            if (order is null)
                 return await Task.FromResult(new ApiErrorResult<string>("Không tìm thấy đơn hàng."));
             order.StatusId = 8;
 

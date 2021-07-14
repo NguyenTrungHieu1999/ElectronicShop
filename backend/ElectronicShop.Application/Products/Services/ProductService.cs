@@ -14,8 +14,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ElectronicShop.Application.Products.Queries.FilterProduct;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace ElectronicShop.Application.Products.Services
 {
@@ -91,11 +89,11 @@ namespace ElectronicShop.Application.Products.Services
                 return await Task.FromResult(new ApiErrorResult<string>("Không tìm thấy sản phẩm cần cập nhật"));
             }
 
-            string spath = _storageService.CreateProductPath(product.CategoryId, product.Name);
+            string sPath = _storageService.CreateProductPath(product.CategoryId, product.Name);
 
-            string dpath = _storageService.CreateProductPath(product.CategoryId, update.Name);
+            string dPath = _storageService.CreateProductPath(product.CategoryId, update.Name);
 
-            _storageService.ChangeNameFolder(spath, dpath);
+            _storageService.ChangeNameFolder(sPath, dPath);
 
             product.Map(update);
 
@@ -119,7 +117,7 @@ namespace ElectronicShop.Application.Products.Services
                 return await Task.FromResult(new ApiErrorResult<string>("Không tìm thấy sản phẩm cần xóa"));
             }
 
-            product.Status = ProductStatus.HIDDEN;
+            product.Status = ProductStatus.DELETED;
 
             _context.Products.Update(product);
 
@@ -133,7 +131,7 @@ namespace ElectronicShop.Application.Products.Services
             var currentUser = _httpContextAccessor.HttpContext.User.Identity.Name;
             var product = await _context.Products
                 .Include(x => x.ProductPhotos)
-                .SingleOrDefaultAsync(x => x.Id == productId && x.Status != ProductStatus.HIDDEN);
+                .SingleOrDefaultAsync(x => x.Id == productId && x.Status != ProductStatus.DELETED);
 
             if (product is null)
             {
@@ -154,8 +152,7 @@ namespace ElectronicShop.Application.Products.Services
         {
             // Lấy danh sách sản phẩm
             var products = await _context.Products
-                .Include(x => x.ProductPhotos)
-                .Where(x => x.Status != ProductStatus.HIDDEN)
+                .Where(x => x.Status != ProductStatus.DELETED)
                 .ToListAsync();
 
             if (products is null)
@@ -163,18 +160,9 @@ namespace ElectronicShop.Application.Products.Services
                 return await Task.FromResult(new ApiErrorResult<List<Product>>("Không tìm thấy sản phẩm"));
             }
 
-            // Tạo đường dẫn cho toàn bộ hình ảnh của sản phẩm
-            foreach (var p in products)
-            {
-                var path = _storageService.CreateProductPath(p.CategoryId, p.Name);
+            var results = await CreatePathPhotos(products);
 
-                foreach (var i in p.ProductPhotos)
-                {
-                    i.Url = "https://localhost:5001/" + path + "/" + i.Url;
-                }
-            }
-
-            return await Task.FromResult(new ApiSuccessResult<List<Product>>(products));
+            return await Task.FromResult(new ApiSuccessResult<List<Product>>(results));
         }
 
         public async Task<ApiResult<List<Product>>> GetByCateIdAsync(int cateId)
@@ -188,7 +176,7 @@ namespace ElectronicShop.Application.Products.Services
             {
                 var query = from category in _context.Categories
                             where category.RootId.Equals(cateId)
-                            join product in _context.Products.Where(x => x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos)
+                            join product in _context.Products.Where(x => x.Status != ProductStatus.DELETED)
                                 on category.Id equals product.CategoryId
                             select new
                             {
@@ -204,8 +192,7 @@ namespace ElectronicShop.Application.Products.Services
             else
             {
                 products = await _context.Products
-                    .Where(x => x.Status != ProductStatus.HIDDEN && x.CategoryId.Equals(cateId))
-                    .Include(x => x.ProductPhotos)
+                    .Where(x => x.Status != ProductStatus.DELETED && x.CategoryId.Equals(cateId))
                     .ToListAsync();
             }
 
@@ -214,18 +201,9 @@ namespace ElectronicShop.Application.Products.Services
                 return await Task.FromResult(new ApiErrorResult<List<Product>>("Không tìm thấy sản phẩm"));
             }
 
-            // Tạo đường dẫn cho toàn bộ hình ảnh của sản phẩm
-            foreach (var p in products)
-            {
-                var path = _storageService.CreateProductPath(p.CategoryId, p.Name);
+            var results = await CreatePathPhotos(products);
 
-                foreach (var i in p.ProductPhotos)
-                {
-                    i.Url = "https://localhost:5001/" + path + "/" + i.Url;
-                }
-            }
-
-            return await Task.FromResult(new ApiSuccessResult<List<Product>>(products));
+            return await Task.FromResult(new ApiSuccessResult<List<Product>>(results));
         }
 
         public async Task<ApiResult<List<Product>>> SearchAsync(SearchProductQuery filter)
@@ -233,8 +211,7 @@ namespace ElectronicShop.Application.Products.Services
             if (string.IsNullOrWhiteSpace(filter.KeyWord))
                 return await Task.FromResult(new ApiErrorResult<List<Product>>(""));
             var query = await _context.Products
-                .Include(x => x.ProductPhotos)
-                .Where(x => x.Status != ProductStatus.HIDDEN
+                .Where(x => x.Status != ProductStatus.DELETED
                             && x.Name.Contains(filter.KeyWord)
                             || x.Description.Contains(filter.KeyWord)
                             || x.Specifications.Contains(filter.KeyWord)
@@ -242,50 +219,44 @@ namespace ElectronicShop.Application.Products.Services
                             || _context.SoundsLike(x.Description) == _context.SoundsLike(filter.KeyWord))
                 .ToListAsync();
 
-            // Tạo đường dẫn cho toàn bộ hình ảnh của sản phẩm
-            foreach (var p in query)
-            {
-                var path = _storageService.CreateProductPath(p.CategoryId, p.Name);
+            var products = await _context.Products
+                .Where(x => x.Status != ProductStatus.DELETED
+                            && x.Name == filter.KeyWord
+                            || x.Description == (filter.KeyWord)
+                            || x.Specifications == (filter.KeyWord))
+                .ToListAsync();
 
-                foreach (var i in p.ProductPhotos)
-                {
-                    i.Url = "https://localhost:5001/" + path + "/" + i.Url;
-                }
+            if (products.Count > 0)
+            {
+                query = new List<Product>();
+                query = products;
             }
 
-            return await Task.FromResult(new ApiSuccessResult<List<Product>>(query));
+            var results = await CreatePathPhotos(query);
+
+            return await Task.FromResult(new ApiSuccessResult<List<Product>>(results));
         }
 
         public async Task<ApiResult<List<Product>>> GetNewProductsAsync()
         {
             var query = await _context.Products
                 .Where(x => x.Status == ProductStatus.NEW)
-                .Include(x => x.ProductPhotos)
                 .ToListAsync();
 
-            // Tạo đường dẫn cho toàn bộ hình ảnh của sản phẩm
-            foreach (var p in query)
-            {
-                var path = _storageService.CreateProductPath(p.CategoryId, p.Name);
+            var results = await CreatePathPhotos(query);
 
-                foreach (var i in p.ProductPhotos)
-                {
-                    i.Url = "https://localhost:5001/" + path + "/" + i.Url;
-                }
-            }
-
-            return await Task.FromResult(new ApiSuccessResult<List<Product>>(query));
+            return await Task.FromResult(new ApiSuccessResult<List<Product>>(results));
         }
 
         public async Task<ApiResult<List<Product>>> FilterAsync(FilterProductQuery query)
         {
             var products = query.Price switch
             {
-                1 => await _context.Products.Where(x => x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos).Where(x => x.Price < 10000000).ToListAsync(),
-                2 => await _context.Products.Where(x => x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos).Where(x => x.Price >= 10000000 && x.Price < 20000000).ToListAsync(),
-                3 => await _context.Products.Where(x => x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos).Where(x => x.Price >= 20000000 && x.Price < 40000000).ToListAsync(),
-                4 => await _context.Products.Where(x => x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos).Where(x => x.Price >= 40000000).ToListAsync(),
-                _ => await _context.Products.Where(x => x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos).ToListAsync(),
+                1 => await _context.Products.Where(x => x.Status != ProductStatus.DELETED).Include(x => x.ProductPhotos).Where(x => x.Price < 10000000).ToListAsync(),
+                2 => await _context.Products.Where(x => x.Status != ProductStatus.DELETED).Include(x => x.ProductPhotos).Where(x => x.Price >= 10000000 && x.Price < 20000000).ToListAsync(),
+                3 => await _context.Products.Where(x => x.Status != ProductStatus.DELETED).Include(x => x.ProductPhotos).Where(x => x.Price >= 20000000 && x.Price < 40000000).ToListAsync(),
+                4 => await _context.Products.Where(x => x.Status != ProductStatus.DELETED).Include(x => x.ProductPhotos).Where(x => x.Price >= 40000000).ToListAsync(),
+                _ => await _context.Products.Where(x => x.Status != ProductStatus.DELETED).Include(x => x.ProductPhotos).ToListAsync(),
             };
 
             products = query.Sorted switch
@@ -295,18 +266,30 @@ namespace ElectronicShop.Application.Products.Services
                 _ => products.ToList(),
             };
 
-            // Tạo đường dẫn cho toàn bộ hình ảnh của sản phẩm
+            var results = await CreatePathPhotos(products);
+
+            return await Task.FromResult(new ApiSuccessResult<List<Product>>(results));
+        }
+
+        private async Task<List<Product>> CreatePathPhotos(List<Product> products)
+        {
             foreach (var p in products)
             {
                 var path = _storageService.CreateProductPath(p.CategoryId, p.Name);
+                var photos = await _context.ProductPhotos.Where(x => x.ProductId == p.Id).ToListAsync();
+                p.ProductPhotos = new List<ProductPhoto>();
 
-                foreach (var i in p.ProductPhotos)
+                for (var i = 0; i < 2; i++)
                 {
-                    i.Url = "https://localhost:5001/" + path + "/" + i.Url;
+                    if (photos.Count >= 2)
+                    {
+                        p.ProductPhotos.Add(photos[i]);
+                        p.ProductPhotos[i].Url = "https://localhost:5001/" + path + "/" + photos[i].Url;
+                    }
                 }
             }
 
-            return await Task.FromResult(new ApiSuccessResult<List<Product>>(products));
+            return products;
         }
     }
 }

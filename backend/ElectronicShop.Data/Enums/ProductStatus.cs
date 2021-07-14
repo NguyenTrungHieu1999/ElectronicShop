@@ -5,6 +5,6 @@
         DEFAULT,
         NEW,
         SALE,
-        HIDDEN
+        DELETED
     }
 }

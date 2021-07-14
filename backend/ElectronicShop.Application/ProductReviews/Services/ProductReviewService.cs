@@ -27,7 +27,7 @@ namespace ElectronicShop.Application.ProductReviews.Services
             _mapper = mapper;
         }
 
-        public async Task<ApiResult<List<ReviewVm>>> GetAllAsync(int productId)
+        public async Task<ApiResult<List<ReviewVm>>> GetAllByProductIdAsync(int productId)
         {
             var reviews = await _context.ProductReviews
                 .Where(x=>x.Status == true && x.ProductId.Equals(productId))
@@ -100,6 +100,13 @@ namespace ElectronicShop.Application.ProductReviews.Services
 
                 return await Task.FromResult(new ApiSuccessResult<double>(totalRate));   
             }
+        }
+
+        public async Task<ApiResult<List<ProductReview>>> GetAllAsync()
+        {
+            var reviews = await _context.ProductReviews.ToListAsync();
+
+            return await Task.FromResult(new ApiSuccessResult<List<ProductReview>>(reviews));
         }
     }
 }
