@@ -7,13 +7,13 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ElectronicShop.Application.ProductReviews.Queries.GetAllAsync
+namespace ElectronicShop.Application.ProductReviews.Queries.GetAllReviewsAsync
 {
-    public class GetAllQuery : IRequest<ApiResult<List<ProductReview>>>
+    public class GetAllReviewsQuery : IRequest<ApiResult<List<ProductReview>>>
     {
     }
 
-    public class GetAllHandle : IRequestHandler<GetAllQuery, ApiResult<List<ProductReview>>>
+    public class GetAllHandle : IRequestHandler<GetAllReviewsQuery, ApiResult<List<ProductReview>>>
     {
         private readonly IProductReviewService _service;
 
@@ -22,7 +22,7 @@ namespace ElectronicShop.Application.ProductReviews.Queries.GetAllAsync
             _service = service;
         }
 
-        public async Task<ApiResult<List<ProductReview>>> Handle(GetAllQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResult<List<ProductReview>>> Handle(GetAllReviewsQuery request, CancellationToken cancellationToken)
         {
             return await _service.GetAllAsync();
         }

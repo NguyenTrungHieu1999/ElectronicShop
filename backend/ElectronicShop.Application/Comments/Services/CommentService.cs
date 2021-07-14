@@ -66,21 +66,43 @@ namespace ElectronicShop.Application.Comments.Services
 
         public async Task<ApiResult<string>> EditAsync(EditCommentCommand command)
         {
-            var comment = await _context.Comments.FindAsync(command.Id);
+            var comment = await _context.Comments.Where(x=>x.Id.Equals(command.Id)&&x.UserId.Equals(_userId)).SingleOrDefaultAsync();
 
             if (comment is null)
             {
-                return await Task.FromResult(new ApiErrorResult<string>("Bình luận không tồn tại."));
+                return await Task.FromResult(new ApiErrorResult<string>("Bạn không thể chỉnh sửa bình luận này"));
             }
-            comment.Map(command);
-
-            comment.UserId = _userId;
+            comment.Text = command.Text;
+            comment.ModifiedDate = DateTime.Now;
 
             _context.Update(comment);
-
             await _context.SaveChangesAsync();
 
             return await Task.FromResult(new ApiSuccessResult<string>("Cập nhật bình luận thành công."));
+        }
+
+        public async Task<ApiResult<string>> DisableOrEnableAsync(int commentId)
+        {
+            var comment = await _context.Comments.Where(x => x.Id.Equals(commentId) && x.Status != false).SingleOrDefaultAsync();
+
+            if(comment is null)
+            {
+                return await Task.FromResult(new ApiErrorResult<String>("Không tìm thấy bình luận"));
+            }
+
+            comment.Status = !comment.Status;
+
+            _context.Update(comment);
+            await _context.SaveChangesAsync();
+
+            return await Task.FromResult(new ApiSuccessResult<string>("Khóa bình luận thành công"));
+        }
+
+        public async Task<ApiResult<List<Comment>>> GetAllAsync()
+        {
+            var comments = await _context.Comments.ToListAsync();
+
+            return await Task.FromResult(new ApiSuccessResult<List<Comment>>(comments));
         }
     }
 }

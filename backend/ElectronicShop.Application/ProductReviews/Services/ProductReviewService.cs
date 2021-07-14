@@ -98,7 +98,7 @@ namespace ElectronicShop.Application.ProductReviews.Services
                     .Where(x=>x.ProductId.Equals(productId))
                     .AverageAsync(x => x.RateStar);
 
-                return await Task.FromResult(new ApiSuccessResult<double>(totalRate));   
+                return await Task.FromResult(new ApiSuccessResult<double>(totalRate));
             }
         }
 
