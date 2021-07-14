@@ -15,6 +15,7 @@ namespace ElectronicShop.Application.Orders.Models
         public string PhoneNumber { get; set; }
         public DateTime DeliveryDate { get; set; }//Ngày giao dự kiến
         public bool Received { get; set; }
+        public string PaymentMethod { get; set; }
         public List<ListProduct> Products { get; set; }
         public List<OrderStatusDetail> OrderStatusDetails { get; set; }
     }

@@ -26,11 +26,11 @@ namespace ElectronicShop.Data.Configurations
                 .IsRequired();
 
             builder.Property(x => x.Receiver)
-                .HasMaxLength(30)
+                .HasMaxLength(200)
                 .IsRequired();
 
             builder.Property(x => x.ReceiversAddress)
-                .HasMaxLength(200)
+                .HasMaxLength(500)
                 .IsRequired();
 
             builder.Property(x => x.PhoneNumber)
@@ -43,6 +43,7 @@ namespace ElectronicShop.Data.Configurations
                 .IsRequired();
 
             builder.Property(x => x.Email)
+                .HasMaxLength(100)
                 .IsRequired();
 
             builder.Property(x => x.Received)

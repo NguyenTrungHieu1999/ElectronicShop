@@ -240,6 +240,7 @@ namespace ElectronicShop.Application.Orders.Services
                     PhoneNumber = o.PhoneNumber,
                     DeliveryDate = o.DeliveryDate,
                     Received = o.Received,
+                    PaymentMethod = o.PaymentMethod,
                     OrderStatusDetails = o.OrderStatusDetails
                 };
 

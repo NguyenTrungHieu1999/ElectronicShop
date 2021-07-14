@@ -16,10 +16,10 @@ namespace ElectronicShop.Data.Configurations
                 .UseIdentityColumn();
 
             builder.Property(x => x.FirstMiddleName)
-                .HasMaxLength(50);
+                .HasMaxLength(100);
 
             builder.Property(x => x.LastName)
-                .HasMaxLength(20);
+                .HasMaxLength(100);
 
             builder.Property(x => x.Address)
                 .HasMaxLength(500);
@@ -38,20 +38,20 @@ namespace ElectronicShop.Data.Configurations
                 .HasColumnType("DateTime");
 
             builder.Property(x => x.CreatedBy)
-                .HasMaxLength(30);
+                .HasMaxLength(100);
 
             builder.Property(x => x.ModifiedBy)
-                .HasMaxLength(30);
+                .HasMaxLength(100);
 
             builder.Property(x => x.UserName)
-                .HasMaxLength(30)
+                .HasMaxLength(100)
                 .IsRequired();
 
             builder.Property(x => x.Birthday)
                 .HasColumnType("DateTime");
 
             builder.Property(x => x.Email)
-                .HasMaxLength(50)
+                .HasMaxLength(100)
                 .IsRequired();
 
             builder.Property(x => x.PhoneNumber)
