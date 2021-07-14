@@ -111,6 +111,7 @@ namespace ElectronicShop.Application.Orders.Services
             var order = _mapper.Map<Order>(command);
             order.CreatedDate = DateTime.Now;
             order.Paid = true;
+            order.PaymentMethod = "Tại cửa hàng";
             order.StatusId = MaxOrderStatusId; // Mặc định đã giao hàng
             order.Received = true; // Mặc định đã nhận hàng
 

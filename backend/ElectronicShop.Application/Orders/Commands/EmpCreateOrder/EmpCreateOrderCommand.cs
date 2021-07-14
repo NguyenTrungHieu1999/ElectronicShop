@@ -32,8 +32,6 @@ namespace ElectronicShop.Application.Orders.Commands.EmpCreateOrder
 
         public string Note { get; set; }
 
-        public string PaymentMethod { get; set; }
-
         public List<OrderDetailVm> OrderDetails { get; set; }
     }
 
