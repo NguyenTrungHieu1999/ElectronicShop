@@ -57,6 +57,7 @@ namespace ElectronicShop.Application.Comments.Services
 
             comment.UserId = _userId;
             comment.CreatedDate = DateTime.Now;
+            comment.Status = true;
 
             await _context.AddAsync(comment);
             await _context.SaveChangesAsync();
@@ -72,9 +73,8 @@ namespace ElectronicShop.Application.Comments.Services
             {
                 return await Task.FromResult(new ApiErrorResult<string>("Bạn không thể chỉnh sửa bình luận này"));
             }
-            comment.Text = command.Text;
-            comment.ModifiedDate = DateTime.Now;
 
+            comment.Map(command);
             _context.Update(comment);
             await _context.SaveChangesAsync();
 
@@ -83,7 +83,7 @@ namespace ElectronicShop.Application.Comments.Services
 
         public async Task<ApiResult<string>> DisableOrEnableAsync(int commentId)
         {
-            var comment = await _context.Comments.Where(x => x.Id.Equals(commentId) && x.Status != false).SingleOrDefaultAsync();
+            var comment = await _context.Comments.Where(x => x.Id.Equals(commentId)).SingleOrDefaultAsync();
 
             if(comment is null)
             {
@@ -95,7 +95,7 @@ namespace ElectronicShop.Application.Comments.Services
             _context.Update(comment);
             await _context.SaveChangesAsync();
 
-            return await Task.FromResult(new ApiSuccessResult<string>("Khóa bình luận thành công"));
+            return await Task.FromResult(new ApiSuccessResult<string>(comment.Status == false ? "Khóa bình luận thành công" : "Mở khóa bình luận thành công"));
         }
 
         public async Task<ApiResult<List<Comment>>> GetAllAsync()

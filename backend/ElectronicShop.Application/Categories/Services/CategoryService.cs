@@ -5,10 +5,12 @@ using ElectronicShop.Application.Categories.Extensions;
 using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
+using ElectronicShop.Data.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ElectronicShop.Application.Categories.Services
@@ -29,9 +31,9 @@ namespace ElectronicShop.Application.Categories.Services
         public async Task<ApiResult<string>> CreateAsync(CreateCategoryCommand request)
         {
             var username = _httpContextAccessor.HttpContext.User.Identity.Name;
-            
+
             var category = _mapper.Map<Category>(request);
-            
+
             category.CreatedDate = DateTime.Now;
 
             category.CreatedBy = username;
@@ -70,14 +72,14 @@ namespace ElectronicShop.Application.Categories.Services
             {
                 return await Task.FromResult(new ApiErrorResult<string>("Cập nhật danh mục sản phẩm thất bại"));
             }
-            
+
             return await Task.FromResult(new ApiSuccessResult<string>("Cập nhật danh mục sản phẩm thành công"));
         }
 
         public async Task<ApiResult<Category>> GetByIdAsync(int id)
         {
             var category = await _context.Categories
-                .Include(x=>x.Products)
+                .Include(x => x.Products.Where(t => t.Status != ProductStatus.DELETED && t.Status != ProductStatus.HIDDEN))
                 .SingleOrDefaultAsync(x => x.Id == id);
 
             return await Task.FromResult(new ApiSuccessResult<Category>(category));

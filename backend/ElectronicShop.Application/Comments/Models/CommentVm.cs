@@ -12,6 +12,8 @@ namespace ElectronicShop.Application.Comments.Models
 
         public int ProductId { get; set; }
 
+        public bool Status { get; set; }
+
         public int? ParentId { get; set; }
 
         public string Text { get; set; }

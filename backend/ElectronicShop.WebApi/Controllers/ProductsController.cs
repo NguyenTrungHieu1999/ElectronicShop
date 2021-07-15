@@ -1,18 +1,20 @@
 ﻿using ElectronicShop.Application.Products.Commands.CreateProduct;
 using ElectronicShop.Application.Products.Commands.DeleteProduct;
+using ElectronicShop.Application.Products.Commands.DisableProduct;
+using ElectronicShop.Application.Products.Commands.EnableProduct;
 using ElectronicShop.Application.Products.Commands.UpdateProduct;
-using ElectronicShop.Utilities.SystemConstants;
-using ElectronicShop.WebApi.ActionFilters;
-using ElectronicShop.WebApi.AuthorizeRoles;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using ElectronicShop.Application.Products.Queries.FilterProduct;
 using ElectronicShop.Application.Products.Queries.GetAllProduct;
 using ElectronicShop.Application.Products.Queries.GetNewProducts;
 using ElectronicShop.Application.Products.Queries.GetProductByCateId;
 using ElectronicShop.Application.Products.Queries.GetProductById;
+using ElectronicShop.Utilities.SystemConstants;
+using ElectronicShop.WebApi.ActionFilters;
+using ElectronicShop.WebApi.AuthorizeRoles;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace ElectronicShop.WebApi.Controllers
 {
@@ -94,6 +96,18 @@ namespace ElectronicShop.WebApi.Controllers
         public async Task<IActionResult> Filter([FromQuery]FilterProductQuery query)
         {
             return Ok(await _mediator.Send(query));
+        }
+
+        [HttpPut("disable/{productId}")]
+        public async Task<IActionResult> Disable(int productId)
+        {
+            return Ok(await _mediator.Send(new DisableProductCommand(productId)));
+        }
+
+        [HttpPut("enable/{productId}")]
+        public async Task<IActionResult> Enable(int productId)
+        {
+            return Ok(await _mediator.Send(new EnableProductCommand(productId)));
         }
     }
 }
