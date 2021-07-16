@@ -11,6 +11,7 @@ using ElectronicShop.Data.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ElectronicShop.Application.Carts.Commands.AddCart;
+using ElectronicShop.Data.Enums;
 
 namespace ElectronicShop.Application.Carts.Services
 {
@@ -75,6 +76,17 @@ namespace ElectronicShop.Application.Carts.Services
                 .Where(x => x.UserId.Equals(_userId)&&x.Status==true)
                 .ToListAsync();
             
+            if(carts != null)
+            {
+                foreach (var c in carts)
+                {
+                    if(c.Product.Status == ProductStatus.HIDDEN || c.Product.Status == ProductStatus.DELETED)
+                    {
+                        carts.Remove(c);
+                    }
+                }
+            }
+
             var cartModels = carts.Select(cart => new CartVm
             {
                 Product = cart.Product, 

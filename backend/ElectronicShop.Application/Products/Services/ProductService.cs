@@ -25,8 +25,6 @@ namespace ElectronicShop.Application.Products.Services
         private readonly IMapper _mapper;
         private readonly IStorageService _storageService;
         private readonly ElectronicShopDbContext _context;
-        private readonly bool isAuth;
-        private readonly string role = string.Empty;
 
         public ProductService(
             IHttpContextAccessor httpContextAccessor, IMapper mapper,
@@ -37,12 +35,6 @@ namespace ElectronicShop.Application.Products.Services
             _mapper = mapper;
             _storageService = storageService;
             _context = context;
-
-            isAuth = _httpContextAccessor.HttpContext.User.Identity.IsAuthenticated;
-            if (isAuth)
-            {
-                role = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value;
-            }
         }
 
         public async Task<ApiResult<string>> CreateAsync(CreateProductCommand request)
@@ -138,7 +130,6 @@ namespace ElectronicShop.Application.Products.Services
 
         public async Task<ApiResult<Product>> GetProductByIdAsync(int productId)
         {
-            var currentUser = _httpContextAccessor.HttpContext.User.Identity.Name;
             var product = await _context.Products
                 .Include(x => x.ProductPhotos)
                 .SingleOrDefaultAsync(x => x.Id == productId && x.Status != ProductStatus.DELETED);
@@ -146,14 +137,6 @@ namespace ElectronicShop.Application.Products.Services
             if (product is null)
             {
                 return await Task.FromResult(new ApiErrorResult<Product>("Không tìm thấy sản phẩm"));
-            }
-
-            if (role == Constants.USER || role == string.Empty)
-            {
-                if (product.Status == ProductStatus.HIDDEN)
-                {
-                    return await Task.FromResult(new ApiErrorResult<Product>("Không tìm thấy sản phẩm"));
-                }
             }
 
             var path = _storageService.CreateProductPath(product.CategoryId, product.Name);
@@ -176,11 +159,6 @@ namespace ElectronicShop.Application.Products.Services
             if (products is null)
             {
                 return await Task.FromResult(new ApiErrorResult<List<Product>>("Không tìm thấy sản phẩm"));
-            }
-
-            if (role == Constants.USER || role == string.Empty)
-            {
-                products = products.Where(x => x.Status != ProductStatus.HIDDEN).ToList();
             }
 
             var results = await CreatePathPhotos(products);
@@ -346,5 +324,44 @@ namespace ElectronicShop.Application.Products.Services
 
             return await Task.FromResult(new ApiSuccessResult<string>("Mở khóa sản phẩm thành công"));
         }
+
+        public async Task<ApiResult<List<Product>>> GetAllForClienttAsync()
+        {
+            // Lấy danh sách sản phẩm
+            var products = await _context.Products
+                .Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN)
+                .ToListAsync();
+
+            if (products is null)
+            {
+                return await Task.FromResult(new ApiErrorResult<List<Product>>("Không tìm thấy sản phẩm"));
+            }
+
+            var results = await CreatePathPhotos(products);
+
+            return await Task.FromResult(new ApiSuccessResult<List<Product>>(results));
+        }
+
+        public async Task<ApiResult<Product>> GetByIdForClientAsync(int productId)
+        {
+            var product = await _context.Products
+                .Include(x => x.ProductPhotos)
+                .SingleOrDefaultAsync(x => x.Id == productId && x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN);
+
+            if (product is null)
+            {
+                return await Task.FromResult(new ApiErrorResult<Product>("Không tìm thấy sản phẩm"));
+            }
+
+            var path = _storageService.CreateProductPath(product.CategoryId, product.Name);
+
+            foreach (var p in product.ProductPhotos)
+            {
+                p.Url = "https://localhost:5001/" + path + "/" + p.Url;
+            }
+
+            return await Task.FromResult(new ApiSuccessResult<Product>(product));
+        }
+
     }
 }

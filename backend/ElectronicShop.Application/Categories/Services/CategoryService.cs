@@ -79,8 +79,19 @@ namespace ElectronicShop.Application.Categories.Services
         public async Task<ApiResult<Category>> GetByIdAsync(int id)
         {
             var category = await _context.Categories
-                .Include(x => x.Products.Where(t => t.Status != ProductStatus.DELETED && t.Status != ProductStatus.HIDDEN))
+                .Include(x => x.Products)
                 .SingleOrDefaultAsync(x => x.Id == id);
+
+            if(category != null)
+            {
+                foreach (var item in category.Products)
+                {
+                    if(item.Status == ProductStatus.HIDDEN || item.Status == ProductStatus.DELETED)
+                    {
+                        category.Products.Remove(item);
+                    }
+                }
+            }
 
             return await Task.FromResult(new ApiSuccessResult<Category>(category));
         }

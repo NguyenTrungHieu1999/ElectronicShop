@@ -21,5 +21,7 @@ namespace ElectronicShop.Application.Products.Services
         Task<ApiResult<List<Product>>> FilterAsync(FilterProductQuery query);
         Task<ApiResult<string>> DisableAsync(int productId);
         Task<ApiResult<string>> EnableAsync(int productId);
+        Task<ApiResult<List<Product>>> GetAllForClienttAsync();
+        Task<ApiResult<Product>> GetByIdForClientAsync(int productId);
     }
 }
