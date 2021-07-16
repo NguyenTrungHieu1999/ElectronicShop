@@ -274,7 +274,11 @@ namespace ElectronicShop.Application.Products.Services
 
         public async Task<ApiResult<string>> DisableAsync(int productId)
         {
-            var product = await _context.Products.Where(x => x.Id == productId && x.Status != ProductStatus.DELETED).SingleOrDefaultAsync();
+            var product = await _context.Products
+                .Where(x => x.Id == productId
+                       && x.Status != ProductStatus.DELETED
+                       && x.Status != ProductStatus.HIDDEN)
+                .SingleOrDefaultAsync();
 
             if (product is null)
             {
@@ -311,7 +315,11 @@ namespace ElectronicShop.Application.Products.Services
 
         public async Task<ApiResult<string>> EnableAsync(int productId)
         {
-            var product = await _context.Products.Where(x => x.Id == productId && x.Status != ProductStatus.DELETED).SingleOrDefaultAsync();
+            var product = await _context.Products
+                .Where(x => x.Id == productId
+                       && x.Status != ProductStatus.DELETED
+                       && x.Status == ProductStatus.HIDDEN)
+                .SingleOrDefaultAsync();
 
             if (product is null)
             {

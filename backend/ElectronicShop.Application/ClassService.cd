@@ -82,7 +82,7 @@
   <Class Name="ElectronicShop.Application.Products.Services.ProductService">
     <Position X="12.25" Y="3.5" Width="5.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAABBAABACAAAAJEBAAACAACAgAAwAAAIAABIE=</HashCode>
+      <HashCode>AAAAAAAABBAABACAAAAJEAAAAAAACAgAAwAAAIAQBIE=</HashCode>
       <FileName>Products\Services\ProductService.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />

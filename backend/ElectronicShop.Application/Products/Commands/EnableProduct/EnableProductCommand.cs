@@ -22,6 +22,12 @@ namespace ElectronicShop.Application.Products.Commands.EnableProduct
     public class EnableProductHandle : IRequestHandler<EnableProductCommand, ApiResult<string>>
     {
         private readonly IProductService _service;
+
+        public EnableProductHandle(IProductService service)
+        {
+            _service = service;
+        }
+
         public async Task<ApiResult<string>> Handle(EnableProductCommand request, CancellationToken cancellationToken)
         {
             return await _service.EnableAsync(request.ProductId);
