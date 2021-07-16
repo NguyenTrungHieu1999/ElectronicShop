@@ -2,7 +2,6 @@
 using ElectronicShop.Application.Products.Services;
 using ElectronicShop.Data.Enums;
 using MediatR;
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
