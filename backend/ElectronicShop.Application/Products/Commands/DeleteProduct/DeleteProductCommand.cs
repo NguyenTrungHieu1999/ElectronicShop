@@ -1,5 +1,4 @@
-﻿
-using ElectronicShop.Application.Common.Models;
+﻿using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Application.Products.Services;
 using MediatR;
 using System.Threading;

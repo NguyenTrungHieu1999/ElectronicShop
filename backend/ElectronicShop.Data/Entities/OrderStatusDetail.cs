@@ -10,10 +10,14 @@ namespace ElectronicShop.Data.Entities
 
         public int OrderId { get; set; }
 
+        public int? EmpId { get; set; }
+
         public DateTime CreatedDate { get; set; }
 
         public Order Order { get; set; }
 
         public OrderStatus OrderStatus { get; set; }
+
+        public User User { get; set; }
     }
 }

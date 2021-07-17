@@ -13,5 +13,7 @@ namespace ElectronicShop.Application.Comments.Services
         Task<ApiResult<List<CommentVm>>> GetAllByProductIdAsync(int productId);
         Task<ApiResult<string>> CreateAsync(CreateCommentCommand command);
         Task<ApiResult<string>> EditAsync(EditCommentCommand command);
+        Task<ApiResult<string>> DisableOrEnableAsync(int commentId);
+        Task<ApiResult<List<Comment>>> GetAllAsync();
     }
 }

@@ -6,17 +6,12 @@ using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 using ElectronicShop.Application.OrderDetails.Models;
+using ElectronicShop.Data.Entities;
 
 namespace ElectronicShop.Application.Orders.Commands.CreateOrder
 {
-    public class CreateOrderCommand : IRequest<ApiResult<string>>
+    public class CreateOrderCommand : IRequest<ApiResult<Order>>
     {
-        //public DateTime CreatedDate { get; set; }
-
-        //public DateTime? ModifiedDate { get; set; }
-
-        //public DateTime DeliveryDate { get; set; }//Ngày giao dự kiến
-
         [Required]
         public bool Paid { get; set; }//Đã thanh toán
 
@@ -35,12 +30,14 @@ namespace ElectronicShop.Application.Orders.Commands.CreateOrder
         [Required]
         public decimal TotalMoney { get; set; }
 
-        public List<OrderDetailVm> OrderDetails { get; set; }
+        public string Note { get; set; }
 
-        //public int StatusId { get; set; }
+        public string PaymentMethod { get; set; }
+
+        public List<OrderDetailVm> OrderDetails { get; set; }
     }
 
-    public class CreateOrderHandle : IRequestHandler<CreateOrderCommand, ApiResult<string>>
+    public class CreateOrderHandle : IRequestHandler<CreateOrderCommand, ApiResult<Order>>
     {
         private readonly IOrderService _orderService;
 
@@ -49,7 +46,7 @@ namespace ElectronicShop.Application.Orders.Commands.CreateOrder
             _orderService = orderService;
         }
 
-        public async Task<ApiResult<string>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<Order>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
             return await _orderService.CreateAsync(request);
         }

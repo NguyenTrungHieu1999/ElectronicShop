@@ -9,9 +9,9 @@ using MediatR;
 
 namespace ElectronicShop.Application.Comments.Queries.GetAllCommentByProductId
 {
-    public class GetAllCommentQuery : IRequest<ApiResult<List<CommentVm>>>
+    public class GetAllCommentByProductIdQuery : IRequest<ApiResult<List<CommentVm>>>
     {
-        public GetAllCommentQuery(int productId)
+        public GetAllCommentByProductIdQuery(int productId)
         {
             ProductId = productId;
         }
@@ -19,7 +19,7 @@ namespace ElectronicShop.Application.Comments.Queries.GetAllCommentByProductId
         public int ProductId { get; }
     }
     
-    public class GetAllCommentHandle : IRequestHandler<GetAllCommentQuery, ApiResult<List<CommentVm>>>
+    public class GetAllCommentHandle : IRequestHandler<GetAllCommentByProductIdQuery, ApiResult<List<CommentVm>>>
     {
         private readonly ICommentService _commentService;
 
@@ -28,7 +28,7 @@ namespace ElectronicShop.Application.Comments.Queries.GetAllCommentByProductId
             _commentService = commentService;
         }
 
-        public async Task<ApiResult<List<CommentVm>>> Handle(GetAllCommentQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResult<List<CommentVm>>> Handle(GetAllCommentByProductIdQuery request, CancellationToken cancellationToken)
         {
             return await _commentService.GetAllByProductIdAsync(request.ProductId);
         }

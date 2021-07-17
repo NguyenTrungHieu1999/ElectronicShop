@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using ElectronicShop.Application.Authentications.Services;
 using ElectronicShop.Application.Categories.Services;
 using ElectronicShop.Application.Common.Mapper;
@@ -27,7 +27,6 @@ using ElectronicShop.Application.Comments.Services;
 using ElectronicShop.Application.Favorites.Services;
 using ElectronicShop.Application.OrderDetails.Services;
 using ElectronicShop.Application.ProductPhotos.Services;
-using ProductService = ElectronicShop.Application.Products.Services.ProductService;
 using ElectronicShop.Application.Orders.Services;
 using ElectronicShop.Application.ProductReviews.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -46,6 +45,9 @@ namespace ElectronicShop.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Dùng để thực hiện loại bỏ ký tự đặc biệt cho kiểu chuỗi
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
             services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
             {
                 builder.WithOrigins("http://localhost:3001/", "http://localhost:3000/")

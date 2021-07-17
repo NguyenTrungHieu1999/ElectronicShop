@@ -8,7 +8,6 @@ namespace ElectronicShop.Application.Comments.Extensions
     {
         public static void Map(this Comment comment, EditCommentCommand command)
         {
-            comment.ProductId = command.ProductId;
             comment.Text = command.Text;
             comment.ModifiedDate = DateTime.Now;
         }

@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="ElectronicShop.Application.Carts.Models.CartVm">
+    <Position X="3.25" Y="9.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>Carts\Models\CartVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.Application.Comments.Models.CommentVm">
+    <Position X="3.25" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>EAACAAAEAAAAAAAAAAAEAAgAAgAAAAAAAwAACAAAAAA=</HashCode>
+      <FileName>Comments\Models\CommentVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.Application.Common.Models.ApiErrorResult&lt;T&gt;">
+    <Position X="3.25" Y="5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>Common\Models\ApiErrorResult.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.Application.Common.Models.ApiResult&lt;T&gt;">
+    <Position X="6" Y="5.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAAAAAAAIAAAAAAAAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>Common\Models\ApiResult.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.Application.Common.Models.ApiSuccessResult&lt;T&gt;">
+    <Position X="5.5" Y="7.5" Width="2.5" />
+    <InheritanceLine Type="ElectronicShop.Application.Common.Models.ApiResult&lt;T&gt;" ManuallyRouted="true">
+      <Path>
+        <Point X="7" Y="7.238" />
+        <Point X="7" Y="7.416" />
+        <Point X="6.75" Y="7.416" />
+        <Point X="6.75" Y="7.5" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Common\Models\ApiSuccessResult.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.Application.OrderDetails.Models.OrderDetailVm">
+    <Position X="6" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>OrderDetails\Models\OrderDetailVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.Application.Orders.Models.OrderDetailForMail">
+    <Position X="1" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAgAAIAAA=</HashCode>
+      <FileName>Orders\Models\OrderDetailForMail.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.Application.Orders.Models.OrderVm">
+    <Position X="5.75" Y="0.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>EAABAAAJAAACAAACBAAAQAAAAAAEQAAAAAAAAAAgAAQ=</HashCode>
+      <FileName>Orders\Models\OrderVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.Application.Orders.Models.ListProduct">
+    <Position X="3.25" Y="6.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAQIAAAAAAAAAAAAAAAAAAAAAAAAAgxAIAAA=</HashCode>
+      <FileName>Orders\Models\OrderVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.Application.Orders.Models.SellingProductsVM">
+    <Position X="1" Y="8.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAEAQAAAAAAAAAAAAQAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>Orders\Models\SellingProductsVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.Application.ProductPhotos.Models.PhotoVm">
+    <Position X="3.25" Y="3.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAA=</HashCode>
+      <FileName>ProductPhotos\Models\PhotoVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.Application.ProductReviews.Models.ReviewVm">
+    <Position X="1" Y="6" Width="2" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAEAAAAAAAAAAAAAAgAAAAAAAAAAQABCAAAEAA=</HashCode>
+      <FileName>ProductReviews\Models\ReviewVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.Application.Users.Models.LoginHistoryVm">
+    <Position X="5.75" Y="9" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAQAAAAgAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>Users\Models\LoginHistoryVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.Application.Users.Models.UserVm">
+    <Position X="1" Y="2.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAEACAAAACAAAAAQAAAAgAIAAACAwAAAQAAAAg=</HashCode>
+      <FileName>Users\Models\UserVm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

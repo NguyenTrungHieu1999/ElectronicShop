@@ -24,9 +24,7 @@ namespace ElectronicShop.Application.Favorites.Services
             _storageService = storageService;
             if (httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
             {
-                _userId = int.Parse(httpContextAccessor.HttpContext.User
-                    .FindFirst(ClaimTypes.NameIdentifier)
-                    .Value);
+                _userId = int.Parse(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             }
         }
 

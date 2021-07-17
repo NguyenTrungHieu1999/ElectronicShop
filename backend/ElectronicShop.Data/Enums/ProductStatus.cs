@@ -4,7 +4,7 @@
     {
         DEFAULT,
         NEW,
-        SALE,
-        HIDDEN
+        HIDDEN,
+        DELETED
     }
 }

@@ -1,18 +1,22 @@
 ﻿using ElectronicShop.Application.Products.Commands.CreateProduct;
 using ElectronicShop.Application.Products.Commands.DeleteProduct;
+using ElectronicShop.Application.Products.Commands.DisableProduct;
+using ElectronicShop.Application.Products.Commands.EnableProduct;
 using ElectronicShop.Application.Products.Commands.UpdateProduct;
+using ElectronicShop.Application.Products.Queries.FilterProduct;
+using ElectronicShop.Application.Products.Queries.GetAllProduct;
+using ElectronicShop.Application.Products.Queries.GetAllProductForClient;
+using ElectronicShop.Application.Products.Queries.GetNewProducts;
+using ElectronicShop.Application.Products.Queries.GetProductByCateId;
+using ElectronicShop.Application.Products.Queries.GetProductById;
+using ElectronicShop.Application.Products.Queries.GetProductByIdForClient;
 using ElectronicShop.Utilities.SystemConstants;
 using ElectronicShop.WebApi.ActionFilters;
 using ElectronicShop.WebApi.AuthorizeRoles;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using ElectronicShop.Application.Products.Queries.FilterProduct;
-using ElectronicShop.Application.Products.Queries.GetAllProduct;
-using ElectronicShop.Application.Products.Queries.GetNewProducts;
-using ElectronicShop.Application.Products.Queries.GetProductByCateId;
-using ElectronicShop.Application.Products.Queries.GetProductById;
-using Microsoft.AspNetCore.Authorization;
 
 namespace ElectronicShop.WebApi.Controllers
 {
@@ -52,10 +56,18 @@ namespace ElectronicShop.WebApi.Controllers
         }
 
         [HttpGet("{productId}")]
-        [AllowAnonymous]
         public async Task<IActionResult> GetById(int productId)
         {
             var query = new GetProductByIdQuery(productId);
+
+            return Ok(await _mediator.Send(query));
+        }
+
+        [HttpGet("{productId}/client")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetByIdForClient(int productId)
+        {
+            var query = new GetProductByIdForClientQuery(productId);
 
             return Ok(await _mediator.Send(query));
         }
@@ -69,10 +81,16 @@ namespace ElectronicShop.WebApi.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<IActionResult> GetAll()
         {
             return Ok(await _mediator.Send(new GetAllProductQuery()));
+        }
+
+        [HttpGet("get-all/client")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAllForClient()
+        {
+            return Ok(await _mediator.Send(new GetAllProductForClientQuery()));
         }
 
         [HttpGet("get-new-products")]
@@ -84,9 +102,28 @@ namespace ElectronicShop.WebApi.Controllers
         
         [HttpGet("search")]
         [AllowAnonymous]
-        public async Task<IActionResult> Filter([FromQuery] FilterProductQuery query)
+        public async Task<IActionResult> Search([FromQuery] SearchProductQuery query)
         {
             return Ok(await _mediator.Send(query));
+        }
+
+        [HttpGet("filter")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Filter([FromQuery]FilterProductQuery query)
+        {
+            return Ok(await _mediator.Send(query));
+        }
+
+        [HttpPut("disable/{productId}")]
+        public async Task<IActionResult> Disable(int productId)
+        {
+            return Ok(await _mediator.Send(new DisableProductCommand(productId)));
+        }
+
+        [HttpPut("enable/{productId}")]
+        public async Task<IActionResult> Enable(int productId)
+        {
+            return Ok(await _mediator.Send(new EnableProductCommand(productId)));
         }
     }
 }

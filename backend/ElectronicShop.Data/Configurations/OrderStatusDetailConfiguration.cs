@@ -25,6 +25,9 @@ namespace ElectronicShop.Data.Configurations
             builder.Property(x => x.OrderId)
                 .IsRequired();
 
+            builder.Property(x => x.EmpId)
+                .IsRequired(false);
+
             builder.HasOne(x => x.Order)
                 .WithMany(x => x.OrderStatusDetails)
                 .HasForeignKey(x => x.OrderId)
@@ -33,6 +36,11 @@ namespace ElectronicShop.Data.Configurations
             builder.HasOne(x => x.OrderStatus)
                 .WithMany(x => x.OrderStatusDetails)
                 .HasForeignKey(x => x.StatusId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(x => x.User)
+                .WithMany(x => x.OrderStatusDetails)
+                .HasForeignKey(x => x.EmpId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

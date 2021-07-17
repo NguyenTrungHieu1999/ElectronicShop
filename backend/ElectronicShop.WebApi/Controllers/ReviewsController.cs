@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using ElectronicShop.Application.ProductReviews.Commands.CreateReview;
 using ElectronicShop.Application.ProductReviews.Commands.DeleteReview;
-using ElectronicShop.Application.ProductReviews.Queries.GetAllReviews;
+using ElectronicShop.Application.ProductReviews.Queries.GetAllByProductId;
 using ElectronicShop.Application.ProductReviews.Queries.TotalRate;
 using ElectronicShop.Utilities.SystemConstants;
 using ElectronicShop.WebApi.AuthorizeRoles;
@@ -52,7 +52,7 @@ namespace ElectronicShop.WebApi.Controllers
         [HttpGet("{productId}/get-all")]
         public async Task<IActionResult> GetAll(int productId)
         {
-            return Ok(await _mediator.Send(new GetAllReviewsQuery(productId)));
+            return Ok(await _mediator.Send(new GetAllByProductIdQuery(productId)));
         }
     }
 }

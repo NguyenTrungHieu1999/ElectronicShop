@@ -4,6 +4,7 @@ using ElectronicShop.Application.Categories.Commands.CreateCategory;
 using ElectronicShop.Application.Comments.Commands.CreateComment;
 using ElectronicShop.Application.Comments.Models;
 using ElectronicShop.Application.Orders.Commands.CreateOrder;
+using ElectronicShop.Application.Orders.Commands.EmpCreateOrder;
 using ElectronicShop.Application.ProductPhotos.Models;
 using ElectronicShop.Application.ProductReviews.Commands.CreateReview;
 using ElectronicShop.Application.ProductReviews.Models;
@@ -40,6 +41,9 @@ namespace ElectronicShop.Application.Common.Mapper
             CreateMap<ProductReview, ReviewVm>();
 
             CreateMap<Comment, CommentVm>();
+
+            CreateMap<EmpCreateOrderCommand, Order>()
+                 .ForMember(dest => dest.OrderDetails, act => act.Ignore());
         }
     }
 }
