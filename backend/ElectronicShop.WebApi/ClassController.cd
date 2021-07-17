@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="ElectronicShop.WebApi.Controllers.AuthController">
+    <Position X="8.75" Y="5" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>AAABACABAAAAAAAAAAAgAAIAAAAAAQAAAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\AuthController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.WebApi.Controllers.BaseController" Collapsed="true">
+    <Position X="9.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\BaseController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.WebApi.Controllers.CartsController">
+    <Position X="8.75" Y="8.25" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAYBAAAAAAAAAAAAAAAABAAAAAAAAEAAAgAAAAAAAAA=</HashCode>
+      <FileName>Controllers\CartsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.WebApi.Controllers.CategoriesController">
+    <Position X="8.75" Y="2" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAQBAAAAAAAAAAAAAAAAAAAAAAAACEAAAgAAAAAAAIA=</HashCode>
+      <FileName>Controllers\CategoriesController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.WebApi.Controllers.CommentsController">
+    <Position X="8.75" Y="11.25" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAADAAAAAAAAAAAAAAAAAAAAAAAAAEACAgAAAAEAAAA=</HashCode>
+      <FileName>Controllers\CommentsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.WebApi.Controllers.FavoritesController">
+    <Position X="3" Y="12" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAAAAAEAAAgAAAAAAQAA=</HashCode>
+      <FileName>Controllers\FavoritesController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.WebApi.Controllers.OrderDetailsController">
+    <Position X="13.75" Y="2" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\OrderDetailsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.WebApi.Controllers.OrdersController">
+    <Position X="13.75" Y="4.5" Width="5.5" />
+    <TypeIdentifier>
+      <HashCode>AAAFAAAAAgAABAAAAAAoACACgAUEAEAAAgAAAAAAAAA=</HashCode>
+      <FileName>Controllers\OrdersController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.WebApi.Controllers.ProductPhotosController">
+    <Position X="3" Y="6.5" Width="4.75" />
+    <InheritanceLine Type="ElectronicShop.WebApi.Controllers.BaseController" ManuallyRouted="true">
+      <Path>
+        <Point X="10.25" Y="1.191" />
+        <Point X="10.25" Y="1.375" />
+        <Point X="7.86" Y="1.375" />
+        <Point X="7.86" Y="6.396" />
+        <Point X="5.375" Y="6.396" />
+        <Point X="5.375" Y="6.5" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAAEAAEAAAgAAAAAAAAA=</HashCode>
+      <FileName>Controllers\ProductPhotosController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.WebApi.Controllers.ProductsController">
+    <Position X="3" Y="2" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAQBAAAAAAAAAAAAAAkACCAAABEAAEAAAgAgAAAgAIA=</HashCode>
+      <FileName>Controllers\ProductsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.WebApi.Controllers.ReviewsController">
+    <Position X="3" Y="9.25" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAIAEAAEAAAgAAAAAAAAA=</HashCode>
+      <FileName>Controllers\ReviewsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.WebApi.Controllers.UsersController">
+    <Position X="13.75" Y="9.25" Width="5.25" />
+    <TypeIdentifier>
+      <HashCode>AAQBAAIIABAAEAAAAAAAAAAAAIEAAUAAAAABAAAAAAA=</HashCode>
+      <FileName>Controllers\UsersController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

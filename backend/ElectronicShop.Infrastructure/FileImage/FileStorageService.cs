@@ -83,7 +83,7 @@ namespace ElectronicShop.Infrastructure.FileImage
 
             foreach (var i in query)
             {
-                path = @"images\products\" + i.T + @"\" + productName;
+                path = @"images\products\" + Slug.ToUrlSlug(i.T) + @"\" + Slug.ToUrlSlug(productName);
             }
 
             return path;

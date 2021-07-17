@@ -1,26 +1,33 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ElectronicShop.Infrastructure.FileImage
 {
     public static class Slug
     {
-        public static string GenerateSlug(this string phrase)
+        public static string ToUrlSlug(string value)
         {
-            string str = phrase.RemoveAccent().ToLower();
-            // invalid chars           
-            str = Regex.Replace(str, @"[^a-z0-9\s-]", "");
-            // convert multiple spaces into one space   
-            str = Regex.Replace(str, @"\s+", " ").Trim();
-            // cut and trim 
-            str = str.Substring(0, str.Length <= 45 ? str.Length : 45).Trim();
-            str = Regex.Replace(str, @"\s", "-"); // hyphens   
-            return str;
-        }
 
-        public static string RemoveAccent(this string txt)
-        {
-            byte[] bytes = System.Text.Encoding.GetEncoding("Cyrillic").GetBytes(txt);
-            return System.Text.Encoding.ASCII.GetString(bytes);
+            //First to lower case
+            value = value.ToLowerInvariant();
+
+            //Remove all accents
+            var bytes = Encoding.GetEncoding("Cyrillic").GetBytes(value);
+            value = Encoding.ASCII.GetString(bytes);
+
+            //Replace spaces
+            value = Regex.Replace(value, @"\s", "-", RegexOptions.Compiled);
+
+            //Remove invalid chars
+            value = Regex.Replace(value, @"[^a-z0-9\s-_]", "", RegexOptions.Compiled);
+
+            //Trim dashes from end
+            value = value.Trim('-', '_');
+
+            //Replace double occurences of - or _
+            value = Regex.Replace(value, @"([-_]){2,}", "$1", RegexOptions.Compiled);
+
+            return value;
         }
     }
 }
