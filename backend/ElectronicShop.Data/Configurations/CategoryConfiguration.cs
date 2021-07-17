@@ -32,11 +32,11 @@ namespace ElectronicShop.Data.Configurations
                 .IsRequired(false);
 
             builder.Property(x => x.CreatedBy)
-                .HasMaxLength(30)
+                .HasMaxLength(100)
                 .IsRequired();
 
             builder.Property(x => x.ModifiedBy)
-                .HasMaxLength(30)
+                .HasMaxLength(100)
                 .IsRequired(false);
 
             builder.HasOne(x => x.Parent)

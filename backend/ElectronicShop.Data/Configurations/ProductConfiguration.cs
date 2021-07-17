@@ -49,11 +49,11 @@ namespace ElectronicShop.Data.Configurations
                 .HasColumnType("DateTime");
 
             builder.Property(x => x.CreatedBy)
-                .HasMaxLength(30)
+                .HasMaxLength(100)
                 .IsRequired();
 
             builder.Property(x => x.ModifiedBy)
-                .HasMaxLength(30)
+                .HasMaxLength(100)
                 .IsRequired(false);
 
             builder.HasOne(x => x.Category)
