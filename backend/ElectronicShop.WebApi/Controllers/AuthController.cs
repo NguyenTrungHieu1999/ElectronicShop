@@ -6,7 +6,6 @@ using ElectronicShop.Application.Authentications.Commands.SignOut;
 using ElectronicShop.Infrastructure.SendMail;
 using ElectronicShop.WebApi.ActionFilters;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -54,13 +53,20 @@ namespace ElectronicShop.WebApi.Controllers
                 return BadRequest(result);
             }
             
-            string href = "http://localhost:3001/tao-moi-mat-khau/" + request.Email + "/" + result.ResultObj;
-            
-            string body =
+            string href = "https://electronicshop-client.herokuapp.com/tao-moi-mat-khau/" + request.Email + "/" + result.ResultObj;
+            ////string href = "http://localhost:3001/tao-moi-mat-khau/" + request.Email + "/" + result.ResultObj;
+            try
+            {
+                string body =
                 "<h3> Quý khách vui lòng click vào đường link bên dưới để chuyển đến trang thay đổi mật khẩu.</h3>" +
                 "<a href=\"" + href + "\">Click vào đây</a>";
 
-            await _mailer.SenEmailAsync(request.Email, "Reset Password", body);
+                await _mailer.SenEmailAsync(request.Email, "Reset Password", body);
+            }
+            catch
+            {
+
+            }
 
             return Ok(result);
         }

@@ -5,7 +5,7 @@ using System.IO;
 
 namespace ElectronicShop.Data.EF
 {
-    class ElectronicShopDbContextFactory : IDesignTimeDbContextFactory<ElectronicShopDbContext>
+    public class ElectronicShopDbContextFactory : IDesignTimeDbContextFactory<ElectronicShopDbContext>
     {
         public ElectronicShopDbContext CreateDbContext(string[] args)
         {

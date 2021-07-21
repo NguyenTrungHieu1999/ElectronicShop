@@ -11,9 +11,10 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using ElectronicShop.Application.Common.Models;
+using ElectronicShop.Application.Users.Commands.EnableAccount;
 
 namespace ElectronicShop.WebApi.Controllers
 {
@@ -51,15 +52,9 @@ namespace ElectronicShop.WebApi.Controllers
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> UpdateMe([FromBody] UpdateUserCommand request)
         {
-            string _userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            if (!_userId.Equals(request.Id.ToString()))
-            {
-                return Ok(new { message = "Thông tin chỉnh sửa không khớp với người dùng hiện tại." });
-            }
-
-            return Ok(await _mediator.Send(request));
-
+            return !userId.Equals(request.Id.ToString()) ? Ok(new ApiErrorResult<string>("Thông tin chỉnh sửa không khớp với người dùng hiện tại.")) : Ok(await _mediator.Send(request));
         }
 
         [HttpDelete("delete/{userId}")]
@@ -81,6 +76,13 @@ namespace ElectronicShop.WebApi.Controllers
             return Ok(await _mediator.Send(command));
         }
 
+        [HttpPut("enable/{userId}")]
+        [Authorize(Roles = Constants.ADMIN)]
+        public async Task<IActionResult> EnableAccount(int userId)
+        {
+            return Ok(await _mediator.Send(new EnableAccountCommand(userId)));
+        }
+
         [HttpGet("{userId}")]
         [Authorize(Roles = Constants.ADMIN)]
         public async Task<IActionResult> GetUserById(int userId)
@@ -94,9 +96,9 @@ namespace ElectronicShop.WebApi.Controllers
         [Authorize]
         public async Task<IActionResult> GetProfile()
         {
-            string _userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            var query = new GetByIdUserQuery(Int32.Parse(_userId));
+            var query = new GetByIdUserQuery(int.Parse(userId));
 
             return Ok(await _mediator.Send(query));
         }

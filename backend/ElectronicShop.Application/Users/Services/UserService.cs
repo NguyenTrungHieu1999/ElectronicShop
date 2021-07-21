@@ -89,7 +89,7 @@ namespace ElectronicShop.Application.Users.Services
             }
 
             var user = await _userManager.FindByIdAsync(request.Id.ToString());
-            
+
             if (user is null)
             {
                 return new ApiErrorResult<string>("Người dùng không tồn tại");
@@ -149,12 +149,14 @@ namespace ElectronicShop.Application.Users.Services
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
 
-            if (user is null)
+            if (user is null || user.Status == UserStatus.DELETED)
             {
                 return new ApiErrorResult<string>("Người dùng không tồn tại");
             }
 
             user.Status = UserStatus.DISABLE;
+            user.ModifiedBy = _httpContextAccessor.HttpContext.User.Identity.Name;
+            user.ModifiedDate = DateTime.Now;
 
             await _userManager.UpdateAsync(user);
 
@@ -203,12 +205,12 @@ namespace ElectronicShop.Application.Users.Services
         public async Task<ApiResult<List<LoginHistoryVm>>> GetLoginHistoryAsync(int m, int y)
         {
             var listLoginHistory = _context.Roles.Where(r => r.Name.Equals("User"))
-                .Join(_context.UserRoles, r => r.Id, ur => ur.RoleId, (r, ur) => new {r, ur})
-                .Join(_context.Users, @t => @t.ur.UserId, u => u.Id, (@t, u) => new {@t, u})
-                .Join(_context.LoginHistories, @t => @t.u.Id, lh => lh.UserId, (@t, lh) => new {@t, lh})
+                .Join(_context.UserRoles, r => r.Id, ur => ur.RoleId, (r, ur) => new { r, ur })
+                .Join(_context.Users, @t => @t.ur.UserId, u => u.Id, (@t, u) => new { @t, u })
+                .Join(_context.LoginHistories, @t => @t.u.Id, lh => lh.UserId, (@t, lh) => new { @t, lh })
                 .Where(@t => @t.lh.AccessTime.Month.Equals(m) && @t.lh.AccessTime.Year.Equals(y))
-                .GroupBy(@t => new {@t.@t.u.Id, @t.@t.u.UserName, @t.@t.u.Email}, @t => @t.lh)
-                .OrderByDescending(x=>x.Count())
+                .GroupBy(@t => new { @t.@t.u.Id, @t.@t.u.UserName, @t.@t.u.Email }, @t => @t.lh)
+                .OrderByDescending(x => x.Count())
                 .Select(list => new
                 {
                     userId = list.Key.Id,
@@ -230,6 +232,24 @@ namespace ElectronicShop.Application.Users.Services
             }
 
             return await Task.FromResult(new ApiSuccessResult<List<LoginHistoryVm>>(result));
+        }
+
+        public async Task<ApiResult<string>> EnableAccountAsync(int userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user is null || (user.Status == UserStatus.DELETED))
+            {
+                return new ApiErrorResult<string>("Người dùng không tồn tại");
+            }
+
+            user.Status = UserStatus.ACTIVE;
+            user.ModifiedBy = _httpContextAccessor.HttpContext.User.Identity.Name;
+            user.ModifiedDate = DateTime.Now;
+
+            await _userManager.UpdateAsync(user);
+
+            return await Task.FromResult(new ApiSuccessResult<string>("Kích hoạt tài khoản thành công"));
         }
     }
 }

@@ -17,6 +17,8 @@ namespace ElectronicShop.Application.Users.Services
 
         Task<ApiResult<string>> DisableAccountAsync(int userId);
 
+        Task<ApiResult<string>> EnableAccountAsync(int userId);
+
         Task<ApiResult<UserVm>> GetByIdAsync(int userId);
 
         Task<ApiResult<List<UserVm>>> GetAllAsync();

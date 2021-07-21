@@ -120,6 +120,8 @@ namespace ElectronicShop.Application.Products.Services
             }
 
             product.Status = ProductStatus.DELETED;
+            product.ModifiedBy = _httpContextAccessor.HttpContext.User.Identity.Name;
+            product.ModifiedDate = DateTime.Now;
 
             _context.Products.Update(product);
 
@@ -286,6 +288,9 @@ namespace ElectronicShop.Application.Products.Services
             }
 
             product.Status = ProductStatus.HIDDEN;
+            product.ModifiedBy = _httpContextAccessor.HttpContext.User.Identity.Name;
+            product.ModifiedDate = DateTime.Now;
+            
             _context.Update(product);
             await _context.SaveChangesAsync();
 
@@ -327,6 +332,9 @@ namespace ElectronicShop.Application.Products.Services
             }
 
             product.Status = ProductStatus.DEFAULT;
+            product.ModifiedBy = _httpContextAccessor.HttpContext.User.Identity.Name;
+            product.ModifiedDate = DateTime.Now;
+            
             _context.Update(product);
             await _context.SaveChangesAsync();
 
