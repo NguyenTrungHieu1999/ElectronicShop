@@ -21,7 +21,7 @@ namespace ElectronicShop.Data.EF
                 //warning You can move this code to protect potentially senstive information
                 //in connection string.
 
-                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=ElectronicShopDb;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=45.119.82.72;Database=ElectronicShopDb;Trusted_Connection=False;user id=sa;password=zaq@1234;");
             }
         }
 

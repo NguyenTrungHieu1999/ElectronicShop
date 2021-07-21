@@ -50,7 +50,9 @@ namespace ElectronicShop.WebApi
 
             services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
             {
-                builder.WithOrigins("http://localhost:3001/", "http://localhost:3000/")
+                builder.WithOrigins("https://electronicshop-client.herokuapp.com/", "http://localhost:3001", "http://localhost:3000")
+                    .SetIsOriginAllowedToAllowWildcardSubdomains()
+                    .WithExposedHeaders("x-custom-header")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials()
