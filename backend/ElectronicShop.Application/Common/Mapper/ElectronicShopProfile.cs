@@ -11,12 +11,14 @@ using ElectronicShop.Application.ProductReviews.Models;
 using ElectronicShop.Application.Products.Commands.CreateProduct;
 using ElectronicShop.Application.Users.Commands.CreateUser;
 using ElectronicShop.Application.Users.Models;
+using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
 
 namespace ElectronicShop.Application.Common.Mapper
 {
     public class ElectronicShopProfile : Profile
     {
+        private readonly ElectronicShopDbContext db = new ElectronicShopDbContext();
         public ElectronicShopProfile()
         {
             CreateMap<CreateUserCommand, User>();
@@ -40,7 +42,8 @@ namespace ElectronicShop.Application.Common.Mapper
 
             CreateMap<ProductReview, ReviewVm>();
 
-            CreateMap<Comment, CommentVm>();
+            CreateMap<Comment, CommentVm>()
+                .ForMember(d => d.ParentName, opt => opt.MapFrom(src => db.Comments.Find(src.Id).Parent.User.UserName));
 
             CreateMap<EmpCreateOrderCommand, Order>()
                  .ForMember(dest => dest.OrderDetails, act => act.Ignore());

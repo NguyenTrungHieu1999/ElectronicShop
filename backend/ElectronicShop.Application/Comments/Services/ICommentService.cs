@@ -10,7 +10,7 @@ namespace ElectronicShop.Application.Comments.Services
 {
     public interface ICommentService
     {
-        Task<ApiResult<List<CommentVm>>> GetAllByProductIdAsync(int productId);
+        Task<ApiResult<List<Comment>>> GetAllByProductIdAsync(int productId);
         Task<ApiResult<string>> CreateAsync(CreateCommentCommand command);
         Task<ApiResult<string>> EditAsync(EditCommentCommand command);
         Task<ApiResult<string>> DisableOrEnableAsync(int commentId);

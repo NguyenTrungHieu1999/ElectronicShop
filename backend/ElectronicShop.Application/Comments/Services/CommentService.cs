@@ -33,22 +33,18 @@ namespace ElectronicShop.Application.Comments.Services
             }
         }
 
-        public async Task<ApiResult<List<CommentVm>>> GetAllByProductIdAsync(int productId)
+        public async Task<ApiResult<List<Comment>>> GetAllByProductIdAsync(int productId)
         {
             var comments = await _context.Comments
-                .Where(x=>x.ProductId.Equals(productId) && x.ParentId == null)
+                .Where(x=>x.ProductId.Equals(productId))
                 .Include(x=>x.Children)
-                .ThenInclude(x=>x.User)
+                .ThenInclude(x => x.Parent)
+                .Include(x=>x.User)
                 .ToListAsync();
 
-            var result = _mapper.Map<List<CommentVm>>(comments);
+            var results = comments.Where(x => x.ParentId == null).ToList();
 
-            foreach (var comment in result)
-            {
-                comment.UserName = (await _context.Users.FindAsync(comment.UserId)).UserName;
-            }
-
-            return await Task.FromResult(new ApiSuccessResult<List<CommentVm>>(result));
+            return await Task.FromResult(new ApiSuccessResult<List<Comment>>(results));
         }
 
         public async Task<ApiResult<string>> CreateAsync(CreateCommentCommand command)
