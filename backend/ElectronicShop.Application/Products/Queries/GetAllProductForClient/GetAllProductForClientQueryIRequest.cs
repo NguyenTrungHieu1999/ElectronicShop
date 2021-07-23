@@ -24,7 +24,7 @@ namespace ElectronicShop.Application.Products.Queries.GetAllProductForClient
 
         public async Task<ApiResult<List<Product>>> Handle(GetAllProductForClientQuery request, CancellationToken cancellationToken)
         {
-            return await _productService.GetAllForClienttAsync();
+            return await _productService.GetAllForClientAsync();
         }
     }
 }

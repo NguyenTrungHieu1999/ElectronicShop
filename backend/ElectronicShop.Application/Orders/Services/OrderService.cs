@@ -225,6 +225,7 @@ namespace ElectronicShop.Application.Orders.Services
                 .Where(o => o.UserId == _userId)
                 .Include(od => od.OrderDetails)
                 .Include(ods => ods.OrderStatusDetails)
+                .OrderByDescending(o=>o.CreatedDate)
                 .ToListAsync();
 
             foreach (var o in orders.Where(o => o is { }))

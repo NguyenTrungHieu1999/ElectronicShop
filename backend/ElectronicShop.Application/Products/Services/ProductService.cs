@@ -3,6 +3,7 @@ using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Application.Products.Commands.CreateProduct;
 using ElectronicShop.Application.Products.Commands.UpdateProduct;
 using ElectronicShop.Application.Products.Extensions;
+using ElectronicShop.Application.Products.Queries.FilterProduct;
 using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
 using ElectronicShop.Data.Enums;
@@ -13,9 +14,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ElectronicShop.Application.Products.Queries.FilterProduct;
-using System.Security.Claims;
-using ElectronicShop.Utilities.SystemConstants;
 
 namespace ElectronicShop.Application.Products.Services
 {
@@ -156,6 +154,7 @@ namespace ElectronicShop.Application.Products.Services
             // Lấy danh sách sản phẩm
             var products = await _context.Products
                 .Where(x => x.Status != ProductStatus.DELETED)
+                .AsNoTracking()
                 .ToListAsync();
 
             if (products is null)
@@ -163,9 +162,7 @@ namespace ElectronicShop.Application.Products.Services
                 return await Task.FromResult(new ApiErrorResult<List<Product>>("Không tìm thấy sản phẩm"));
             }
 
-            var results = await CreatePathPhotos(products);
-
-            return await Task.FromResult(new ApiSuccessResult<List<Product>>(results));
+            return await Task.FromResult(new ApiSuccessResult<List<Product>>(products));
         }
 
         public async Task<ApiResult<List<Product>>> GetByCateIdAsync(int cateId)
@@ -196,6 +193,7 @@ namespace ElectronicShop.Application.Products.Services
             {
                 products = await _context.Products
                     .Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN && x.CategoryId.Equals(cateId))
+                    .AsNoTracking()
                     .ToListAsync();
             }
 
@@ -255,11 +253,11 @@ namespace ElectronicShop.Application.Products.Services
         {
             var products = query.Price switch
             {
-                1 => await _context.Products.Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos).Where(x => x.Price < 10000000).ToListAsync(),
-                2 => await _context.Products.Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos).Where(x => x.Price >= 10000000 && x.Price < 20000000).ToListAsync(),
-                3 => await _context.Products.Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos).Where(x => x.Price >= 20000000 && x.Price < 40000000).ToListAsync(),
-                4 => await _context.Products.Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos).Where(x => x.Price >= 40000000).ToListAsync(),
-                _ => await _context.Products.Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos).ToListAsync(),
+                1 => await _context.Products.Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN && x.Price < 10000000).ToListAsync(),
+                2 => await _context.Products.Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN && x.Price >= 10000000 && x.Price < 20000000).ToListAsync(),
+                3 => await _context.Products.Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN && x.Price >= 20000000 && x.Price < 40000000).ToListAsync(),
+                4 => await _context.Products.Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN && x.Price >= 40000000).ToListAsync(),
+                _ => await _context.Products.Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN).ToListAsync()
             };
 
             products = query.Sorted switch
@@ -341,11 +339,12 @@ namespace ElectronicShop.Application.Products.Services
             return await Task.FromResult(new ApiSuccessResult<string>("Mở khóa sản phẩm thành công"));
         }
 
-        public async Task<ApiResult<List<Product>>> GetAllForClienttAsync()
+        public async Task<ApiResult<List<Product>>> GetAllForClientAsync()
         {
             // Lấy danh sách sản phẩm
             var products = await _context.Products
                 .Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN)
+                .AsNoTracking()
                 .ToListAsync();
 
             if (products is null)
