@@ -38,7 +38,6 @@ namespace ElectronicShop.Application.Comments.Services
             var comments = await _context.Comments
                 .Where(x=>x.ProductId.Equals(productId))
                 .Include(x=>x.Children)
-                .ThenInclude(x => x.Parent)
                 .Include(x=>x.User)
                 .ToListAsync();
 
