@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using ElectronicShop.Application.Comments.Commands.CreateComment;
 using ElectronicShop.Application.Comments.Commands.EditComment;
 using ElectronicShop.Application.Comments.Extensions;
-using ElectronicShop.Application.Comments.Models;
 using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace ElectronicShop.Application.Comments.Services
 {
@@ -21,7 +20,7 @@ namespace ElectronicShop.Application.Comments.Services
         private readonly ElectronicShopDbContext _context;
         private readonly IMapper _mapper;
         private readonly int _userId;
-        
+
         public CommentService(ElectronicShopDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
@@ -36,14 +35,14 @@ namespace ElectronicShop.Application.Comments.Services
         public async Task<ApiResult<List<Comment>>> GetAllByProductIdAsync(int productId)
         {
             var comments = await _context.Comments
-                .Where(x=>x.ProductId.Equals(productId))
-                .Include(x=>x.Children)
-                .Include(x=>x.User)
+                .Where(x => x.ProductId.Equals(productId))
+                .Include(x => x.Children)
+                .Include(x => x.User)
                 .ToListAsync();
 
             var results = comments.Where(x => x.ParentId == null).ToList();
 
-            return await Task.FromResult(new ApiSuccessResult<List<Comment>>(results));
+            return await Task.FromResult(new ApiSuccessResult<List<Comment>> { Message = comments.Count.ToString(), ResultObj = results });
         }
 
         public async Task<ApiResult<string>> CreateAsync(CreateCommentCommand command)
@@ -62,7 +61,7 @@ namespace ElectronicShop.Application.Comments.Services
 
         public async Task<ApiResult<string>> EditAsync(EditCommentCommand command)
         {
-            var comment = await _context.Comments.Where(x=>x.Id.Equals(command.Id)&&x.UserId.Equals(_userId)).SingleOrDefaultAsync();
+            var comment = await _context.Comments.Where(x => x.Id.Equals(command.Id) && x.UserId.Equals(_userId)).SingleOrDefaultAsync();
 
             if (comment is null)
             {
@@ -80,9 +79,9 @@ namespace ElectronicShop.Application.Comments.Services
         {
             var comment = await _context.Comments.Where(x => x.Id.Equals(commentId)).SingleOrDefaultAsync();
 
-            if(comment is null)
+            if (comment is null)
             {
-                return await Task.FromResult(new ApiErrorResult<String>("Không tìm thấy bình luận"));
+                return await Task.FromResult(new ApiErrorResult<string>("Không tìm thấy bình luận"));
             }
 
             comment.Status = !comment.Status;

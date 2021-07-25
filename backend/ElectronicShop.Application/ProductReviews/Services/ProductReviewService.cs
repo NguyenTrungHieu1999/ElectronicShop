@@ -110,7 +110,10 @@ namespace ElectronicShop.Application.ProductReviews.Services
 
         public async Task<ApiResult<List<ProductReview>>> GetAllAsync()
         {
-            var reviews = await _context.ProductReviews.ToListAsync();
+            var reviews = await _context.ProductReviews
+                .Include(x=>x.User)
+                .Include(x=>x.Product)
+                .ToListAsync();
 
             return await Task.FromResult(new ApiSuccessResult<List<ProductReview>>(reviews));
         }

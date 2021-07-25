@@ -2,12 +2,11 @@
 using ElectronicShop.Application.ProductReviews.Services;
 using ElectronicShop.Data.Entities;
 using MediatR;
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ElectronicShop.Application.ProductReviews.Queries.GetAllReviewsAsync
+namespace ElectronicShop.Application.ProductReviews.Queries.GetAllReviews
 {
     public class GetAllReviewsQuery : IRequest<ApiResult<List<ProductReview>>>
     {
