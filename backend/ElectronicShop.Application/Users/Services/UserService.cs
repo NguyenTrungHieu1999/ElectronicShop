@@ -251,5 +251,13 @@ namespace ElectronicShop.Application.Users.Services
 
             return await Task.FromResult(new ApiSuccessResult<string>("Kích hoạt tài khoản thành công"));
         }
+
+        public async Task<ApiResult<List<UserRole>>> GetAllRoleAsync()
+        {
+            var roles = await _context.UserRoles
+                .ToListAsync();
+
+            return await Task.FromResult(new ApiSuccessResult<List<UserRole>>(roles));
+        }
     }
 }
