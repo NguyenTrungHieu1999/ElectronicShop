@@ -21,6 +21,8 @@ namespace ElectronicShop.Data.Entities
 
         public bool Status { get; set; }
 
+        public bool Deleted { get; set; }
+
         public User User { get; set; }
 
         public Product Product { get; set; }

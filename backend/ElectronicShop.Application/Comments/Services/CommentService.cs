@@ -38,6 +38,7 @@ namespace ElectronicShop.Application.Comments.Services
                 .Where(x => x.ProductId.Equals(productId))
                 .Include(x => x.Children)
                 .Include(x => x.User)
+                .Where(x => x.Deleted == false)
                 .ToListAsync();
 
             var results = comments.Where(x => x.ParentId == null).ToList();
@@ -97,6 +98,38 @@ namespace ElectronicShop.Application.Comments.Services
             var comments = await _context.Comments.ToListAsync();
 
             return await Task.FromResult(new ApiSuccessResult<List<Comment>>(comments));
+        }
+
+        public async Task<ApiResult<string>> DeleteAsync(int commentId)
+        {
+            var comment = await _context.Comments.Where(x => x.Id == commentId)
+                .Include(x => x.Children)
+                .SingleOrDefaultAsync();
+
+            await Comment(comment);
+
+            _context.Update(comment);
+            await _context.SaveChangesAsync();
+
+            return await Task.FromResult(new ApiSuccessResult<string>("Xóa bình luận thành công"));
+        }
+
+        public async Task Comments(List<Comment> comments)
+        {
+            foreach (var comment in comments)
+            {
+                await Comment(comment);
+            }
+        }
+
+        public async Task Comment(Comment comment)
+        {
+            comment.Deleted = true;
+
+            if(comment.Children != null)
+            {
+                await Comments(comment.Children);
+            }
         }
     }
 }
