@@ -50,5 +50,7 @@ namespace ElectronicShop.Data.Entities
         public List<LoginHistory> LoginHistories { get; set; }
 
         public List<OrderStatusDetail> OrderStatusDetails { get; set; }
+
+        public List<ProductInventory> ProductInventories { get; set; }
     }
 }

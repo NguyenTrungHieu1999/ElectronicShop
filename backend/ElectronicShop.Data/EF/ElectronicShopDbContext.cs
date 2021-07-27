@@ -14,10 +14,6 @@ namespace ElectronicShop.Data.EF
 
         }
 
-        public ElectronicShopDbContext()
-        {
-
-        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -53,6 +49,7 @@ namespace ElectronicShop.Data.EF
             modelBuilder.ApplyConfiguration(new UserLoginConfiguration());
             modelBuilder.ApplyConfiguration(new UserTokenConfiguration());
             modelBuilder.ApplyConfiguration(new LoginHistoryConfiguration());
+            modelBuilder.ApplyConfiguration(new ProductInventoryConfiguration());
 
             // Khởi tạo giá trị ban đầu cho dữ liệu
             modelBuilder.Seed();
@@ -72,6 +69,7 @@ namespace ElectronicShop.Data.EF
         public virtual DbSet<WatchedProduct> WatchedProducts { get; set; }
         public virtual  DbSet<Cart> Carts { get; set; }
         public virtual DbSet<LoginHistory> LoginHistories { get; set; }
+        public virtual DbSet<ProductInventory> ProductInventories { get; set; }
 
         
         [DbFunction("udfSoundex", "")]

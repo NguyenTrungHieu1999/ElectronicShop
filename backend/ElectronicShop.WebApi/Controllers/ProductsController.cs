@@ -2,6 +2,7 @@
 using ElectronicShop.Application.Products.Commands.DeleteProduct;
 using ElectronicShop.Application.Products.Commands.DisableProduct;
 using ElectronicShop.Application.Products.Commands.EnableProduct;
+using ElectronicShop.Application.Products.Commands.ToReceive;
 using ElectronicShop.Application.Products.Commands.UpdateProduct;
 using ElectronicShop.Application.Products.Queries.FilterProduct;
 using ElectronicShop.Application.Products.Queries.GetAllProduct;
@@ -124,6 +125,13 @@ namespace ElectronicShop.WebApi.Controllers
         public async Task<IActionResult> Enable(int productId)
         {
             return Ok(await _mediator.Send(new EnableProductCommand(productId)));
+        }
+
+        [HttpPost("to-receive")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> ToReceive(ToReceiveCommand command)
+        {
+            return Ok(await _mediator.Send(command));
         }
     }
 }
