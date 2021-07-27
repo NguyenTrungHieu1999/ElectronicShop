@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Application.Products.Commands.CreateProduct;
+using ElectronicShop.Application.Products.Commands.ToReceive;
 using ElectronicShop.Application.Products.Commands.UpdateProduct;
 using ElectronicShop.Application.Products.Extensions;
 using ElectronicShop.Application.Products.Queries.FilterProduct;
@@ -13,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace ElectronicShop.Application.Products.Services
@@ -376,6 +378,50 @@ namespace ElectronicShop.Application.Products.Services
             }
 
             return await Task.FromResult(new ApiSuccessResult<Product>(product));
+        }
+
+        //public async Task InitStock()
+        //{
+        //    var products = await _context.Products.ToListAsync();
+
+        //    foreach (var p in products)
+        //    {
+        //        var inventory = new ProductInventory
+        //        {
+        //            ProductId = p.Id,
+        //            GoodsReceipt = p.GoodsReceipt,
+        //            CostPrice = p.Price - p.Price * decimal.Parse("0.05"),
+        //            UserId = 1,
+        //            CreatedDate = p.CreatedDate
+        //        };
+
+        //        await _context.ProductInventories.AddAsync(inventory);
+        //    }
+
+        //    await _context.SaveChangesAsync();
+        //}
+
+        public async Task<ApiResult<string>> ToReceive(ToReceiveCommand command)
+        {
+            var product = await _context.Products.Where(x => x.Id == command.ProductId).SingleOrDefaultAsync();
+
+            product.GoodsReceipt += command.GoodsReceipt;
+            product.Inventory += command.GoodsReceipt;
+
+            var inventory = new ProductInventory
+            {
+                ProductId = command.ProductId,
+                GoodsReceipt = command.GoodsReceipt,
+                CostPrice = command.CostPrice,
+                CreatedDate = DateTime.Now,
+                UserId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value)
+            };
+
+            _context.Products.Update(product);
+            await _context.ProductInventories.AddAsync(inventory);
+            await _context.SaveChangesAsync();
+
+            return await Task.FromResult(new ApiSuccessResult<string>("Nhập số lượng hàng vào kho thành công"));
         }
 
     }

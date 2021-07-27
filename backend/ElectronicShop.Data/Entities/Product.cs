@@ -49,5 +49,7 @@ namespace ElectronicShop.Data.Entities
         public List<Cart> Carts { get; set; }
 
         public List<Comment> Comments { get; set; }
+
+        public List<ProductInventory> ProductInventories { get; set; }
     }
 }

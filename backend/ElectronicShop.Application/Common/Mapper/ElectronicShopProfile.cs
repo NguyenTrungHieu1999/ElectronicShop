@@ -18,7 +18,6 @@ namespace ElectronicShop.Application.Common.Mapper
 {
     public class ElectronicShopProfile : Profile
     {
-        private readonly ElectronicShopDbContext db = new ElectronicShopDbContext();
         public ElectronicShopProfile()
         {
             CreateMap<CreateUserCommand, User>();
@@ -41,9 +40,6 @@ namespace ElectronicShop.Application.Common.Mapper
             CreateMap<CreateCommentCommand, Comment>();
 
             CreateMap<ProductReview, ReviewVm>();
-
-            CreateMap<Comment, CommentVm>()
-                .ForMember(d => d.ParentName, opt => opt.MapFrom(src => db.Comments.Find(src.Id).Parent.User.UserName));
 
             CreateMap<EmpCreateOrderCommand, Order>()
                  .ForMember(dest => dest.OrderDetails, act => act.Ignore());
