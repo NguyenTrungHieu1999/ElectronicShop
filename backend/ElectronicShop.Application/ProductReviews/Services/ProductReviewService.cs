@@ -31,7 +31,7 @@ namespace ElectronicShop.Application.ProductReviews.Services
         public async Task<ApiResult<List<ReviewVm>>> GetAllByProductIdAsync(int productId)
         {
             var reviews = await _context.ProductReviews
-                .Where(x=>x.Status == true && x.ProductId.Equals(productId))
+                .Where(x=>x.Status && x.ProductId.Equals(productId))
                 .ToListAsync();
 
             var result = _mapper.Map<List<ReviewVm>>(reviews);
@@ -47,7 +47,7 @@ namespace ElectronicShop.Application.ProductReviews.Services
         public async Task<ApiResult<ProductReview>> GetByIdAsync(int reviewId)
         {
             var review = await _context.ProductReviews
-                .SingleOrDefaultAsync(x=>x.Id == reviewId && x.Status == true);
+                .SingleOrDefaultAsync(x=>x.Id == reviewId && x.Status);
 
             return await Task.FromResult(new ApiSuccessResult<ProductReview>(review));
         }
@@ -102,9 +102,7 @@ namespace ElectronicShop.Application.ProductReviews.Services
                                    {
                                        totalRate = result.Average(r => r.RateStar)
                                    }).SingleOrDefaultAsync();
-            //var totalRate = await _context.ProductReviews
-            //       .Where(x => x.ProductId.Equals(productId))
-            //       .AverageAsync(x => x.RateStar);
+
             return await Task.FromResult(new ApiSuccessResult<double>(totalRate.totalRate));
         }
 

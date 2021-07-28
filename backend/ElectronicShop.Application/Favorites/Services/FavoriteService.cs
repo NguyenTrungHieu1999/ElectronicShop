@@ -63,7 +63,7 @@ namespace ElectronicShop.Application.Favorites.Services
         public async Task<ApiResult<List<Product>>> GetAllAsync()
         {
             var favorites = await _context.FavoriteProducts
-                .Where(x => x.UserId == _userId && x.Status == true)
+                .Where(x => x.UserId == _userId && x.Status)
                 .ToListAsync();
             var favoriteModels = new List<Product>();
             foreach (var item in favorites)
@@ -93,7 +93,7 @@ namespace ElectronicShop.Application.Favorites.Services
         public async Task<ApiResult<string>> CleanAsync()
         {
             var favorites = await _context.FavoriteProducts
-                .Where(x => x.UserId == _userId && x.Status == true)
+                .Where(x => x.UserId == _userId && x.Status)
                 .ToListAsync();
 
             foreach (var favorite in favorites)

@@ -114,7 +114,7 @@ namespace ElectronicShop.Application.Comments.Services
             return await Task.FromResult(new ApiSuccessResult<string>("Xóa bình luận thành công"));
         }
 
-        public async Task Comments(List<Comment> comments)
+        private async Task Comments(List<Comment> comments)
         {
             foreach (var comment in comments)
             {
@@ -122,7 +122,7 @@ namespace ElectronicShop.Application.Comments.Services
             }
         }
 
-        public async Task Comment(Comment comment)
+        private async Task Comment(Comment comment)
         {
             comment.Deleted = true;
 

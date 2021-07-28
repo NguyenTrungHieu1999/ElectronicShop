@@ -169,7 +169,7 @@ namespace ElectronicShop.Application.Products.Services
 
         public async Task<ApiResult<List<Product>>> GetByCateIdAsync(int cateId)
         {
-            var cate = await _context.Categories.FindAsync(cateId);
+            var cate = await _context.Categories.Where(x=>x.Id == cateId).SingleOrDefaultAsync();
 
             var products = new List<Product>();
 
@@ -231,7 +231,6 @@ namespace ElectronicShop.Application.Products.Services
 
             if (products.Count > 0)
             {
-                query = new List<Product>();
                 query = products;
             }
 
