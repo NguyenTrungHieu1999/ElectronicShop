@@ -169,7 +169,9 @@ namespace ElectronicShop.Application.Orders.Services
 
         public async Task<ApiResult<Order>> ChangeStatusAsync(int orderId)
         {
-            var order = await _context.Orders.Where(x => x.Id.Equals(orderId)).Include(x => x.OrderStatus).SingleOrDefaultAsync();
+            var order = await _context.Orders.Where(x => x.Id.Equals(orderId))
+                .Include(x => x.OrderStatus)
+                .SingleOrDefaultAsync();
 
             if (order.StatusId < MaxOrderStatusId)
             {

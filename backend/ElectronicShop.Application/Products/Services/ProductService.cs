@@ -229,7 +229,6 @@ namespace ElectronicShop.Application.Products.Services
 
             if (products.Count > 0)
             {
-                query = new List<Product>();
                 query = products;
             }
 

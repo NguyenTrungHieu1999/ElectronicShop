@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using ElectronicShop.Application.Common.Models;
@@ -47,7 +46,7 @@ namespace ElectronicShop.Application.Carts.Services
             }
 
             var oldShoppingCarts = await _context.Carts
-                .Where(x => x.UserId == _userId && x.Status != false)
+                .Where(x => x.UserId == _userId && x.Status)
                 .ToListAsync();
 
             foreach (var item in oldShoppingCarts)
@@ -73,7 +72,7 @@ namespace ElectronicShop.Application.Carts.Services
         {
             var carts = await _context.Carts
                 .Include(x => x.Product)
-                .Where(x => (x.Product.Status != ProductStatus.HIDDEN && x.Product.Status != ProductStatus.DELETED) && x.UserId.Equals(_userId) && x.Status == true)
+                .Where(x => (x.Product.Status != ProductStatus.HIDDEN && x.Product.Status != ProductStatus.DELETED) && x.UserId.Equals(_userId) && x.Status)
                 .ToListAsync();
 
             var cartModels = carts.Select(cart => new CartVm
@@ -110,7 +109,7 @@ namespace ElectronicShop.Application.Carts.Services
         public async Task<ApiResult<string>> UpdateAsync(UpdateCartCommand command)
         {
             var cart = await _context.Carts
-                .Where(x => x.Status == true && x.ProductId.Equals(command.ProductId) && x.UserId.Equals(_userId))
+                .Where(x => x.Status && x.ProductId.Equals(command.ProductId) && x.UserId.Equals(_userId))
                 .SingleOrDefaultAsync();
 
             if (cart is null)
@@ -132,12 +131,10 @@ namespace ElectronicShop.Application.Carts.Services
             return await Task.FromResult(new ApiSuccessResult<string>("Cập nhật giỏ hàng thành công"));
         }
 
-
-
         public async Task<ApiResult<string>> RemoveAllCart()
         {
             var carts = await _context.Carts
-                .Where(x => x.UserId.Equals(_userId) && x.Status == true)
+                .Where(x => x.UserId.Equals(_userId) && x.Status)
                 .ToListAsync();
 
             foreach (var cart in carts)
