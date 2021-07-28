@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ElectronicShop.Application.Categories.Services
@@ -78,19 +79,8 @@ namespace ElectronicShop.Application.Categories.Services
         public async Task<ApiResult<Category>> GetByIdAsync(int id)
         {
             var category = await _context.Categories
-                .Include(x => x.Products)
-                .SingleOrDefaultAsync(x => x.Id == id);
-
-            if(category != null)
-            {
-                foreach (var item in category.Products)
-                {
-                    if(item.Status == ProductStatus.HIDDEN || item.Status == ProductStatus.DELETED)
-                    {
-                        category.Products.Remove(item);
-                    }
-                }
-            }
+                .Where(x => x.Id == id)
+                .SingleOrDefaultAsync();
 
             return await Task.FromResult(new ApiSuccessResult<Category>(category));
         }
