@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
   <Class Name="ElectronicShop.Data.Entities.Cart">
-    <Position X="10" Y="0.5" Width="1.5" />
+    <Position X="10" Y="0.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>EAADAAAEAAAAAAAAAAAAAAgAAAAAAAAAAAAAgAAAAAA=</HashCode>
       <FileName>Entities\Cart.cs</FileName>
@@ -17,7 +17,7 @@
   <Class Name="ElectronicShop.Data.Entities.Comment">
     <Position X="4" Y="0.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>EAADAAAEAAAAAAAAAAAEQAgAAgAAAAAAAgAACAAAAAA=</HashCode>
+      <HashCode>EAADAAAEAAAAAAAAAAAEUAgAAgAAAAAAAgAACAAAAAA=</HashCode>
       <FileName>Entities\Comment.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -50,7 +50,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="ElectronicShop.Data.Entities.OrderStatus">
-    <Position X="8.75" Y="10.5" Width="3.25" />
+    <Position X="8.75" Y="10.75" Width="3.25" />
     <TypeIdentifier>
       <HashCode>AAECAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAgAAA=</HashCode>
       <FileName>Entities\OrderStatus.cs</FileName>
@@ -71,7 +71,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="ElectronicShop.Data.Entities.ProductPhoto">
-    <Position X="10" Y="4.5" Width="1.5" />
+    <Position X="10" Y="4.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>EAACAQAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAA=</HashCode>
       <FileName>Entities\ProductPhoto.cs</FileName>
@@ -85,7 +85,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="ElectronicShop.Data.Entities.ProductType">
-    <Position X="10" Y="6.75" Width="1.5" />
+    <Position X="10" Y="6.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAACAAAEAAAAAAAAAAAAAAQAAAAAEAAAAAAAAAEAAAA=</HashCode>
       <FileName>Entities\ProductType.cs</FileName>
@@ -138,6 +138,13 @@
     <TypeIdentifier>
       <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Entities\UserToken.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.Data.Entities.WatchedProduct">
+    <Position X="10" Y="8.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>EAADAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\WatchedProduct.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />
