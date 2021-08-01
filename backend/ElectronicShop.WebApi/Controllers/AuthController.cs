@@ -53,8 +53,8 @@ namespace ElectronicShop.WebApi.Controllers
                 return BadRequest(result);
             }
             
-            string href = "https://electronicshop-client.herokuapp.com/tao-moi-mat-khau/" + request.Email + "/" + result.ResultObj;
-            ////string href = "http://localhost:3001/tao-moi-mat-khau/" + request.Email + "/" + result.ResultObj;
+            //string href = "https://electronicshop-client.herokuapp.com/tao-moi-mat-khau/" + request.Email + "/" + result.ResultObj;
+            string href = "http://localhost:3001/tao-moi-mat-khau/" + request.Email + "/" + result.ResultObj;
             try
             {
                 string body =

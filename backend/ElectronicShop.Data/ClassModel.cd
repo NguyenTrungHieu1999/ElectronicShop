@@ -66,12 +66,12 @@
   <Class Name="ElectronicShop.Data.Entities.Product">
     <Position X="6.5" Y="5" Width="3" />
     <TypeIdentifier>
-      <HashCode>AAACCAAEAQIgAgAAABAAiAQAggAAAAAAAgQAEgAIKAE=</HashCode>
+      <HashCode>AAACCAAEAQIgAgAABBAAiAQAggAAAAAAAgQAEgAIKAE=</HashCode>
       <FileName>Entities\Product.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ElectronicShop.Data.Entities.ProductPhoto">
-    <Position X="10" Y="4.5" Width="1.75" />
+    <Position X="10" Y="4.75" Width="1.75" />
     <TypeIdentifier>
       <HashCode>EAACAQAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAA=</HashCode>
       <FileName>Entities\ProductPhoto.cs</FileName>
@@ -85,7 +85,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="ElectronicShop.Data.Entities.ProductType">
-    <Position X="10" Y="6.75" Width="2.25" />
+    <Position X="9.75" Y="6.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAACAAAEAAAAAAAAAAAAAAQAAAAAEAAAAAAAAAEAAAA=</HashCode>
       <FileName>Entities\ProductType.cs</FileName>
@@ -108,7 +108,7 @@
   <Class Name="ElectronicShop.Data.Entities.User">
     <Position X="0.5" Y="0.5" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>AAEACAAEAAAAAACgAAgACBAAAgAIAAgCAgQCAwAoIAk=</HashCode>
+      <HashCode>AAEACAAEAAAAAACgBAgACBAAAgAIAAgCAgQCAwAoIAk=</HashCode>
       <FileName>Entities\User.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -141,10 +141,17 @@
     </TypeIdentifier>
   </Class>
   <Class Name="ElectronicShop.Data.Entities.WatchedProduct">
-    <Position X="10" Y="8.75" Width="2" />
+    <Position X="9.75" Y="8.75" Width="2" />
     <TypeIdentifier>
       <HashCode>EAADAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Entities\WatchedProduct.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElectronicShop.Data.Entities.ProductInventory">
+    <Position X="12" Y="2.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>EAADAAAAAAAAAQAAAAAAAAgAAAAAAAAAAgAAEAAAAAA=</HashCode>
+      <FileName>Entities\ProductInventory.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />
