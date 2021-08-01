@@ -27,13 +27,13 @@
   <Class Name="ElectronicShop.Application.Comments.Services.CommentService">
     <Position X="0.5" Y="0.5" Width="5.5" />
     <TypeIdentifier>
-      <HashCode>AAEAAAAAAAAAFAAAAAABAAAAAAAAAAgIAAAAAIAACAA=</HashCode>
+      <HashCode>AAEAAAAEAAAAFAAAAAABAAAAAAAAAAgIAAAAAIAAKIA=</HashCode>
       <FileName>Comments\Services\CommentService.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ElectronicShop.Application.Common.Mapper.ElectronicShopProfile">
-    <Position X="0.5" Y="13" Width="5.5" />
+    <Position X="9.75" Y="13.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Common\Mapper\ElectronicShopProfile.cs</FileName>
@@ -48,7 +48,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ElectronicShop.Application.OrderDetails.Services.OrderDetailService">
-    <Position X="12" Y="12.25" Width="5.5" />
+    <Position X="12.25" Y="12.75" Width="5.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAABAAAAAABAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
       <FileName>OrderDetails\Services\OrderDetailService.cs</FileName>
@@ -56,7 +56,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ElectronicShop.Application.Orders.Services.OrderService">
-    <Position X="0.5" Y="3.75" Width="5.5" />
+    <Position X="0.5" Y="4.5" Width="5.5" />
     <TypeIdentifier>
       <HashCode>AIEAAAAAABEABAEAAAABAgAAAAAEAAAIABiAIKAAFAA=</HashCode>
       <FileName>Orders\Services\OrderService.cs</FileName>
@@ -72,9 +72,9 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ElectronicShop.Application.ProductReviews.Services.ProductReviewService">
-    <Position X="12.25" Y="8.75" Width="5.25" />
+    <Position X="12.25" Y="9" Width="5.25" />
     <TypeIdentifier>
-      <HashCode>AAEAAAAAABEABAAAAAABAAAAAAAAAAAAAAAAAAAALIA=</HashCode>
+      <HashCode>AAEAAAAAABEABAAAAAABAAAAAAAAAAgAAAAAAAAALIA=</HashCode>
       <FileName>ProductReviews\Services\ProductReviewService.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -82,15 +82,15 @@
   <Class Name="ElectronicShop.Application.Products.Services.ProductService">
     <Position X="12.25" Y="3.5" Width="5.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAABBAABACAAAAJEAAAAAAACAgAAwAAAIAQBIE=</HashCode>
+      <HashCode>AAAAAAIABBAABACAAAAJEAAAAAAACAgAAwEAAIAABIE=</HashCode>
       <FileName>Products\Services\ProductService.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ElectronicShop.Application.Users.Services.UserService">
-    <Position X="0.5" Y="9" Width="5.5" />
+    <Position X="0.5" Y="9.75" Width="5.5" />
     <TypeIdentifier>
-      <HashCode>AAEABAAAIBAABAAAgAABAAAEAAAAAAgAAAAAQIAAIIA=</HashCode>
+      <HashCode>AAEABAACIBAABAAAgAABAAAEAAAAAAgAAAIAQIAAIIA=</HashCode>
       <FileName>Users\Services\UserService.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
