@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
   <Class Name="ElectronicShop.Application.Carts.Models.CartVm">
-    <Position X="3.25" Y="9.5" Width="1.75" />
+    <Position X="3.5" Y="9.75" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
       <FileName>Carts\Models\CartVm.cs</FileName>
@@ -10,12 +10,12 @@
   <Class Name="ElectronicShop.Application.Comments.Models.CommentVm">
     <Position X="3.25" Y="0.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>EAACAAAEAAAAAAAAAAAEAAgAAgAAAAAAAwAACAAAAAA=</HashCode>
+      <HashCode>EAADAAAEAAAAAAAAAAAEQAhAAgAAAAAAAgAACAAAAAA=</HashCode>
       <FileName>Comments\Models\CommentVm.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ElectronicShop.Application.Common.Models.ApiErrorResult&lt;T&gt;">
-    <Position X="3.25" Y="5" Width="2.5" />
+    <Position X="3.25" Y="5.5" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAA=</HashCode>
       <FileName>Common\Models\ApiErrorResult.cs</FileName>
@@ -29,13 +29,11 @@
     </TypeIdentifier>
   </Class>
   <Class Name="ElectronicShop.Application.Common.Models.ApiSuccessResult&lt;T&gt;">
-    <Position X="5.5" Y="7.5" Width="2.5" />
+    <Position X="5.75" Y="7.75" Width="2.5" />
     <InheritanceLine Type="ElectronicShop.Application.Common.Models.ApiResult&lt;T&gt;" ManuallyRouted="true">
       <Path>
         <Point X="7" Y="7.238" />
-        <Point X="7" Y="7.416" />
-        <Point X="6.75" Y="7.416" />
-        <Point X="6.75" Y="7.5" />
+        <Point X="7" Y="7.75" />
       </Path>
     </InheritanceLine>
     <TypeIdentifier>
@@ -65,7 +63,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="ElectronicShop.Application.Orders.Models.ListProduct">
-    <Position X="3.25" Y="6.75" Width="2" />
+    <Position X="3.25" Y="7.25" Width="2" />
     <TypeIdentifier>
       <HashCode>EAAAAAAAAQIAAAAAAAAAAAAAAAAAAAAAAAAAgxAIAAA=</HashCode>
       <FileName>Orders\Models\OrderVm.cs</FileName>
@@ -79,7 +77,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="ElectronicShop.Application.ProductPhotos.Models.PhotoVm">
-    <Position X="3.25" Y="3.5" Width="2.25" />
+    <Position X="3.25" Y="4" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAA=</HashCode>
       <FileName>ProductPhotos\Models\PhotoVm.cs</FileName>
@@ -88,12 +86,12 @@
   <Class Name="ElectronicShop.Application.ProductReviews.Models.ReviewVm">
     <Position X="1" Y="6" Width="2" />
     <TypeIdentifier>
-      <HashCode>EAAAAAAEAAAAAAAAAAAAAAgAAAAAAAAAAQABCAAAEAA=</HashCode>
+      <HashCode>EAACAAAEAAAAAAAAAAAAAAgAAAAAAAAAAQABCAAAEAA=</HashCode>
       <FileName>ProductReviews\Models\ReviewVm.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ElectronicShop.Application.Users.Models.LoginHistoryVm">
-    <Position X="5.75" Y="9" Width="1.75" />
+    <Position X="5.75" Y="9.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAACAAAAAAAQAAAAgAAAAAAAAAAAAAgAAAAAA=</HashCode>
       <FileName>Users\Models\LoginHistoryVm.cs</FileName>

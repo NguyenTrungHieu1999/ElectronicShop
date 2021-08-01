@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Application.ProductReviews.Commands.CreateReview;
+using ElectronicShop.Application.ProductReviews.Commands.EditReview;
 using ElectronicShop.Application.ProductReviews.Models;
 using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
@@ -30,7 +31,7 @@ namespace ElectronicShop.Application.ProductReviews.Services
         public async Task<ApiResult<List<ReviewVm>>> GetAllByProductIdAsync(int productId)
         {
             var reviews = await _context.ProductReviews
-                .Where(x=>x.Status == true && x.ProductId.Equals(productId))
+                .Where(x=>x.Status && x.ProductId.Equals(productId))
                 .ToListAsync();
 
             var result = _mapper.Map<List<ReviewVm>>(reviews);
@@ -46,7 +47,7 @@ namespace ElectronicShop.Application.ProductReviews.Services
         public async Task<ApiResult<ProductReview>> GetByIdAsync(int reviewId)
         {
             var review = await _context.ProductReviews
-                .SingleOrDefaultAsync(x=>x.Id == reviewId && x.Status == true);
+                .SingleOrDefaultAsync(x=>x.Id == reviewId && x.Status);
 
             return await Task.FromResult(new ApiSuccessResult<ProductReview>(review));
         }
@@ -92,21 +93,45 @@ namespace ElectronicShop.Application.ProductReviews.Services
             {
                 return await Task.FromResult(new ApiErrorResult<double>("Không có đánh giá."));
             }
-            else
-            {
-                var totalRate = await _context.ProductReviews
-                    .Where(x=>x.ProductId.Equals(productId))
-                    .AverageAsync(x => x.RateStar);
 
-                return await Task.FromResult(new ApiSuccessResult<double>(totalRate));
-            }
+            var totalRate = await (from review in _context.ProductReviews
+                                   where review.ProductId.Equals(productId)
+                                   group review by review.ProductId
+                                   into result
+                                   select new
+                                   {
+                                       totalRate = result.Average(r => r.RateStar)
+                                   }).SingleOrDefaultAsync();
+
+            return await Task.FromResult(new ApiSuccessResult<double>(totalRate.totalRate));
         }
 
         public async Task<ApiResult<List<ProductReview>>> GetAllAsync()
         {
-            var reviews = await _context.ProductReviews.ToListAsync();
+            var reviews = await _context.ProductReviews
+                .Include(x=>x.User)
+                .Include(x=>x.Product)
+                .ToListAsync();
 
             return await Task.FromResult(new ApiSuccessResult<List<ProductReview>>(reviews));
+        }
+
+        public async Task<ApiResult<string>> EditAsync(EditReviewCommand command)
+        {
+            var review = await _context.ProductReviews.Where(x => x.Id == command.Id).SingleOrDefaultAsync();
+
+            if(review is null)
+            {
+                return await Task.FromResult(new ApiErrorResult<string>("Không tìm thấy đánh giá"));
+            }
+
+            review.Text = command.Text;
+            review.RateStar = command.RateStar;
+
+            _context.Update(review);
+            await _context.SaveChangesAsync();
+
+            return await Task.FromResult(new ApiSuccessResult<string>("Cập nhật đánh giá thành công"));
         }
     }
 }

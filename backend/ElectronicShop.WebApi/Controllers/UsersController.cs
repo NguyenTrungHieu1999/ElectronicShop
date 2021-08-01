@@ -15,6 +15,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Application.Users.Commands.EnableAccount;
+using ElectronicShop.Application.Users.Queries.GetAllRole;
 
 namespace ElectronicShop.WebApi.Controllers
 {
@@ -117,6 +118,13 @@ namespace ElectronicShop.WebApi.Controllers
         public async Task<IActionResult> GetLoginHistory([FromQuery] GetLoginHistoryQuery query)
         {            
             return Ok(await _mediator.Send(query));
+        }
+
+        [HttpGet("roles")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAllRole()
+        {
+            return Ok(await _mediator.Send(new GetAllRoleQuery()));
         }
     }
 }

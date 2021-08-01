@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using ElectronicShop.Application.Comments.Commands.CreateComment;
+using ElectronicShop.Application.Comments.Commands.DeleteComment;
 using ElectronicShop.Application.Comments.Commands.DisableOrEnableComment;
 using ElectronicShop.Application.Comments.Commands.EditComment;
 using ElectronicShop.Application.Comments.Queries.GetAllComment;
@@ -60,6 +61,13 @@ namespace ElectronicShop.WebApi.Controllers
         public async Task<IActionResult> Edit(EditCommentCommand command)
         {
             return Ok(await _mediator.Send(command));
+        }
+
+        [HttpPut("delete/{id}")]
+        [Authorize]
+        public async Task<IActionResult> Delete(int id)
+        {
+            return Ok(await _mediator.Send(new DeleteCommentCommand(id)));
         }
     }
 }

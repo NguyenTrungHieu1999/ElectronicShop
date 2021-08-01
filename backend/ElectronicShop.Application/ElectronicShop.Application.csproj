@@ -19,8 +19,4 @@
     <ProjectReference Include="..\ElectronicShop.Utilities\ElectronicShop.Utilities.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="OrderDetails\Commands" />
-  </ItemGroup>
-
 </Project>

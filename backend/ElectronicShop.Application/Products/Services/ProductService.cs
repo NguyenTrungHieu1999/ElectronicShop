@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Application.Products.Commands.CreateProduct;
+using ElectronicShop.Application.Products.Commands.ToReceive;
 using ElectronicShop.Application.Products.Commands.UpdateProduct;
 using ElectronicShop.Application.Products.Extensions;
+using ElectronicShop.Application.Products.Queries.FilterProduct;
 using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
 using ElectronicShop.Data.Enums;
@@ -12,10 +14,8 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using ElectronicShop.Application.Products.Queries.FilterProduct;
 using System.Security.Claims;
-using ElectronicShop.Utilities.SystemConstants;
+using System.Threading.Tasks;
 
 namespace ElectronicShop.Application.Products.Services
 {
@@ -156,6 +156,7 @@ namespace ElectronicShop.Application.Products.Services
             // Lấy danh sách sản phẩm
             var products = await _context.Products
                 .Where(x => x.Status != ProductStatus.DELETED)
+                .AsNoTracking()
                 .ToListAsync();
 
             if (products is null)
@@ -163,14 +164,12 @@ namespace ElectronicShop.Application.Products.Services
                 return await Task.FromResult(new ApiErrorResult<List<Product>>("Không tìm thấy sản phẩm"));
             }
 
-            var results = await CreatePathPhotos(products);
-
-            return await Task.FromResult(new ApiSuccessResult<List<Product>>(results));
+            return await Task.FromResult(new ApiSuccessResult<List<Product>>(products));
         }
 
         public async Task<ApiResult<List<Product>>> GetByCateIdAsync(int cateId)
         {
-            var cate = await _context.Categories.FindAsync(cateId);
+            var cate = await _context.Categories.Where(x=>x.Id == cateId).SingleOrDefaultAsync();
 
             var products = new List<Product>();
 
@@ -196,6 +195,7 @@ namespace ElectronicShop.Application.Products.Services
             {
                 products = await _context.Products
                     .Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN && x.CategoryId.Equals(cateId))
+                    .AsNoTracking()
                     .ToListAsync();
             }
 
@@ -231,7 +231,6 @@ namespace ElectronicShop.Application.Products.Services
 
             if (products.Count > 0)
             {
-                query = new List<Product>();
                 query = products;
             }
 
@@ -255,11 +254,11 @@ namespace ElectronicShop.Application.Products.Services
         {
             var products = query.Price switch
             {
-                1 => await _context.Products.Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos).Where(x => x.Price < 10000000).ToListAsync(),
-                2 => await _context.Products.Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos).Where(x => x.Price >= 10000000 && x.Price < 20000000).ToListAsync(),
-                3 => await _context.Products.Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos).Where(x => x.Price >= 20000000 && x.Price < 40000000).ToListAsync(),
-                4 => await _context.Products.Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos).Where(x => x.Price >= 40000000).ToListAsync(),
-                _ => await _context.Products.Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN).Include(x => x.ProductPhotos).ToListAsync(),
+                1 => await _context.Products.Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN && x.Price < 10000000).ToListAsync(),
+                2 => await _context.Products.Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN && x.Price >= 10000000 && x.Price < 20000000).ToListAsync(),
+                3 => await _context.Products.Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN && x.Price >= 20000000 && x.Price < 40000000).ToListAsync(),
+                4 => await _context.Products.Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN && x.Price >= 40000000).ToListAsync(),
+                _ => await _context.Products.Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN).ToListAsync()
             };
 
             products = query.Sorted switch
@@ -341,11 +340,12 @@ namespace ElectronicShop.Application.Products.Services
             return await Task.FromResult(new ApiSuccessResult<string>("Mở khóa sản phẩm thành công"));
         }
 
-        public async Task<ApiResult<List<Product>>> GetAllForClienttAsync()
+        public async Task<ApiResult<List<Product>>> GetAllForClientAsync()
         {
             // Lấy danh sách sản phẩm
             var products = await _context.Products
                 .Where(x => x.Status != ProductStatus.DELETED && x.Status != ProductStatus.HIDDEN)
+                .AsNoTracking()
                 .ToListAsync();
 
             if (products is null)
@@ -377,6 +377,50 @@ namespace ElectronicShop.Application.Products.Services
             }
 
             return await Task.FromResult(new ApiSuccessResult<Product>(product));
+        }
+
+        //public async Task InitStock()
+        //{
+        //    var products = await _context.Products.ToListAsync();
+
+        //    foreach (var p in products)
+        //    {
+        //        var inventory = new ProductInventory
+        //        {
+        //            ProductId = p.Id,
+        //            GoodsReceipt = p.GoodsReceipt,
+        //            CostPrice = p.Price - p.Price * decimal.Parse("0.05"),
+        //            UserId = 1,
+        //            CreatedDate = p.CreatedDate
+        //        };
+
+        //        await _context.ProductInventories.AddAsync(inventory);
+        //    }
+
+        //    await _context.SaveChangesAsync();
+        //}
+
+        public async Task<ApiResult<string>> ToReceive(ToReceiveCommand command)
+        {
+            var product = await _context.Products.Where(x => x.Id == command.ProductId).SingleOrDefaultAsync();
+
+            product.GoodsReceipt += command.GoodsReceipt;
+            product.Inventory += command.GoodsReceipt;
+
+            var inventory = new ProductInventory
+            {
+                ProductId = command.ProductId,
+                GoodsReceipt = command.GoodsReceipt,
+                CostPrice = command.CostPrice,
+                CreatedDate = DateTime.Now,
+                UserId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value)
+            };
+
+            _context.Products.Update(product);
+            await _context.ProductInventories.AddAsync(inventory);
+            await _context.SaveChangesAsync();
+
+            return await Task.FromResult(new ApiSuccessResult<string>("Nhập số lượng hàng vào kho thành công"));
         }
 
     }

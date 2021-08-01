@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using ElectronicShop.Application.Common.Models;
@@ -17,24 +16,24 @@ namespace ElectronicShop.Application.Carts.Services
 {
     public class CartService : ICartService
     {
-        
+
         private readonly ElectronicShopDbContext _context;
         private readonly int _userId;
-        
+
         public CartService(ElectronicShopDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
-            
+
             if (httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
             {
                 _userId = int.Parse(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             }
         }
-        
+
         public async Task<ApiResult<string>> CreateAsync(List<CartModel> models)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync();
-            
+
             foreach (var cart in models.Select(cartModel => new Cart
             {
                 ProductId = cartModel.ProductId,
@@ -47,15 +46,15 @@ namespace ElectronicShop.Application.Carts.Services
             }
 
             var oldShoppingCarts = await _context.Carts
-                .Where(x => x.UserId == _userId&&x.Status!=false)
+                .Where(x => x.UserId == _userId && x.Status)
                 .ToListAsync();
-            
+
             foreach (var item in oldShoppingCarts)
             {
                 item.Status = false;
                 _context.Carts.Update(item);
             }
-            
+
             try
             {
                 await _context.SaveChangesAsync();
@@ -73,23 +72,12 @@ namespace ElectronicShop.Application.Carts.Services
         {
             var carts = await _context.Carts
                 .Include(x => x.Product)
-                .Where(x => x.UserId.Equals(_userId)&&x.Status==true)
+                .Where(x => (x.Product.Status != ProductStatus.HIDDEN && x.Product.Status != ProductStatus.DELETED) && x.UserId.Equals(_userId) && x.Status)
                 .ToListAsync();
-            
-            if(carts != null)
-            {
-                foreach (var c in carts)
-                {
-                    if(c.Product.Status == ProductStatus.HIDDEN || c.Product.Status == ProductStatus.DELETED)
-                    {
-                        carts.Remove(c);
-                    }
-                }
-            }
 
             var cartModels = carts.Select(cart => new CartVm
             {
-                Product = cart.Product, 
+                Product = cart.Product,
                 Quantity = cart.Quantity
             }).ToList();
 
@@ -121,14 +109,14 @@ namespace ElectronicShop.Application.Carts.Services
         public async Task<ApiResult<string>> UpdateAsync(UpdateCartCommand command)
         {
             var cart = await _context.Carts
-                .Where(x => x.Status==true&&x.ProductId.Equals(command.ProductId)&&x.UserId.Equals(_userId))
+                .Where(x => x.Status && x.ProductId.Equals(command.ProductId) && x.UserId.Equals(_userId))
                 .SingleOrDefaultAsync();
-            
+
             if (cart is null)
             {
                 return await Task.FromResult(new ApiErrorResult<string>("Cập nhật giỏ hàng thất bại"));
             }
-            
+
             cart.Quantity += command.Total;
 
             if (cart.Quantity == 0)
@@ -139,16 +127,14 @@ namespace ElectronicShop.Application.Carts.Services
             _context.Carts.Update(cart);
 
             await _context.SaveChangesAsync();
-            
+
             return await Task.FromResult(new ApiSuccessResult<string>("Cập nhật giỏ hàng thành công"));
         }
-
-
 
         public async Task<ApiResult<string>> RemoveAllCart()
         {
             var carts = await _context.Carts
-                .Where(x => x.UserId.Equals(_userId) && x.Status == true)
+                .Where(x => x.UserId.Equals(_userId) && x.Status)
                 .ToListAsync();
 
             foreach (var cart in carts)
@@ -162,5 +148,5 @@ namespace ElectronicShop.Application.Carts.Services
 
             return await Task.FromResult(new ApiSuccessResult<string>("Xóa giỏ hàng thành công!"));
         }
-     }
+    }
 }

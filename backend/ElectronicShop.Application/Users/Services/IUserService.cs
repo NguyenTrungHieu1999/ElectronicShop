@@ -2,6 +2,7 @@
 using ElectronicShop.Application.Users.Commands.CreateUser;
 using ElectronicShop.Application.Users.Commands.UpdateUser;
 using ElectronicShop.Application.Users.Models;
+using ElectronicShop.Data.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -24,5 +25,7 @@ namespace ElectronicShop.Application.Users.Services
         Task<ApiResult<List<UserVm>>> GetAllAsync();
 
         Task<ApiResult<List<LoginHistoryVm>>> GetLoginHistoryAsync(int m, int y);
+
+        Task<ApiResult<List<UserRole>>> GetAllRoleAsync();
     }
 }

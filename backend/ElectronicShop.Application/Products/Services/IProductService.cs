@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Application.Products.Commands.CreateProduct;
+using ElectronicShop.Application.Products.Commands.ToReceive;
 using ElectronicShop.Application.Products.Commands.UpdateProduct;
 using ElectronicShop.Application.Products.Queries.FilterProduct;
 using ElectronicShop.Data.Entities;
@@ -21,7 +22,8 @@ namespace ElectronicShop.Application.Products.Services
         Task<ApiResult<List<Product>>> FilterAsync(FilterProductQuery query);
         Task<ApiResult<string>> DisableAsync(int productId);
         Task<ApiResult<string>> EnableAsync(int productId);
-        Task<ApiResult<List<Product>>> GetAllForClienttAsync();
+        Task<ApiResult<List<Product>>> GetAllForClientAsync();
         Task<ApiResult<Product>> GetByIdForClientAsync(int productId);
+        Task<ApiResult<string>> ToReceive(ToReceiveCommand command);
     }
 }

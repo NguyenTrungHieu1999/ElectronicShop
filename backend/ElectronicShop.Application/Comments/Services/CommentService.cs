@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using ElectronicShop.Application.Comments.Commands.CreateComment;
 using ElectronicShop.Application.Comments.Commands.EditComment;
 using ElectronicShop.Application.Comments.Extensions;
-using ElectronicShop.Application.Comments.Models;
 using ElectronicShop.Application.Common.Models;
 using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace ElectronicShop.Application.Comments.Services
 {
@@ -21,7 +20,7 @@ namespace ElectronicShop.Application.Comments.Services
         private readonly ElectronicShopDbContext _context;
         private readonly IMapper _mapper;
         private readonly int _userId;
-        
+
         public CommentService(ElectronicShopDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
@@ -33,22 +32,18 @@ namespace ElectronicShop.Application.Comments.Services
             }
         }
 
-        public async Task<ApiResult<List<CommentVm>>> GetAllByProductIdAsync(int productId)
+        public async Task<ApiResult<List<Comment>>> GetAllByProductIdAsync(int productId)
         {
             var comments = await _context.Comments
-                .Where(x=>x.ProductId.Equals(productId) && x.ParentId == null)
-                .Include(x=>x.Children)
-                .ThenInclude(x=>x.User)
+                .Where(x => x.ProductId.Equals(productId))
+                .Include(x => x.Children)
+                .Include(x => x.User)
+                .Where(x => x.Deleted == false)
                 .ToListAsync();
 
-            var result = _mapper.Map<List<CommentVm>>(comments);
+            var results = comments.Where(x => x.ParentId == null).ToList();
 
-            foreach (var comment in result)
-            {
-                comment.UserName = (await _context.Users.FindAsync(comment.UserId)).UserName;
-            }
-
-            return await Task.FromResult(new ApiSuccessResult<List<CommentVm>>(result));
+            return await Task.FromResult(new ApiSuccessResult<List<Comment>> { Message = comments.Count.ToString(), ResultObj = results });
         }
 
         public async Task<ApiResult<string>> CreateAsync(CreateCommentCommand command)
@@ -67,7 +62,7 @@ namespace ElectronicShop.Application.Comments.Services
 
         public async Task<ApiResult<string>> EditAsync(EditCommentCommand command)
         {
-            var comment = await _context.Comments.Where(x=>x.Id.Equals(command.Id)&&x.UserId.Equals(_userId)).SingleOrDefaultAsync();
+            var comment = await _context.Comments.Where(x => x.Id.Equals(command.Id) && x.UserId.Equals(_userId)).SingleOrDefaultAsync();
 
             if (comment is null)
             {
@@ -85,9 +80,9 @@ namespace ElectronicShop.Application.Comments.Services
         {
             var comment = await _context.Comments.Where(x => x.Id.Equals(commentId)).SingleOrDefaultAsync();
 
-            if(comment is null)
+            if (comment is null)
             {
-                return await Task.FromResult(new ApiErrorResult<String>("Không tìm thấy bình luận"));
+                return await Task.FromResult(new ApiErrorResult<string>("Không tìm thấy bình luận"));
             }
 
             comment.Status = !comment.Status;
@@ -103,6 +98,38 @@ namespace ElectronicShop.Application.Comments.Services
             var comments = await _context.Comments.ToListAsync();
 
             return await Task.FromResult(new ApiSuccessResult<List<Comment>>(comments));
+        }
+
+        public async Task<ApiResult<string>> DeleteAsync(int commentId)
+        {
+            var comment = await _context.Comments.Where(x => x.Id == commentId)
+                .Include(x => x.Children)
+                .SingleOrDefaultAsync();
+
+            await Comment(comment);
+
+            _context.Update(comment);
+            await _context.SaveChangesAsync();
+
+            return await Task.FromResult(new ApiSuccessResult<string>("Xóa bình luận thành công"));
+        }
+
+        private async Task Comments(List<Comment> comments)
+        {
+            foreach (var comment in comments)
+            {
+                await Comment(comment);
+            }
+        }
+
+        private async Task Comment(Comment comment)
+        {
+            comment.Deleted = true;
+
+            if(comment.Children != null)
+            {
+                await Comments(comment.Children);
+            }
         }
     }
 }

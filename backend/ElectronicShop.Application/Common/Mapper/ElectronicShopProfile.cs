@@ -11,6 +11,7 @@ using ElectronicShop.Application.ProductReviews.Models;
 using ElectronicShop.Application.Products.Commands.CreateProduct;
 using ElectronicShop.Application.Users.Commands.CreateUser;
 using ElectronicShop.Application.Users.Models;
+using ElectronicShop.Data.EF;
 using ElectronicShop.Data.Entities;
 
 namespace ElectronicShop.Application.Common.Mapper
@@ -39,8 +40,6 @@ namespace ElectronicShop.Application.Common.Mapper
             CreateMap<CreateCommentCommand, Comment>();
 
             CreateMap<ProductReview, ReviewVm>();
-
-            CreateMap<Comment, CommentVm>();
 
             CreateMap<EmpCreateOrderCommand, Order>()
                  .ForMember(dest => dest.OrderDetails, act => act.Ignore());
